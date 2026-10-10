@@ -1,0 +1,13 @@
+[workspace]
+resolver = "2"
+members = ["crates/blueprint-core", "crates/blueprint-wasm"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Dr. Delminquoe L Cunningham <info@phoenixinceptionsmediallc.com>"]
+license = "All rights reserved"
+
+[profile.release]
+lto = true
+strip = true

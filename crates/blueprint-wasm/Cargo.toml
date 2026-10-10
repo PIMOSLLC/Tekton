@@ -1,0 +1,10 @@
+[package]
+name = "blueprint-wasm"
+description = "WASM bindings for blueprint-core (Phoenix Insight Nexus toolkit module — future phase)"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+blueprint-core = { path = "../blueprint-core" }

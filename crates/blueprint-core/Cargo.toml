@@ -1,0 +1,9 @@
+[package]
+name = "blueprint-core"
+description = "Service blueprint engine: document model, validation, WCAG 2.2 lint, dual-format render"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]

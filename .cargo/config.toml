@@ -1,0 +1,4 @@
+# Why: /mnt/reactapps is an NFS mount of Minerva — cargo target dirs on NFS are
+# slow and bloat the mount. Build artifacts live in the local home cache.
+[build]
+target-dir = "/home/adminphx/.cache/cargo-target/phoenix-Tekton"
