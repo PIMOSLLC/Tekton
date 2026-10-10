@@ -94,6 +94,9 @@ tekton render fixtures/serta-simmons.yaml -f wordpress    # → embed fragment
 cd fixtures && python3 -m http.server 6041 --bind 0.0.0.0
 #   → open http://192.168.10.138:6041/serta-simmons-standalone.html in any desktop browser
 #     (drawer, focus filter, print, responsive — the full experience)
+#   Agent sessions (opencode/bash tool): background servers must fully detach or the
+#   tool's timeout group-kill reaps them — use:
+#   (setsid python3 -m http.server 6041 --bind 0.0.0.0 > /tmp/tekton-serve.log 2>&1 < /dev/null &)
 
 # 4. Editor (phase 2, browser-first) — Vite dev server on the same pattern:
 npm run dev -- --host 0.0.0.0 --port 6041          # → http://192.168.10.138:6041
