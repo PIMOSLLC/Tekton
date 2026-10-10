@@ -38,7 +38,7 @@ Born from the hand-built `agentic_ecommerce_service_blueprint.html` (Serta Simmo
 | Desktop shell | `src-tauri/` | Tauri 2 (phase 2) |
 | Editor | `src/` | React 18 + Vite + TS strict, Tekhne-token themed (phase 2) |
 
-**Status: phase 1 (Rust core) in progress.** Engine + fixture + tests land on `phase-1-rust-core`.
+**Status: phase 1 (Rust core) COMPLETE** — `blueprint-core` on branch `phase-1-rust-core` (pushed): document model, validation, WCAG 2.2 linter (suggested fixes), dual-format renderer, Serta fixture, 21 tests green (`cargo test --workspace`, clippy clean). Verify with: `cargo run -p blueprint-core --example render-fixture` (renders the fixture to `serta-*.html`). **Next: phase 2 (Tauri editor)** — branch `phase-2-tauri-editor` off `phase-1-rust-core`. Blocking prerequisite: the sudo system-deps command below (agent sessions cannot sudo).
 
 ## Repository
 
