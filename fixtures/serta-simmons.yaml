@@ -1,0 +1,144 @@
+# phoenix-Tekton fixture #1 — the Serta Simmons Bedding agentic e-commerce service
+# blueprint (case study: "AI Agentic Workflows in E-Commerce",
+# delminquoelcunningham.com). Same data as the deployed artifact (page 2508);
+# NDA-conscious wording throughout.
+meta:
+  eyebrow: "Portfolio case study · Future-state service design"
+  title: "AI Agentic Workflows in E-Commerce"
+  intro: >-
+    Interactive service blueprint for the simmons.com DTC pilot: connecting customer
+    experience, human decisions, AI recommendations, Shopify operations, and
+    traceable governance.
+stats:
+  - figure: "4 layers"
+    caption: "Design system · analytics · site operations · human command"
+  - figure: "Human approved"
+    caption: "No unreviewed agent changes to production"
+  - figure: "5 stages"
+    caption: "From customer signal to monitored release"
+stages:
+  - id: signal
+    name: Signal
+    blurb: "Observe storefront behavior and operational needs"
+  - id: analyze
+    name: Analyze
+    blurb: "Prioritize evidence-backed opportunities"
+  - id: prepare
+    name: Prepare
+    blurb: "Build constrained change proposals"
+  - id: approve
+    name: Approve
+    blurb: "Human decision and release gate"
+  - id: measure
+    name: Measure
+    blurb: "Monitor performance and iterate"
+lanes:
+  - id: customer
+    name: "Customer actions"
+    blurb: "What shoppers do"
+    cards:
+      - { title: "Browse and compare", blurb: "Explore mattress products and offers" }
+      - { title: "Consider options", blurb: "Review details and product information" }
+      - { title: "Experience page content", blurb: "Interact with the current storefront" }
+      - { title: "Continue shopping", blurb: "Only approved changes become visible" }
+      - { title: "Respond to experience", blurb: "Browse, convert, or abandon" }
+  - id: frontstage
+    name: "Frontstage experience"
+    blurb: "What customers see"
+    cards:
+      - { title: "Shopify storefront", blurb: "Product and collection pages" }
+      - { title: "Existing site experience", blurb: "Observable navigation and content" }
+      - { title: "Preview environment", blurb: "Proposed variants are not public" }
+      - { title: "Approved publication", blurb: "Published Shopify changes only" }
+      - { title: "Updated storefront", blurb: "Live experience measured" }
+  - id: agents
+    name: "AI agent workflow"
+    blurb: "Agent-prepared work"
+    divider: "— Line of interaction —"
+    tint: "#f3f0ff"
+    interpretation: >-
+      Agents may analyze and prepare proposals but cannot authorize publication. Every
+      output should carry evidence, version, and an accountable reviewer.
+    cards:
+      - { title: "Signal intake", blurb: "Receive approved behavioral and CRM signals" }
+      - { title: "Recommendation agent", blurb: "Rank friction points and opportunities" }
+      - { title: "Site operations agent", blurb: "Package component and content variants" }
+      - { title: "Hold for review", blurb: "No autonomous production publishing" }
+      - { title: "Evaluation support", blurb: "Summarize performance and next actions" }
+  - id: backstage
+    name: "Backstage human actions"
+    blurb: "UX and merchandising teams"
+    divider: "— Line of visibility —"
+    interpretation: >-
+      UX and merchandising staff define objectives, validate the recommendations, and
+      own approval decisions.
+    cards:
+      - { title: "UX and merchandising", blurb: "Set objectives and research questions" }
+      - { title: "Research and prioritization", blurb: "Validate signals and recommendation relevance" }
+      - { title: "Design and content review", blurb: "Inspect brand, UX and accessibility" }
+      - { title: "Human command", blurb: "Approve, revise, or reject change" }
+      - { title: "UX and commerce review", blurb: "Interpret results and decide next iteration" }
+  - id: systems
+    name: "Supporting systems"
+    blurb: "Tools and infrastructure"
+    divider: "— Line of internal interaction —"
+    tint: "#eff9f8"
+    interpretation: >-
+      Design tokens and modular components constrain agent output. A preview and
+      rollback path reduce the risk of changes reaching customers.
+    cards:
+      - { title: "Shopify DTC", blurb: "Storefront and CRM" }
+      - { title: "Analytics instrumentation", blurb: "Behavioral tracking and analysis" }
+      - { title: "Agent-ready design system", blurb: "Tokens, components, brand constraints" }
+      - { title: "Review and release workflow", blurb: "Approval surface and deployment path" }
+      - { title: "Monitoring and rollback", blurb: "Performance checks and reversibility" }
+  - id: data
+    name: "Evidence and data"
+    blurb: "Signals and traceability"
+    tint: "#f3f8ff"
+    interpretation: >-
+      Recommendations should be linked to permitted CRM or behavioral sources and
+      assessed for privacy, quality, and relevance.
+    cards:
+      - { title: "Behavioral signals", blurb: "Views, journeys and drop-off events" }
+      - { title: "CRM + analytics", blurb: "Ranked, source-linked recommendations" }
+      - { title: "Change specification", blurb: "Variant, rationale and test brief" }
+      - { title: "Decision record", blurb: "Reviewer, status, rationale and version" }
+      - { title: "Experiment measures", blurb: "Conversion and operational velocity" }
+  - id: governance
+    name: "Governance"
+    blurb: "Controls and approval"
+    divider: "— Control and accountability boundary —"
+    tint: "#fff3e9"
+    interpretation: >-
+      Human review is a blocking gate, not a passive notification. Reject and revise
+      paths return proposals to preparation; approved changes can proceed to Shopify.
+    cards:
+      - { title: "Data access boundaries", blurb: "Approved sources and privacy constraints" }
+      - { title: "Evidence traceability", blurb: "Every recommendation linked to signals" }
+      - { title: "Preflight checks", blurb: "Brand, accessibility and component rules" }
+      - { title: "Mandatory approval gate", blurb: "Explicit human sign-off before production" }
+      - { title: "Audit and rollback", blurb: "Review impact and revert if necessary" }
+  - id: outcome
+    name: "Service outcomes"
+    blurb: "Expected or reported value"
+    tint: "#f0fbf4"
+    interpretation: >-
+      Reported and intended benefits should be separated in the final portfolio
+      narrative. Do not imply unreleased conversion figures.
+    cards:
+      - { title: "Opportunity visibility", blurb: "Find actionable storefront friction" }
+      - { title: "Prioritized work", blurb: "Less distance between insight and action" }
+      - { title: "Faster prototyping", blurb: "Reported page updates prepared in hours" }
+      - { title: "Controlled deployment", blurb: "Zero unreviewed agent changes published" }
+      - { title: "Continuous improvement", blurb: "Operational and conversion targets monitored" }
+note:
+  label: "Scope and evidence:"
+  body: >-
+    The core pilot includes Shopify CRM and behavioral analytics, ranked site-operation
+    recommendations, agent-prepared visual changes, and human review prior to
+    deployment. Extended customer journey stages are service-design context. The
+    cycle-time compression from a 2–3 week manual baseline to 1 week with QA is the
+    reported pilot metric; additional outcome metrics remain pending NDA review.
+# theme omitted on purpose: exercises the default (hue-230) palette — the same
+# choice the renderer's lint re-verifies on every build.
