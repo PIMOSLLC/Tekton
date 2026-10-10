@@ -5,3 +5,4 @@ dist/
 .DS_Store
 /*.html
 /fixtures/*.html
+src/engine/blueprint_wasm*

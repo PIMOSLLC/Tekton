@@ -2,8 +2,10 @@
 //! at authoring time, not as broken grids in a browser.
 
 use crate::model::Document;
+use serde::Serialize;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "lowercase")]
 pub enum Severity {
     /// Blocks rendering.
     Error,
@@ -11,14 +13,14 @@ pub enum Severity {
     Warning,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct Issue {
     pub severity: Severity,
     /// Human-readable explanation, written for the document author.
     pub message: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Default)]
+#[derive(Debug, Clone, PartialEq, Default, Serialize)]
 pub struct Validation {
     pub issues: Vec<Issue>,
 }

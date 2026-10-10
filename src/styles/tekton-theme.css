@@ -1,0 +1,59 @@
+/**
+ * phoenix-Tekton editor theme — Phoenix Tekhne tokens (12 per variant, per the
+ * PIMOS convention: copied from Tekhne's blank-theme.css and customized).
+ *
+ * Palette: the hue-230 navy family shared with the product's default blueprint
+ * theme and the DLC site header — the tool speaks its own output language.
+ */
+
+[data-phoenix-theme="tekton-dark"],
+.phoenix-tekton-dark {
+  /* 60% Foundation */
+  --color-tekton-dark-bg-primary: #060d2f;
+  --color-tekton-dark-bg-secondary: #0b1734;
+
+  /* 30% Structural */
+  --color-tekton-dark-surface: #141b3d;
+
+  /* 10% Neural */
+  --color-tekton-dark-accent: #1d4ed8;
+  --color-tekton-dark-accent-interactive: #3169e8;
+
+  /* Text */
+  --color-tekton-dark-text: #f2f5fb;
+  --color-tekton-dark-text-muted: #9fb0d6;
+
+  /* Borders */
+  --color-tekton-dark-border: rgba(255, 255, 255, 0.14);
+  --color-tekton-dark-border-subtle: rgba(255, 255, 255, 0.07);
+
+  /* Glow */
+  --color-tekton-dark-glow: rgba(49, 105, 232, 0.4);
+  --color-tekton-dark-glow-subtle: rgba(49, 105, 232, 0.18);
+}
+
+[data-phoenix-theme="tekton-light"],
+.phoenix-tekton-light {
+  /* 60% Foundation */
+  --color-tekton-light-bg-primary: #f5f7fb;
+  --color-tekton-light-bg-secondary: #ffffff;
+
+  /* 30% Structural */
+  --color-tekton-light-surface: #ffffff;
+
+  /* 10% Neural */
+  --color-tekton-light-accent: #1d4ed8;
+  --color-tekton-light-accent-interactive: #2563eb;
+
+  /* Text */
+  --color-tekton-light-text: #141b3d;
+  --color-tekton-light-text-muted: #53647c;
+
+  /* Borders */
+  --color-tekton-light-border: #d8e1ef;
+  --color-tekton-light-border-subtle: #e3e8f1;
+
+  /* Glow */
+  --color-tekton-light-glow: rgba(29, 78, 216, 0.3);
+  --color-tekton-light-glow-subtle: rgba(29, 78, 216, 0.15);
+}

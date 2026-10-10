@@ -1,0 +1,29 @@
+{
+  "name": "phoenix-tekton-editor",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "phoenix-Tekton — Service Blueprint Studio (browser-mode editor; Tauri shell lands with the desktop pass)",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "wasm": "cargo build -p blueprint-wasm --target wasm32-unknown-unknown --release && wasm-bindgen ~/.cache/cargo-target/phoenix-Tekton/wasm32-unknown-unknown/release/blueprint_wasm.wasm --target web --out-dir src/engine"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.3",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "happy-dom": "^20.14.6",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.3"
+  }
+}
