@@ -38,7 +38,7 @@ Born from the hand-built `agentic_ecommerce_service_blueprint.html` (Serta Simmo
 | Desktop shell | `src-tauri/` | Tauri 2 (phase 2) |
 | Editor | `src/` | React 18 + Vite + TS strict, Tekhne-token themed (phase 2) |
 
-**Status: phase 1 (Rust core) COMPLETE + `tekton` CLI** — `blueprint-core` + `tekton-cli` on branch `phase-1-rust-core` (pushed): document model, validation, WCAG 2.2 linter (suggested fixes), dual-format renderer, Serta fixture, 30 tests green (`cargo test --workspace`, clippy clean). **Next: phase 2 (Tauri editor, browser-first)** — branch `phase-2-tauri-editor` off `phase-1-rust-core`: WASM engine bindings (hoisted from P4 — browser-mode editor needs them and they are the Nexus module's future), React 18 + Vite editor, dual EngineService (Tauri invoke / WASM). Blocking prerequisite for the desktop shell only: the sudo system-deps command below (agent sessions cannot sudo).
+**Status: phase 1 (Rust core) COMPLETE + `tekton` CLI** — `blueprint-core` + `tekton-cli` on branch `phase-1-rust-core` (pushed): document model, validation, WCAG 2.2 linter (suggested fixes), dual-format renderer, Serta fixture, 30 tests green (`cargo test --workspace`, clippy clean). **Next: phase 2 (Tauri editor, browser-first)** — branch `phase-2-tauri-editor` off `phase-1-rust-core`: WASM engine bindings (hoisted from P4 — browser-mode editor needs them and they are the Nexus module's future), React 18 + Vite editor, dual EngineService (Tauri invoke / WASM). Port 6041 is OPENED on Minerva's firewall (permanent). Host sudo access: see the PIMOS umbrella AGENTS.md infrastructure table (kept there per owner policy — not duplicated in remote-pushed repos).
 
 ## Repository
 
@@ -62,8 +62,9 @@ The Tauri app is a desktop app — no persistent server. 6041 is the dev webview
 - **PIN integration contract (future phase)**: land as a toolkit module — `shared/types/tekton.ts` + storage key `blueprint` + route `/projects/:id/tekton`, served by the generic `/toolkit/:projectId/toolkit/:tool` endpoint. No new per-module backend routes.
 - **Phoenix theming**: `data-phoenix-theme="..."` attribute required or Tekhne CSS variables silently resolve to nothing. The **editor UI** uses Tekhne tokens (start from `/mnt/reactapps/phoenix-tekhne_v2/packages/tokens/src/blank-theme.css`); the **rendered blueprint output** uses the document's own theme — exported HTML must be fully self-contained (it leaves the Tekhne context entirely).
 - **Named exports only** — no default exports; barrel via `index.ts`.
-- **Tauri GUI system deps (Fedora, need sudo — not yet installed on this workstation):**
+- **Tauri GUI system deps (Fedora, need sudo):**
   `sudo dnf install webkit2gtk4.1-devel gtk3-devel librsvg2-devel openssl-devel curl-devel`
+  (host sudo access: see the PIMOS umbrella AGENTS.md infrastructure table — use `sudo -S` with stdin in agent sessions)
 
 ## Conventions (Inherited)
 
