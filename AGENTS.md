@@ -38,7 +38,7 @@ Born from the hand-built `agentic_ecommerce_service_blueprint.html` (Serta Simmo
 | Desktop shell | `src-tauri/` | Tauri 2 (phase 2) |
 | Editor | `src/` | React 18 + Vite + TS strict, Tekhne-token themed (phase 2) |
 
-**Status: phase 1 (Rust core) COMPLETE** — `blueprint-core` on branch `phase-1-rust-core` (pushed): document model, validation, WCAG 2.2 linter (suggested fixes), dual-format renderer, Serta fixture, 21 tests green (`cargo test --workspace`, clippy clean). Verify with: `cargo run -p blueprint-core --example render-fixture` (renders the fixture to `serta-*.html`). **Next: phase 2 (Tauri editor)** — branch `phase-2-tauri-editor` off `phase-1-rust-core`. Blocking prerequisite: the sudo system-deps command below (agent sessions cannot sudo).
+**Status: phase 1 (Rust core) COMPLETE + `tekton` CLI** — `blueprint-core` + `tekton-cli` on branch `phase-1-rust-core` (pushed): document model, validation, WCAG 2.2 linter (suggested fixes), dual-format renderer, Serta fixture, 30 tests green (`cargo test --workspace`, clippy clean). **Next: phase 2 (Tauri editor, browser-first)** — branch `phase-2-tauri-editor` off `phase-1-rust-core`: WASM engine bindings (hoisted from P4 — browser-mode editor needs them and they are the Nexus module's future), React 18 + Vite editor, dual EngineService (Tauri invoke / WASM). Blocking prerequisite for the desktop shell only: the sudo system-deps command below (agent sessions cannot sudo).
 
 ## Repository
 
@@ -76,17 +76,34 @@ The Tauri app is a desktop app — no persistent server. 6041 is the dev webview
 
 ## Verification
 
+Minerva is headless (CLI-only) — the testing strategy is engine-on-CLI, visuals-in-browser:
+
 ```bash
-# Engine (phase 1+)
-cargo test --workspace
+# 1. Engine + CLI (headless, on Minerva)
+cargo test --workspace          # 30 tests (engine 21 + CLI integration 8 + doctest)
 cargo fmt --check
 
-# Editor (phase 2+, once scaffolded)
-npm run lint && npm run typecheck && npm run test
+# 2. CLI — render / lint / validate (exit 1 on failures: CI-friendly)
+tekton validate fixtures/serta-simmons.yaml
+tekton lint fixtures/serta-simmons.yaml            # 26 WCAG pairs, AA/AAA verdicts
+tekton lint fixtures/serta-simmons.yaml --json    # pure JSON on stdout
+tekton render fixtures/serta-simmons.yaml -f standalone   # → fixtures/serta-simmons-standalone.html
+tekton render fixtures/serta-simmons.yaml -f wordpress    # → embed fragment
 
-# Desktop app (phase 2+; requires system deps above + a display)
+# 3. Visual/interactive testing (rendered blueprint) — serve on the LAN:
+cd fixtures && python3 -m http.server 6041 --bind 0.0.0.0
+#   → open http://192.168.10.138:6041/serta-simmons-standalone.html in any desktop browser
+#     (drawer, focus filter, print, responsive — the full experience)
+
+# 4. Editor (phase 2, browser-first) — Vite dev server on the same pattern:
+npm run dev -- --host 0.0.0.0 --port 6041          # → http://192.168.10.138:6041
+npm run lint && npm run typecheck && npm run test   # Vitest + RTL (headless)
+
+# 5. Desktop shell (needs a display machine + the sudo system deps below):
 npm run tauri dev
 ```
+
+The `tekton` binary builds to the cargo bin dir (`~/.cache/cargo-target/phoenix-Tekton/debug/tekton`); `cargo run -p tekton-cli -- <args>` works anywhere in the workspace.
 
 ## References
 

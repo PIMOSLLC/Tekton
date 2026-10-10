@@ -3,11 +3,13 @@
 //! spec's relative-luminance definition (WCAG 2.1+ threshold 0.04045); "large text"
 //! follows SC 1.4.3: ≥24px regular or ≥18.66px bold.
 
+use serde::Serialize;
+
 use crate::model::Document;
 use crate::theme::Theme;
 
 /// One checked color pair.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct Finding {
     /// Human-readable element name, e.g. "Band intro text".
     pub element: String,
@@ -22,7 +24,7 @@ pub struct Finding {
     pub suggestion: Option<String>,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct Report {
     pub findings: Vec<Finding>,
 }

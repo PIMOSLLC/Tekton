@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/blueprint-core", "crates/blueprint-wasm"]
+members = ["crates/blueprint-core", "crates/blueprint-wasm", "crates/tekton-cli"]
 
 [workspace.package]
 version = "0.1.0"

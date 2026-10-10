@@ -1,0 +1,169 @@
+<div class="bp-root" data-tekton="service-blueprint"><style>.bp-root{--bp-band-bg:#060d2f;--bp-band-border:#27539c;--bp-band-eyebrow:#9fc4ff;--bp-band-text:#cbd7f1;--bp-canvas:#f5f7fb;--bp-surface:#ffffff;--bp-ink:#141b3d;--bp-ink-strong:#131b45;--bp-grid-head:#161f4c;--bp-divider-bg:#182150;--bp-row-head-bg:#f0f4fa;--bp-row-blurb:#5e6d83;--bp-stage-bg:#eaf1ff;--bp-stage-ink:#17256d;--bp-stage-blurb:#566b8e;--bp-accent:#1d4ed8;--bp-accent-soft-bg:#e9efff;--bp-accent-soft-ink:#2147a5;--bp-item-border:#d8e1ef;--bp-item-type:#64748b;--bp-border-soft:#e3e8f1;--bp-legend:#566783;--bp-stat-caption:#53647c;--bp-note-ink:#59677d;--bp-drawer-ink:#455670;--bp-focus-outline:#3169e8;--bp-selected-outline:#2563eb;--bp-hover-soft:#e9f0ff;}.bp-root .bp-cell[data-lane="agents"]{background:#f3f0ff;}.bp-root .bp-cell[data-lane="systems"]{background:#eff9f8;}.bp-root .bp-cell[data-lane="data"]{background:#f3f8ff;}.bp-root .bp-cell[data-lane="governance"]{background:#fff3e9;}.bp-root .bp-cell[data-lane="outcome"]{background:#f0fbf4;}/*
+ * phoenix-Tekton engine stylesheet.
+ *
+ * Why everything is scoped under `.bp-root`: unscoped element selectors in embedded
+ * content leak into host pages (a standalone-authored artifact once styled the site's
+ * own <header>, doubling its border — see the DLC case-study changelog). All colors
+ * arrive as CSS custom properties on `.bp-root` from the renderer (theme), and the
+ * JS layer adds `--bp-header-h` when a host page has its own sticky header.
+ */
+
+.bp-root {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  color: var(--bp-ink);
+  background: var(--bp-canvas);
+}
+.bp-root *,
+.bp-root *::before,
+.bp-root *::after { box-sizing: border-box; }
+
+/* Band */
+.bp-root .bp-band {
+  padding: 32px max(24px, 4vw);
+  background: var(--bp-band-bg);
+  color: #fff;
+  border-bottom: 4px solid var(--bp-band-border);
+}
+.bp-root .bp-band h1,
+.bp-root .bp-band h2 { font-size: clamp(26px, 3vw, 42px); margin: 8px 0; color: #fff; }
+.bp-root .bp-band p { color: var(--bp-band-text); max-width: 850px; line-height: 1.6; margin: 0 0 8px; }
+.bp-root .bp-eyebrow {
+  letter-spacing: .19em; text-transform: uppercase;
+  font-size: 12px; color: var(--bp-band-eyebrow); font-weight: 800;
+}
+
+/* Toolbar */
+.bp-root .bp-toolbar {
+  position: sticky; top: var(--bp-header-h, 0px); z-index: 5;
+  background: var(--bp-surface);
+  border-bottom: 1px solid var(--bp-border-soft);
+  padding: 12px 4vw; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+}
+.bp-root .bp-toolbar button,
+.bp-root .bp-toolbar select,
+.bp-root .bp-drawer-close {
+  border: 1px solid var(--bp-item-border); border-radius: 9px; padding: 9px 13px;
+  background: var(--bp-surface); color: var(--bp-ink-strong);
+  font-weight: 650; cursor: pointer; font-family: inherit; font-size: 14px;
+}
+.bp-root .bp-toolbar button:hover,
+.bp-root .bp-toolbar button:focus-visible,
+.bp-root .bp-drawer-close:hover,
+.bp-root .bp-drawer-close:focus-visible { background: var(--bp-hover-soft); }
+.bp-root .bp-toolbar button.active { background: var(--bp-accent); color: #fff; border-color: var(--bp-accent); }
+.bp-root .bp-toolbar label { font-size: 13px; font-weight: 700; }
+.bp-root .bp-legend { margin-left: auto; font-size: 12px; color: var(--bp-legend); }
+
+/* Main + stats */
+.bp-root .bp-main { padding: 24px 4vw 60px; }
+.bp-root .bp-stats { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+.bp-root .bp-stat {
+  background: var(--bp-surface); border: 1px solid var(--bp-border-soft);
+  border-radius: 12px; padding: 14px 18px; flex: 1; min-width: 190px;
+}
+.bp-root .bp-stat strong { display: block; color: var(--bp-accent); font-size: 22px; }
+.bp-root .bp-stat span { font-size: 12px; color: var(--bp-stat-caption); }
+
+/* Grid — labeled scroll region (WCAG remediation: convey the region's purpose) */
+.bp-root .bp-scroll {
+  overflow: auto; border: 1px solid var(--bp-border-soft); border-radius: 14px;
+  background: var(--bp-surface); box-shadow: 0 8px 28px rgba(28, 49, 82, .04);
+}
+.bp-root .bp-grid { min-width: 1200px; display: grid; }
+.bp-root .bp-corner,
+.bp-root .bp-stage,
+.bp-root .bp-rowlabel,
+.bp-root .bp-cell {
+  padding: 16px;
+  border-right: 1px solid var(--bp-border-soft);
+  border-bottom: 1px solid var(--bp-border-soft);
+}
+.bp-root .bp-corner { background: var(--bp-grid-head); color: #fff; }
+.bp-root .bp-corner small { display: block; font-weight: 500; margin-top: 5px; opacity: .75; }
+.bp-root .bp-stage { background: var(--bp-stage-bg); font-weight: 800; color: var(--bp-stage-ink); }
+.bp-root .bp-stage small { display: block; font-weight: 500; margin-top: 5px; color: var(--bp-stage-blurb); }
+.bp-root .bp-rowlabel {
+  background: var(--bp-row-head-bg); font-weight: 800;
+  position: sticky; left: 0; z-index: 2; color: var(--bp-ink);
+}
+.bp-root .bp-rowlabel small { display: block; font-weight: 400; margin-top: 7px; color: var(--bp-row-blurb); }
+.bp-root .bp-cell { min-height: 142px; background: var(--bp-surface); }
+.bp-root .bp-divider {
+  grid-column: 1 / -1; background: var(--bp-divider-bg); color: #fff;
+  padding: 7px 18px; font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+  border-right: 1px solid var(--bp-border-soft);
+  border-bottom: 1px solid var(--bp-border-soft);
+}
+
+/* Cards — real buttons: keyboard operable, focus-visible outlined, state exposed via
+ * aria-expanded/aria-controls (rendered) and .selected (visual only, here). */
+.bp-root .bp-item {
+  display: block; width: 100%; border: 1px solid var(--bp-item-border);
+  border-radius: 10px; padding: 11px; margin-bottom: 9px;
+  background: var(--bp-surface); cursor: pointer; text-align: left;
+  font-size: 13px; line-height: 1.45; color: var(--bp-ink-strong);
+  box-shadow: 0 2px 5px rgba(11, 29, 55, .02); font-family: inherit;
+}
+.bp-root .bp-item:hover,
+.bp-root .bp-item:focus-visible { outline: 2px solid var(--bp-focus-outline); outline-offset: 1px; }
+.bp-root .bp-item.selected { outline: 2px solid var(--bp-selected-outline); }
+.bp-root .bp-item strong { display: block; font-size: 13px; margin-bottom: 5px; }
+.bp-root .bp-item .bp-type {
+  display: block; font-size: 10px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--bp-item-type); margin-bottom: 4px;
+}
+
+/* Note */
+.bp-root .bp-note { color: var(--bp-note-ink); font-size: 13px; max-width: 1000px; line-height: 1.6; margin-top: 20px; }
+.bp-root .bp-hidden { display: none !important; }
+
+/* Drawer — persistent inspector: opens on first card click, content swaps in place
+ * (no focus steal), Esc / close button dismiss. Flex fix: body needs min-height:0
+ * so it scrolls INSIDE the fixed-height panel (a flex child's default min-height:auto
+ * makes long content overflow the panel with no scroll path). */
+.bp-root .bp-drawer {
+  position: fixed; top: var(--bp-header-h, 0px); right: 0; bottom: 0;
+  width: min(420px, 92vw); background: var(--bp-surface);
+  box-shadow: -12px 0 32px rgba(16, 29, 58, .18); z-index: 60;
+  transform: translateX(105%); visibility: hidden;
+  transition: transform .28s ease, visibility 0s linear .28s;
+  display: flex; flex-direction: column;
+}
+.bp-root .bp-drawer.open { transform: none; visibility: visible; transition: transform .28s ease, visibility 0s; }
+.bp-root .bp-drawer-head {
+  position: sticky; top: 0; background: var(--bp-surface); padding: 12px 16px;
+  display: flex; justify-content: flex-end; border-bottom: 1px solid var(--bp-border-soft); flex: none;
+}
+.bp-root .bp-drawer-close { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; padding: 0; }
+.bp-root .bp-drawer-body { padding: 12px 24px 32px; overflow-y: auto; flex: 1 1 auto; min-height: 0; overscroll-behavior: contain; }
+.bp-root .bp-drawer-body h3 { margin: 14px 0 8px; color: var(--bp-ink); font-size: 18px; }
+.bp-root .bp-drawer-body h4 {
+  margin: 16px 0 6px; color: var(--bp-accent-soft-ink);
+  font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+}
+.bp-root .bp-drawer-body p { line-height: 1.65; color: var(--bp-drawer-ink); margin: 0 0 10px; }
+.bp-root .bp-pill {
+  display: inline-block; background: var(--bp-accent-soft-bg); color: var(--bp-accent-soft-ink);
+  border-radius: 99px; padding: 5px 10px; font-size: 12px; font-weight: 800; margin-top: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bp-root .bp-drawer { transition: none; }
+}
+
+/* Print */
+@media print {
+  .bp-root .bp-toolbar { display: none; }
+  .bp-root .bp-band { padding: 15px; }
+  .bp-root .bp-main { padding: 10px; }
+  .bp-root .bp-scroll { overflow: visible; }
+  .bp-root .bp-grid { min-width: 0; }
+  .bp-root .bp-corner,
+  .bp-root .bp-stage,
+  .bp-root .bp-rowlabel,
+  .bp-root .bp-cell { padding: 7px; }
+  .bp-root .bp-item { font-size: 9px; padding: 6px; }
+  .bp-root .bp-item strong { font-size: 10px; }
+  .bp-root .bp-cell { min-height: 70px; }
+  .bp-root .bp-drawer { display: none; }
+}</style><header class="bp-band"><div class="bp-eyebrow">Portfolio case study · Future-state service design</div><h2>AI Agentic Workflows in E-Commerce</h2><p>Interactive service blueprint for the simmons.com DTC pilot: connecting customer experience, human decisions, AI recommendations, Shopify operations, and traceable governance.</p></header><div class="bp-toolbar"><label for="bp-focus">Focus layer</label><select id="bp-focus" class="bp-focus"><option value="all">All layers</option><option value="customer">Customer actions</option><option value="frontstage">Frontstage experience</option><option value="agents">AI agent workflow</option><option value="backstage">Backstage human actions</option><option value="systems">Supporting systems</option><option value="data">Evidence and data</option><option value="governance">Governance</option><option value="outcome">Service outcomes</option></select><button id="bp-show-all" class="bp-show-all active" type="button">Show all stages</button><button id="bp-print" class="bp-print" type="button">Print / Save PDF</button><span class="bp-legend">Select any card to inspect its handoff and controls</span></div><main class="bp-main"><div class="bp-stats"><div class="bp-stat"><strong>4 layers</strong><span>Design system · analytics · site operations · human command</span></div><div class="bp-stat"><strong>Human approved</strong><span>No unreviewed agent changes to production</span></div><div class="bp-stat"><strong>5 stages</strong><span>From customer signal to monitored release</span></div></div><div class="bp-scroll" role="region" aria-label="Service blueprint grid: AI Agentic Workflows in E-Commerce"><div class="bp-grid" id="bp-grid" style="grid-template-columns:190px repeat(5,minmax(200px,1fr))"><div class="bp-corner">Service layer ↓<small>Workflow stage →</small></div><div class="bp-stage">Signal<small>Observe storefront behavior and operational needs</small></div><div class="bp-stage">Analyze<small>Prioritize evidence-backed opportunities</small></div><div class="bp-stage">Prepare<small>Build constrained change proposals</small></div><div class="bp-stage">Approve<small>Human decision and release gate</small></div><div class="bp-stage">Measure<small>Monitor performance and iterate</small></div><div class="bp-rowlabel" data-lane="customer">Customer actions<small>What shoppers do</small></div><div class="bp-cell" data-lane="customer"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="customer" data-stage="0" data-title="Browse and compare" data-blurb="Explore mattress products and offers"><span class="bp-type">Signal</span><strong>Browse and compare</strong>Explore mattress products and offers</button></div><div class="bp-cell" data-lane="customer"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="customer" data-stage="1" data-title="Consider options" data-blurb="Review details and product information"><span class="bp-type">Analyze</span><strong>Consider options</strong>Review details and product information</button></div><div class="bp-cell" data-lane="customer"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="customer" data-stage="2" data-title="Experience page content" data-blurb="Interact with the current storefront"><span class="bp-type">Prepare</span><strong>Experience page content</strong>Interact with the current storefront</button></div><div class="bp-cell" data-lane="customer"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="customer" data-stage="3" data-title="Continue shopping" data-blurb="Only approved changes become visible"><span class="bp-type">Approve</span><strong>Continue shopping</strong>Only approved changes become visible</button></div><div class="bp-cell" data-lane="customer"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="customer" data-stage="4" data-title="Respond to experience" data-blurb="Browse, convert, or abandon"><span class="bp-type">Measure</span><strong>Respond to experience</strong>Browse, convert, or abandon</button></div><div class="bp-rowlabel" data-lane="frontstage">Frontstage experience<small>What customers see</small></div><div class="bp-cell" data-lane="frontstage"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="frontstage" data-stage="0" data-title="Shopify storefront" data-blurb="Product and collection pages"><span class="bp-type">Signal</span><strong>Shopify storefront</strong>Product and collection pages</button></div><div class="bp-cell" data-lane="frontstage"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="frontstage" data-stage="1" data-title="Existing site experience" data-blurb="Observable navigation and content"><span class="bp-type">Analyze</span><strong>Existing site experience</strong>Observable navigation and content</button></div><div class="bp-cell" data-lane="frontstage"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="frontstage" data-stage="2" data-title="Preview environment" data-blurb="Proposed variants are not public"><span class="bp-type">Prepare</span><strong>Preview environment</strong>Proposed variants are not public</button></div><div class="bp-cell" data-lane="frontstage"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="frontstage" data-stage="3" data-title="Approved publication" data-blurb="Published Shopify changes only"><span class="bp-type">Approve</span><strong>Approved publication</strong>Published Shopify changes only</button></div><div class="bp-cell" data-lane="frontstage"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="frontstage" data-stage="4" data-title="Updated storefront" data-blurb="Live experience measured"><span class="bp-type">Measure</span><strong>Updated storefront</strong>Live experience measured</button></div><div class="bp-divider">— Line of interaction —</div><div class="bp-rowlabel" data-lane="agents">AI agent workflow<small>Agent-prepared work</small></div><div class="bp-cell" data-lane="agents"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="agents" data-stage="0" data-title="Signal intake" data-blurb="Receive approved behavioral and CRM signals"><span class="bp-type">Signal</span><strong>Signal intake</strong>Receive approved behavioral and CRM signals</button></div><div class="bp-cell" data-lane="agents"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="agents" data-stage="1" data-title="Recommendation agent" data-blurb="Rank friction points and opportunities"><span class="bp-type">Analyze</span><strong>Recommendation agent</strong>Rank friction points and opportunities</button></div><div class="bp-cell" data-lane="agents"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="agents" data-stage="2" data-title="Site operations agent" data-blurb="Package component and content variants"><span class="bp-type">Prepare</span><strong>Site operations agent</strong>Package component and content variants</button></div><div class="bp-cell" data-lane="agents"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="agents" data-stage="3" data-title="Hold for review" data-blurb="No autonomous production publishing"><span class="bp-type">Approve</span><strong>Hold for review</strong>No autonomous production publishing</button></div><div class="bp-cell" data-lane="agents"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="agents" data-stage="4" data-title="Evaluation support" data-blurb="Summarize performance and next actions"><span class="bp-type">Measure</span><strong>Evaluation support</strong>Summarize performance and next actions</button></div><div class="bp-divider">— Line of visibility —</div><div class="bp-rowlabel" data-lane="backstage">Backstage human actions<small>UX and merchandising teams</small></div><div class="bp-cell" data-lane="backstage"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="backstage" data-stage="0" data-title="UX and merchandising" data-blurb="Set objectives and research questions"><span class="bp-type">Signal</span><strong>UX and merchandising</strong>Set objectives and research questions</button></div><div class="bp-cell" data-lane="backstage"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="backstage" data-stage="1" data-title="Research and prioritization" data-blurb="Validate signals and recommendation relevance"><span class="bp-type">Analyze</span><strong>Research and prioritization</strong>Validate signals and recommendation relevance</button></div><div class="bp-cell" data-lane="backstage"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="backstage" data-stage="2" data-title="Design and content review" data-blurb="Inspect brand, UX and accessibility"><span class="bp-type">Prepare</span><strong>Design and content review</strong>Inspect brand, UX and accessibility</button></div><div class="bp-cell" data-lane="backstage"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="backstage" data-stage="3" data-title="Human command" data-blurb="Approve, revise, or reject change"><span class="bp-type">Approve</span><strong>Human command</strong>Approve, revise, or reject change</button></div><div class="bp-cell" data-lane="backstage"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="backstage" data-stage="4" data-title="UX and commerce review" data-blurb="Interpret results and decide next iteration"><span class="bp-type">Measure</span><strong>UX and commerce review</strong>Interpret results and decide next iteration</button></div><div class="bp-divider">— Line of internal interaction —</div><div class="bp-rowlabel" data-lane="systems">Supporting systems<small>Tools and infrastructure</small></div><div class="bp-cell" data-lane="systems"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="systems" data-stage="0" data-title="Shopify DTC" data-blurb="Storefront and CRM"><span class="bp-type">Signal</span><strong>Shopify DTC</strong>Storefront and CRM</button></div><div class="bp-cell" data-lane="systems"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="systems" data-stage="1" data-title="Analytics instrumentation" data-blurb="Behavioral tracking and analysis"><span class="bp-type">Analyze</span><strong>Analytics instrumentation</strong>Behavioral tracking and analysis</button></div><div class="bp-cell" data-lane="systems"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="systems" data-stage="2" data-title="Agent-ready design system" data-blurb="Tokens, components, brand constraints"><span class="bp-type">Prepare</span><strong>Agent-ready design system</strong>Tokens, components, brand constraints</button></div><div class="bp-cell" data-lane="systems"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="systems" data-stage="3" data-title="Review and release workflow" data-blurb="Approval surface and deployment path"><span class="bp-type">Approve</span><strong>Review and release workflow</strong>Approval surface and deployment path</button></div><div class="bp-cell" data-lane="systems"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="systems" data-stage="4" data-title="Monitoring and rollback" data-blurb="Performance checks and reversibility"><span class="bp-type">Measure</span><strong>Monitoring and rollback</strong>Performance checks and reversibility</button></div><div class="bp-rowlabel" data-lane="data">Evidence and data<small>Signals and traceability</small></div><div class="bp-cell" data-lane="data"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="data" data-stage="0" data-title="Behavioral signals" data-blurb="Views, journeys and drop-off events"><span class="bp-type">Signal</span><strong>Behavioral signals</strong>Views, journeys and drop-off events</button></div><div class="bp-cell" data-lane="data"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="data" data-stage="1" data-title="CRM + analytics" data-blurb="Ranked, source-linked recommendations"><span class="bp-type">Analyze</span><strong>CRM + analytics</strong>Ranked, source-linked recommendations</button></div><div class="bp-cell" data-lane="data"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="data" data-stage="2" data-title="Change specification" data-blurb="Variant, rationale and test brief"><span class="bp-type">Prepare</span><strong>Change specification</strong>Variant, rationale and test brief</button></div><div class="bp-cell" data-lane="data"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="data" data-stage="3" data-title="Decision record" data-blurb="Reviewer, status, rationale and version"><span class="bp-type">Approve</span><strong>Decision record</strong>Reviewer, status, rationale and version</button></div><div class="bp-cell" data-lane="data"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="data" data-stage="4" data-title="Experiment measures" data-blurb="Conversion and operational velocity"><span class="bp-type">Measure</span><strong>Experiment measures</strong>Conversion and operational velocity</button></div><div class="bp-divider">— Control and accountability boundary —</div><div class="bp-rowlabel" data-lane="governance">Governance<small>Controls and approval</small></div><div class="bp-cell" data-lane="governance"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="governance" data-stage="0" data-title="Data access boundaries" data-blurb="Approved sources and privacy constraints"><span class="bp-type">Signal</span><strong>Data access boundaries</strong>Approved sources and privacy constraints</button></div><div class="bp-cell" data-lane="governance"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="governance" data-stage="1" data-title="Evidence traceability" data-blurb="Every recommendation linked to signals"><span class="bp-type">Analyze</span><strong>Evidence traceability</strong>Every recommendation linked to signals</button></div><div class="bp-cell" data-lane="governance"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="governance" data-stage="2" data-title="Preflight checks" data-blurb="Brand, accessibility and component rules"><span class="bp-type">Prepare</span><strong>Preflight checks</strong>Brand, accessibility and component rules</button></div><div class="bp-cell" data-lane="governance"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="governance" data-stage="3" data-title="Mandatory approval gate" data-blurb="Explicit human sign-off before production"><span class="bp-type">Approve</span><strong>Mandatory approval gate</strong>Explicit human sign-off before production</button></div><div class="bp-cell" data-lane="governance"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="governance" data-stage="4" data-title="Audit and rollback" data-blurb="Review impact and revert if necessary"><span class="bp-type">Measure</span><strong>Audit and rollback</strong>Review impact and revert if necessary</button></div><div class="bp-rowlabel" data-lane="outcome">Service outcomes<small>Expected or reported value</small></div><div class="bp-cell" data-lane="outcome"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="outcome" data-stage="0" data-title="Opportunity visibility" data-blurb="Find actionable storefront friction"><span class="bp-type">Signal</span><strong>Opportunity visibility</strong>Find actionable storefront friction</button></div><div class="bp-cell" data-lane="outcome"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="outcome" data-stage="1" data-title="Prioritized work" data-blurb="Less distance between insight and action"><span class="bp-type">Analyze</span><strong>Prioritized work</strong>Less distance between insight and action</button></div><div class="bp-cell" data-lane="outcome"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="outcome" data-stage="2" data-title="Faster prototyping" data-blurb="Reported page updates prepared in hours"><span class="bp-type">Prepare</span><strong>Faster prototyping</strong>Reported page updates prepared in hours</button></div><div class="bp-cell" data-lane="outcome"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="outcome" data-stage="3" data-title="Controlled deployment" data-blurb="Zero unreviewed agent changes published"><span class="bp-type">Approve</span><strong>Controlled deployment</strong>Zero unreviewed agent changes published</button></div><div class="bp-cell" data-lane="outcome"><button class="bp-item" type="button" aria-expanded="false" aria-controls="bp-drawer" data-lane="outcome" data-stage="4" data-title="Continuous improvement" data-blurb="Operational and conversion targets monitored"><span class="bp-type">Measure</span><strong>Continuous improvement</strong>Operational and conversion targets monitored</button></div></div></div><p class="bp-note"><strong>Scope and evidence:</strong> The core pilot includes Shopify CRM and behavioral analytics, ranked site-operation recommendations, agent-prepared visual changes, and human review prior to deployment. Extended customer journey stages are service-design context. The cycle-time compression from a 2–3 week manual baseline to 1 week with QA is the reported pilot metric; additional outcome metrics remain pending NDA review.</p><aside class="bp-drawer" id="bp-drawer" role="region" aria-label="Blueprint card details" aria-hidden="true"><div class="bp-drawer-head"><button class="bp-drawer-close" id="bp-drawer-close" type="button" aria-label="Close details panel"><svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" focusable="false"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div><div class="bp-drawer-body" id="bp-drawer-body" aria-live="polite"></div></aside><script type="application/json" class="bp-data">{"stages":[{"name":"Signal"},{"name":"Analyze"},{"name":"Prepare"},{"name":"Approve"},{"name":"Measure"}],"lanes":{"agents":{"name":"AI agent workflow","interpretation":"Agents may analyze and prepare proposals but cannot authorize publication. Every output should carry evidence, version, and an accountable reviewer."},"backstage":{"name":"Backstage human actions","interpretation":"UX and merchandising staff define objectives, validate the recommendations, and own approval decisions."},"customer":{"name":"Customer actions"},"data":{"name":"Evidence and data","interpretation":"Recommendations should be linked to permitted CRM or behavioral sources and assessed for privacy, quality, and relevance."},"frontstage":{"name":"Frontstage experience"},"governance":{"name":"Governance","interpretation":"Human review is a blocking gate, not a passive notification. Reject and revise paths return proposals to preparation; approved changes can proceed to Shopify."},"outcome":{"name":"Service outcomes","interpretation":"Reported and intended benefits should be separated in the final portfolio narrative. Do not imply unreleased conversion figures."},"systems":{"name":"Supporting systems","interpretation":"Design tokens and modular components constrain agent output. A preview and rollback path reduce the risk of changes reaching customers."}}}</script></main></div>

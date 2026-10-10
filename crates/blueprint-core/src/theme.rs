@@ -13,7 +13,9 @@ fn d(s: &str) -> String {
     s.to_string()
 }
 
+/// Strict deserialization: unknown theme keys fail loudly (authoring aid).
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Theme {
     /// Band background.
     #[serde(default = "band_bg")]

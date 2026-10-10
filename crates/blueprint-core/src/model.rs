@@ -8,7 +8,12 @@
 use serde::{Deserialize, Serialize};
 
 /// Whole document: one interactive service blueprint.
+///
+/// `deny_unknown_fields` — every struct in this model is strict: a typo'd or
+/// misplaced key fails parsing loudly instead of silently doing nothing
+/// (a real authoring failure mode caught during the CLI's first integration test).
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Document {
     pub meta: Meta,
     /// At-a-glance figures above the grid (e.g. "4 layers").
