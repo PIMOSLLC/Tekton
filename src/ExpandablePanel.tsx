@@ -109,12 +109,14 @@ export function ExpandablePanel({
     >
       {/* Inner content rides the leading edge (right-anchored) and fades —
           the drawer GLIDES instead of revealing by a hard wipe; fixed width
-          keeps form fields from reflowing mid-animation */}
+          keeps form fields from reflowing mid-animation. The right inset = the
+          resizer's width: the content's scrollbar lives LEFT of the drag
+          divider (the owner's order: content → scrollbar → grip). */}
       <div
         className={`flex flex-col h-full ml-auto transition-opacity duration-300 ease-out motion-reduce:transition-none ${
           open ? 'opacity-100' : 'opacity-0'
         }`}
-        style={{ width, minWidth: width }}
+        style={{ width, minWidth: width, paddingRight: open ? 10 : 0 }}
         aria-hidden={!open}
         {...(!open ? { inert: 'true' } : {})}
       >
