@@ -120,7 +120,7 @@
 .tk-layout { grid-template-columns: none; display: flex; }
 
 /* Visual Architect */
-.tk-architect { overflow-y: auto; padding: 4px 14px 20px; flex: 1; }
+.tk-architect { overflow-y: auto; padding: 14px 16px 20px; flex: 1; }
 .tk-arch-section { margin-bottom: 22px; }
 .tk-arch-section h3 {
   display: flex;
@@ -162,6 +162,18 @@
   padding: 7px 10px;
 }
 .tk-architect textarea, .tk-inspector textarea { resize: vertical; line-height: 1.5; }
+/* Native color swatches: exempt from the full-width text-input treatment —
+   they are fixed-size chips, not fields (the generic rule above was inflating
+   them to 100% width). */
+.tk-architect input[type='color'],
+.tk-inspector input[type='color'] {
+  width: 34px;
+  height: 26px;
+  padding: 0 2px 2px;
+  background: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
 .tk-architect input:focus-visible,
 .tk-architect select:focus-visible,
 .tk-architect textarea:focus-visible,
@@ -210,9 +222,425 @@
 .tk-add:hover, .tk-add:focus-visible { border-color: var(--color-tekton-dark-accent); color: var(--color-tekton-dark-text); }
 .tk-add:focus-visible { outline: 2px solid var(--color-tekton-dark-accent-interactive); outline-offset: 1px; }
 
-/* YAML source tab */
-.tk-yaml-source {
+/* Template picker — the New flow's pushed panel */
+.tk-new-picker {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tk-template-card {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: left;
+  background: var(--color-tekton-dark-bg-secondary);
+  border: 1px solid var(--color-tekton-dark-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.tk-template-card:hover {
+  border-color: var(--color-tekton-dark-accent);
+  background: #ffffff10;
+}
+.tk-template-card:focus-visible {
+  outline: 2px solid var(--color-tekton-dark-accent-interactive);
+  outline-offset: 2px;
+}
+.tk-template-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-tekton-dark-text);
+}
+.tk-template-hint {
+  font-size: 0.68rem;
+  line-height: 1.5;
+  color: var(--color-tekton-dark-text-muted);
+}
+
+/* Blueprint setup wizard — the New panel's from-scratch flow */
+.tk-wizard-note {
+  font-size: 0.66rem;
+  color: var(--color-tekton-dark-text-muted);
+  line-height: 1.5;
+  margin: 0 0 10px;
+}
+/* Native color scheme per theme — tells the browser how to render its
+   NATIVE surfaces (select dropdown popups, scrollbars, form chrome). Fixes
+   the white-on-white dropdown-list bug in the wizard/lanes selects: without
+   it the native popup inherits the control's translucent white fill and
+   light text, compositing to unreadable ghost options. */
+[data-phoenix-theme='tekton-dark'] { color-scheme: dark; }
+[data-phoenix-theme='tekton-light'] { color-scheme: light; }
+/* Belt and suspenders: the option rows get explicit colors regardless of the
+   popup's inheritance choices. */
+[data-phoenix-theme='tekton-dark'] select option {
+  background-color: #111827;
+  color: #f3f4f6;
+}
+
+/* Setup wizard modal — PIN-family glass styling (StartupWizard language:
+   frosted panels, icon chips, generous air, fade/pop entry) */
+.tk-fade-in { animation: tk-fade-in 0.2s ease-out; }
+.tk-wizard {
+  background: rgba(11, 15, 26, 0.92);
+  backdrop-filter: blur(24px);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  animation: tk-pop-in 0.22s ease-out;
+}
+.tk-glass-panel {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 18px;
+  backdrop-filter: blur(8px);
+  text-wrap: pretty; /* Gestalt/typography: no stranded last lines in step bodies */
+}
+.tk-wizard input[type='text'],
+.tk-wizard textarea,
+.tk-wizard select {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  padding: 9px 12px;
+  color: #f3f4f6;
+  font-size: 0.8rem;
+}
+.tk-wizard input::placeholder, .tk-wizard textarea::placeholder { color: #6b7280; }
+.tk-wizard input:focus-visible, .tk-wizard textarea:focus-visible, .tk-wizard select:focus-visible {
+  outline: 2px solid var(--color-tekton-dark-accent-interactive);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+.tk-wizard .tk-field > span,
+.tk-wizard .tk-field-label {
+  display: block;
+  font-size: 0.64rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #d1d5db;
+  margin-bottom: 5px;
+}
+.tk-wizard .tk-row-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+.tk-wizard .tk-remove { color: #9ca3af; }
+.tk-wizard .tk-add {
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  color: #d1d5db;
+}
+.tk-wizard .tk-add:hover, .tk-wizard .tk-add:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.tk-wizard-secondary {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #d1d5db;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 9px 16px;
+  cursor: pointer;
+}
+.tk-wizard-secondary:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.tk-wizard-secondary:focus-visible { outline: 2px solid var(--color-tekton-dark-accent-interactive); outline-offset: 1px; }
+@keyframes tk-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes tk-pop-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tk-fade-in, .tk-wizard { animation: none; }
+}
+/* Theme presets — whole-theme one-click sets (dark = studio-matched) */
+.tk-preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--color-tekton-dark-border-subtle);
+}
+.tk-preset-caption {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-tekton-dark-text-muted);
+  margin-right: auto;
+}
+.tk-preset-btn {
+  background: transparent;
+  border: 1px solid var(--color-tekton-dark-border);
+  color: var(--color-tekton-dark-text);
+  border-radius: 7px;
+  font-size: 0.64rem;
+  font-weight: 700;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.tk-preset-btn:hover {
+  border-color: var(--color-tekton-dark-accent-interactive);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+}
+.tk-preset-btn:focus-visible { outline: 2px solid var(--color-tekton-dark-accent-interactive); outline-offset: 1px; }
+
+.tk-wizard-steps {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.tk-wizard-steps li {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--color-tekton-dark-text-muted);
+}
+.tk-wizard-steps li.is-done { color: var(--color-tekton-dark-text); }
+.tk-wizard-steps li.is-current { color: #fff; }
+.tk-wizard-step-badge {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 99px;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: inherit;
+}
+.tk-wizard-steps li.is-current .tk-wizard-step-badge {
+  background: var(--color-tekton-dark-accent);
+  border-color: var(--color-tekton-dark-accent);
+  color: #fff;
+}
+.tk-wizard-steps li.is-done .tk-wizard-step-badge {
+  background: color-mix(in srgb, var(--color-tekton-dark-accent) 25%, transparent);
+  color: var(--color-tekton-dark-text);
+}
+.tk-wizard-step-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.tk-wizard-note {
+  font-size: 0.68rem;
+  color: var(--color-tekton-dark-text-muted);
+  line-height: 1.55;
+  margin: 0 0 12px;
+  text-wrap: pretty;
+}
+/* Human-First field help — labels say WHAT the field is for, the help line
+   says why/when it matters (no designer jargon required to succeed) */
+.tk-field-help {
+  display: block;
+  font-size: 0.66rem;
+  line-height: 1.45;
+  color: var(--color-tekton-dark-text-muted);
+  margin: 2px 0 6px;
+}
+.tk-wizard-filename {
+  font-family: ui-monospace, 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--color-tekton-dark-text);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 5px;
+  padding: 2px 7px;
+}
+.tk-wizard-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border: 1px solid var(--color-tekton-dark-border-subtle);
+  border-radius: 9px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+.tk-wizard-title-line { font-size: 0.86rem; font-weight: 700; color: var(--color-tekton-dark-text); }
+.tk-wizard-eyebrow-line {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-tekton-dark-accent-interactive);
+}
+.tk-wizard-intro-line { font-size: 0.68rem; color: var(--color-tekton-dark-text-muted); line-height: 1.5; }
+.tk-wizard-math {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-family: ui-monospace, 'JetBrains Mono', monospace;
+  font-size: 0.66rem;
+  color: var(--color-tekton-dark-text-muted);
+  margin-bottom: 12px;
+}
+.tk-wizard-math span:first-child { color: var(--color-tekton-dark-text); font-weight: 700; }
+.tk-wizard-buttons { display: flex; gap: 8px; }
+/* Modal footer CTA — auto width next to Back, right-aligned via the counter */
+.tk-create {
+  background: var(--color-tekton-dark-accent);
+  color: #fff;
+  border: 1px solid var(--color-tekton-dark-accent);
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 9px 16px;
+  cursor: pointer;
+}
+.tk-create:hover:not(:disabled) { background: var(--color-tekton-dark-accent-interactive); }
+.tk-create:disabled { opacity: 0.45; cursor: not-allowed; }
+.tk-create:focus-visible { outline: 2px solid var(--color-tekton-dark-accent-interactive); outline-offset: 1px; }
+
+/* Theme editor — grouped token rows; every edit live-lints the WCAG gate */
+.tk-theme-editor {
+  display: flex;
+  flex-direction: column;
+  /* Same inner rhythm as the architect panel — the rows read inside the
+     panel's edges, not flush against them */
+  overflow-y: auto;
+  padding: 14px 16px 20px;
   flex: 1;
+}
+.tk-theme-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--color-tekton-dark-border-subtle);
+}
+.tk-theme-row:last-child { border-bottom: none; }
+.tk-theme-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.tk-theme-label { font-size: 0.74rem; font-weight: 700; color: var(--color-tekton-dark-text); }
+.tk-theme-about { font-size: 0.62rem; color: var(--color-tekton-dark-text-muted); }
+.tk-theme-swatch {
+  width: 34px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--color-tekton-dark-border);
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.tk-theme-swatch::-webkit-color-swatch-wrapper { padding: 2px; }
+.tk-theme-swatch::-webkit-color-swatch { border: none; border-radius: 4px; }
+.tk-theme-hex {
+  width: 82px;
+  font-family: ui-monospace, 'JetBrains Mono', monospace;
+  font-size: 0.66rem;
+  color: var(--color-tekton-dark-text);
+  background: var(--color-tekton-dark-bg-secondary);
+  border: 1px solid var(--color-tekton-dark-border);
+  border-radius: 6px;
+  padding: 5px 7px;
+  flex-shrink: 0;
+}
+.tk-theme-hex:focus-visible {
+  outline: 2px solid var(--color-tekton-dark-accent-interactive);
+  outline-offset: 1px;
+}
+
+/* Lane tint field (Visual Architect lane list) */
+.tk-tint-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 2px;
+}
+.tk-tint-swatch {
+  width: 30px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--color-tekton-dark-border);
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.tk-tint-swatch::-webkit-color-swatch-wrapper { padding: 2px; }
+.tk-tint-swatch::-webkit-color-swatch { border: none; border-radius: 4px; }
+.tk-tint-caption {
+  font-size: 0.64rem;
+  color: var(--color-tekton-dark-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Live AA verdict on a lane tint — warn + fix path, never a dead end */
+.tk-tint-warning {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid color-mix(in srgb, #f59e0b 45%, transparent);
+  background: color-mix(in srgb, #f59e0b 10%, transparent);
+  border-radius: 7px;
+  padding: 6px 8px;
+}
+.tk-tint-warning-text {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: #fcd34d;
+  line-height: 1.4;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.tk-fix {
+  background: transparent;
+  border: 1px solid var(--color-tekton-dark-border);
+  color: var(--color-tekton-dark-text);
+  border-radius: 6px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tk-fix:hover { border-color: var(--color-tekton-dark-accent-interactive); color: #fff; }
+.tk-fix:focus-visible { outline: 2px solid var(--color-tekton-dark-accent-interactive); outline-offset: 1px; }
+/* Terminal validation rows become fix buttons (card-located issues) */
+.tk-lint-fix {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+.tk-lint-fix:hover .tk-lint-element, .tk-lint-fix:hover .tk-lint-fix-hint { color: #fff; }
+.tk-lint-fix:focus-visible { outline: 2px solid var(--color-tekton-dark-accent-interactive); outline-offset: 2px; }
+.tk-lint-fix-hint { margin-left: auto; font-size: 0.6rem; color: var(--color-tekton-dark-accent-interactive); }
+
+/* YAML source tab — the first-class authoring surface: it FILLS the panel
+   (its parent is a block scroll container, so flex:1 meant nothing and the
+   textarea rendered at intrinsic textarea size) */
+.tk-yaml-source {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
   resize: none;
   border: none;
   outline: none;
@@ -222,7 +650,6 @@
   font-size: 0.72rem;
   line-height: 1.55;
   padding: 12px 14px;
-  min-height: 0;
 }
 
 /* Canvas toolbar + viewport */
@@ -238,10 +665,13 @@
 .tk-canvas-viewport > .tk-error { margin: 20px; }
 .tk-loading { padding: 20px; color: var(--color-tekton-dark-text-muted); font-size: 0.8rem; }
 
-/* Build canvas (light workspace) */
+/* Build canvas (light workspace) — inside the pan/zoom TransformComponent:
+   NOT a scroll container (the transform owns panning/zooming; an overflow
+   auto here gives the browser a second scroller to scroll-into-view against,
+   which pan-jumps the grid when the inspector focuses its first field) */
 .tk-canvas {
   flex: 1;
-  overflow: auto;
+  overflow: visible;
   background: var(--color-tekton-light-bg-primary);
   padding: 24px;
 }
@@ -268,15 +698,38 @@
 .tk-canvas-stage h3 { margin: 4px 0 2px; font-size: 1rem; color: var(--color-tekton-light-text); }
 .tk-canvas-stage p { margin: 0; font-size: 0.68rem; color: var(--color-tekton-light-text-muted); }
 .tk-canvas-divider {
+  /* The artifact's shaded separation row (theme `divider-bg`, default
+     #182150) — a full-width band that visibly belongs to the row below it.
+     Now a real toggle button: click shades the governed row (hover-only
+     interaction is rejected). */
   grid-column: 1 / -1;
+  display: block;
+  width: 100%;
+  background: #182150;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
   font-size: 0.6rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: var(--color-tekton-light-text-muted);
-  border-top: 2px dashed var(--color-tekton-light-border);
-  padding-top: 6px;
+  text-align: left;
+  padding: 8px 14px;
   margin: 4px 0;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+.tk-canvas-divider:hover { filter: brightness(1.18); }
+.tk-canvas-divider:focus-visible { outline: 2px solid var(--color-tekton-light-accent-interactive); outline-offset: 2px; }
+.tk-canvas-divider.is-active { outline: 2px solid var(--color-tekton-light-accent-interactive); outline-offset: 1px; }
+.tk-canvas-lane-label.is-associated {
+  outline: 2px solid var(--color-tekton-light-accent-interactive);
+  outline-offset: -2px;
+}
+/* Translucent accent wash — composes with kind tints rather than replacing them */
+.tk-canvas-lane-label.is-associated,
+.tk-canvas-card.is-associated {
+  box-shadow: inset 0 0 0 9999px var(--color-tekton-light-glow-subtle);
 }
 .tk-canvas-lane-label h4 { margin: 0; font-size: 0.92rem; color: var(--color-tekton-light-text); }
 .tk-canvas-lane-label p {
@@ -303,6 +756,59 @@
 .tk-canvas-card:hover { border-color: var(--color-tekton-light-accent); box-shadow: 0 4px 12px rgba(20, 27, 61, 0.08); }
 .tk-canvas-card:focus-visible { outline: 2px solid var(--color-tekton-light-accent-interactive); outline-offset: 2px; }
 .tk-canvas-card.is-selected { outline: 2px solid var(--color-tekton-light-accent-interactive); outline-offset: 2px; }
+/* A card the validator flagged (empty title → the grid contract): dashed
+   amber = "this slot needs a title" — clickable, the inspector is the fix. */
+.tk-canvas-card.is-untitled { border: 2px dashed color-mix(in srgb, #f59e0b 65%, transparent); }
+.tk-canvas-card.is-untitled strong { color: var(--color-tekton-light-text-muted); }
+
+/* Panel resize separator — user-resizable widths (drag, arrows, Home/dblclick reset) */
+.tk-panel-resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 10px;
+  cursor: col-resize;
+  touch-action: none;
+  z-index: 5;
+}
+.tk-panel-resizer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 3px;
+  width: 3px;
+  border-radius: 2px;
+  background: transparent;
+}
+.tk-panel-resizer:hover::after,
+.tk-panel-resizer:focus-within::after {
+  background: var(--color-tekton-dark-accent-interactive);
+  opacity: 0.55;
+}
+.tk-panel-resizer:focus-visible {
+  outline: 2px solid var(--color-tekton-dark-accent-interactive);
+  outline-offset: -2px;
+}
+body.is-panel-resizing {
+  cursor: col-resize !important;
+  user-select: none;
+}
+
+/* Info banner (neutral gate states — e.g. "ready to fill"): same shape as the
+   error banner, calmer colors; announces politely, not as an alert */
+.tk-info {
+  border: 1px solid color-mix(in srgb, #2dd4bf 45%, transparent);
+  background: color-mix(in srgb, #0f172a 92%, #2dd4bf);
+  color: #a7f3d0;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.tk-info a { color: #7dd3fc; text-decoration: underline; }
 
 /* Lint terminal */
 .tk-terminal {
@@ -342,46 +848,81 @@
 .tk-terminal-summary { font-size: 0.74rem; margin: 0 0 8px; }
 .tk-terminal .tk-panel { background: transparent; border: none; padding: 0; }
 
-/* Card inspector drawer */
-.tk-inspector {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: min(420px, 92vw);
-  background: var(--color-tekton-dark-surface);
-  border-left: 1px solid var(--color-tekton-dark-border);
-  box-shadow: -12px 0 32px rgba(6, 13, 47, 0.5);
-  z-index: 60;
-  transform: translateX(105%);
-  visibility: hidden;
-  transition: transform 0.28s ease, visibility 0s linear 0.28s;
-  display: flex;
-  flex-direction: column;
-}
-.tk-inspector.is-open { transform: none; visibility: visible; transition: transform 0.28s ease, visibility 0s; }
-.tk-inspector-head {
-  display: flex;
-  justify-content: flex-end;
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--color-tekton-dark-border-subtle);
-  flex: none;
-}
-.tk-inspector-close {
-  width: 44px;
-  height: 44px;
+/* The ONE close-button pattern (drawer + panels — same control, same look) */
+.tk-close {
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
   border: 1px solid var(--color-tekton-dark-border);
   border-radius: 8px;
-  color: var(--color-tekton-dark-text);
-  font-size: 1.2rem;
+  color: var(--color-tekton-dark-text-muted);
   cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 }
-.tk-inspector-close:focus-visible { outline: 2px solid var(--color-tekton-dark-accent-interactive); }
-.tk-inspector-body { padding: 6px 18px 24px; overflow-y: auto; }
+.tk-close:hover {
+  color: var(--color-tekton-dark-text);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--color-tekton-dark-accent-interactive);
+}
+.tk-close:focus-visible { outline: 2px solid var(--color-tekton-dark-accent-interactive); outline-offset: 1px; }
+
+/* Card inspector drawer */
+.tk-inspector {
+  /* Contained INSIDE the content band (the Penpot spec: 420 x the band's
+     full height — below the toolbar, above the terminal/footer): the drawer
+     is a positioned child of the band, so it can never cover the bars. */
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 60vw);
+  background: var(--color-tekton-dark-surface);
+  border-left: 1px solid var(--color-tekton-dark-border);
+  box-shadow: -12px 0 32px rgba(6, 13, 47, 0.5);
+  z-index: 60;
+  transform: translateX(108%);
+  visibility: hidden;
+  /* The same choreography as the panels: ease-out settle in both directions
+     ('ease' front-loads velocity — that's the pop-in you saw), plus a
+     compositor hint so the slide never drops frames. */
+  transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1), visibility 0s linear 0.32s;
+  will-change: transform;
+  display: flex;
+  flex-direction: column;
+}
+.tk-inspector.is-open {
+  transform: none;
+  visibility: visible;
+  transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1), visibility 0s;
+}
+/* Drawer head = the panel-head pattern (title + blurb + close) */
+.tk-inspector-heading {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  color: var(--color-tekton-dark-text);
+  margin: 0;
+}
+.tk-inspector-blurb {
+  font-size: 9px;
+  color: var(--color-tekton-dark-text-muted);
+  margin: 2px 0 0;
+  text-wrap: pretty;
+}
+.tk-inspector-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--color-tekton-dark-border-subtle);
+  flex: none;
+}
+.tk-inspector-body { padding: 14px 20px 24px; overflow-y: auto; }
 .tk-inspector-pill {
   font-size: 0.66rem;
   color: var(--color-tekton-dark-accent-interactive);
@@ -398,8 +939,11 @@
 /* Canvas zoom tools (Figma-style cluster, adopted design) */
 .tk-canvas-tools {
   position: absolute;
-  top: 10px;
-  right: 12px;
+  /* Bottom-center of the canvas — the Figma-style cluster floats where the
+     work is, clear of the toolbar and the docked lint terminal above/below */
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 20;
   display: flex;
   align-items: center;
@@ -436,6 +980,25 @@
 /* Pan/zoom canvas: pan cursor while dragging, canvas is grabbable everywhere
    except on cards (which stay pointer/click targets) */
 .tk-panzoom { cursor: grab; }
+
+/* Dot-grid backdrop (toggleable via the canvas tools' grid button) —
+   two layers: the void zones around the canvas sheet, and the sheet itself
+   (the previous version painted only the root backdrop, which the opaque
+   canvas sheet covered — the toggle visibly did nothing) */
+.tk-canvas-dotgrid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(20, 27, 61, 0.12) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+.tk-canvas-dotgrid .tk-canvas {
+  background-image: radial-gradient(circle, rgba(20, 27, 61, 0.10) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
+}
+.tk-canvas-tool.is-armed { color: var(--color-tekton-dark-text); background: var(--color-tekton-dark-surface); }
 .tk-panzoom:active { cursor: grabbing; }
 
 /* ══════════════════════════════════════════════════════════════════

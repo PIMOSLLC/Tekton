@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { X } from 'lucide-react';
 import type { BlueprintCard, BlueprintLane } from './types';
 import { laneKindLabel } from './types';
 
@@ -22,7 +23,10 @@ export function CardInspector(props: CardInspectorProps) {
   const firstField = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    if (open) firstField.current?.focus();
+    // preventScroll: the browser otherwise runs its focus-scroll into every
+    // scrollable ancestor — at canvas zoom that pan-jumps the blueprint grid
+    // (the "popping" world-slide). keyboard focus lands exactly as before.
+    if (open) firstField.current?.focus({ preventScroll: true });
   }, [open]);
 
   useEffect(() => {
@@ -43,13 +47,17 @@ export function CardInspector(props: CardInspectorProps) {
       {...(!open ? { inert: 'true' } : {})}
     >
       <div className="tk-inspector-head">
+        <div className="flex-1 min-w-0">
+          <h2 className="tk-inspector-heading">Card inspector</h2>
+          <p className="tk-inspector-blurb">Edit this card — content blurb + the lane's interpretation.</p>
+        </div>
         <button
           type="button"
-          className="tk-inspector-close"
+          className="tk-close"
           aria-label="Close card inspector"
           onClick={onClose}
         >
-          ×
+          <X className="w-4 h-4" aria-hidden="true" />
         </button>
       </div>
       {open && lane && card && (
@@ -60,6 +68,7 @@ export function CardInspector(props: CardInspectorProps) {
           </p>
           <label className="tk-field">
             <span>Card title</span>
+            <span className="tk-field-help">What this card is called.</span>
             <input
               ref={firstField}
               type="text"
@@ -69,22 +78,24 @@ export function CardInspector(props: CardInspectorProps) {
           </label>
           <label className="tk-field">
             <span>Card blurb</span>
+            <span className="tk-field-help">The supporting line under the title.</span>
+            <textarea
+              rows={3}
+              value={card.blurb}
+              aria-label="Card blurb"
+              onChange={(e) => props.onCardChange('blurb', e.target.value)}
+            />
           </label>
-          <textarea
-            rows={3}
-            value={card.blurb}
-            aria-label="Card blurb"
-            onChange={(e) => props.onCardChange('blurb', e.target.value)}
-          />
           <label className="tk-field">
-            <span>Lane interpretation (drawer text)</span>
+            <span>Lane interpretation</span>
+            <span className="tk-field-help">What a reader must understand about this lane (shows in the card drawer).</span>
+            <textarea
+              rows={5}
+              value={lane.interpretation ?? ''}
+              aria-label="Lane interpretation"
+              onChange={(e) => props.onInterpretationChange(e.target.value)}
+            />
           </label>
-          <textarea
-            rows={5}
-            value={lane.interpretation ?? ''}
-            aria-label="Lane interpretation"
-            onChange={(e) => props.onInterpretationChange(e.target.value)}
-          />
         </div>
       )}
     </aside>

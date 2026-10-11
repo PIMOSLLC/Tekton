@@ -45,9 +45,12 @@ function LintRow({ finding: f }: { finding: EngineFinding }) {
 
 export interface ValidationPanelProps {
   issues: EngineIssue[];
+  /** Recovery affordance: card-located issues navigate the author to the
+   * offending card (inspector opens, focused on the first field). */
+  onFixIssue?(issue: EngineIssue): void;
 }
 
-export function ValidationPanel({ issues }: ValidationPanelProps) {
+export function ValidationPanel({ issues, onFixIssue }: ValidationPanelProps) {
   return (
     <section className="tk-panel" aria-label="Document validation">
       <h3>Validation</h3>
@@ -57,12 +60,37 @@ export function ValidationPanel({ issues }: ValidationPanelProps) {
         </p>
       ) : (
         <ul className="tk-lint-list">
-          {issues.map((i, idx) => (
-            <li key={idx} className={`tk-lint-row ${i.severity === 'error' ? 'is-fail' : 'is-warn'}`}>
-              <span className="tk-lint-badge">{i.severity}</span>
-              <span className="tk-lint-element">{i.message}</span>
-            </li>
-          ))}
+          {issues.map((i, idx) => {
+            const navigable =
+              i.lane !== undefined && i.stage !== undefined && onFixIssue !== undefined;
+            const content = (
+              <>
+                <span className="tk-lint-badge">{i.severity}</span>
+                <span className="tk-lint-element">{i.message}</span>
+                {navigable && <span className="tk-lint-fix-hint">fix →</span>}
+              </>
+            );
+            return (
+              <li
+                key={idx}
+                className={`tk-lint-row ${i.severity === 'error' ? 'is-fail' : 'is-warn'}`}
+              >
+                {navigable ? (
+                  <button
+                    type="button"
+                    className="tk-lint-fix"
+                    data-testid="validation-fix"
+                    onClick={() => i.lane !== undefined && i.stage !== undefined && onFixIssue?.(i)}
+                    aria-label={`Fix: ${i.message}`}
+                  >
+                    {content}
+                  </button>
+                ) : (
+                  content
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
     </section>

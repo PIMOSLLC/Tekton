@@ -5,7 +5,7 @@ import {
   useControls,
 } from 'react-zoom-pan-pinch';
 import type { ReactZoomPanPinchContentRef } from 'react-zoom-pan-pinch';
-import { Minus, Plus, Maximize, RotateCcw } from 'lucide-react';
+import { Minus, Plus, Maximize, RotateCcw, Grid3x3 } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 export interface CanvasViewportProps {
@@ -19,23 +19,25 @@ export interface CanvasViewportProps {
  * CanvasViewport — the design-tool canvas for Build mode (owner direction):
  * pan by drag, zoom toward the cursor (wheel / trackpad pinch), and a
  * keyboard-accessible control cluster (zoom in / out / fit / reset + readout)
- * overlaid top-right, Figma-style. Isolated to the editor layer — the engine's
- * rendered output (Preview mode) keeps its normal page scroll behavior.
- *
- * Scale tracking: read from `onZoom` (+ initial state) — the instance's
- * transform state is NOT populated on first render, which crashed the first
- * version of this component (the white-screen report).
+ * floating bottom-center, Figma-style. "Fit blueprint" = the library's native
+ * contain-fit (scale capped at 100% — fit never enlarges), and `fitOnInit`
+ * makes every grid reshape (the remount via `fitKey`) come out fitted, not
+ * merely centered. Isolated to the editor layer — the engine's rendered
+ * output (Preview mode) keeps its normal page scroll.
  */
 export function CanvasViewport({ children, fitKey }: CanvasViewportProps) {
   const [scale, setScale] = useState(1);
+  // View state: the dot-grid backdrop (design-tool feel; decorative, pointer-transparent).
+  const [gridOn, setGridOn] = useState(true);
 
   return (
-    <div className="relative h-full w-full tk-panzoom">
+    <div className={`relative h-full w-full tk-panzoom ${gridOn ? 'tk-canvas-dotgrid' : ''}`}>
       <TransformWrapper
         key={String(fitKey ?? '')}
         initialScale={1}
         minScale={0.15}
         maxScale={3}
+        fitOnInit="contain"
         centerOnInit
         centerZoomedOut
         wheel={{ step: 0.15 }}
@@ -47,7 +49,7 @@ export function CanvasViewport({ children, fitKey }: CanvasViewportProps) {
           if (typeof s === 'number' && Number.isFinite(s)) setScale(s);
         }}
       >
-        <CanvasTools scale={scale} initial={1} />
+        <CanvasTools scale={scale} initial={1} gridOn={gridOn} onToggleGrid={() => setGridOn((v) => !v)} />
         <TransformComponent wrapperClass="!h-full !w-full" contentClass="!w-max">
           {children}
         </TransformComponent>
@@ -60,7 +62,17 @@ export function CanvasViewport({ children, fitKey }: CanvasViewportProps) {
  * Control cluster — must live INSIDE TransformWrapper for `useControls` to
  * bind to it (library-idiomatic; the render-prop instance read crashed).
  */
-function CanvasTools({ scale, initial }: { scale: number; initial: number }) {
+function CanvasTools({
+  scale,
+  initial,
+  gridOn,
+  onToggleGrid,
+}: {
+  scale: number;
+  initial: number;
+  gridOn: boolean;
+  onToggleGrid(): void;
+}) {
   const api = useControls();
   return (
     <div className="tk-canvas-tools" role="toolbar" aria-label="Canvas zoom controls">
@@ -69,8 +81,25 @@ function CanvasTools({ scale, initial }: { scale: number; initial: number }) {
         {Math.round((scale ?? initial) * 100)}%
       </span>
       <ToolButton label="Zoom in" onClick={() => api.zoomIn()} icon={<Plus className="w-3.5 h-3.5" />} />
-      <ToolButton label="Fit blueprint (see all lanes and cards)" onClick={() => api.centerView(1)} icon={<Maximize className="w-3.5 h-3.5" />} />
+      <ToolButton
+        label="Fit blueprint (see all lanes and cards)"
+        onClick={() =>
+          // contain: show the whole grid, scaled BELOW 100% at most — a real
+          // fit, not a re-centering at fixed scale (which was a no-op when
+          // already centered, the bug the owner reported).
+          api.fitToView({ mode: 'contain', minScale: 0.15, maxScale: 1 }).catch(() => {
+            /* zero-rect environments (headless test DOM) have nothing to fit */
+          })
+        }
+        icon={<Maximize className="w-3.5 h-3.5" />}
+      />
       <ToolButton label="Reset view (100%)" onClick={() => api.resetTransform()} icon={<RotateCcw className="w-3.5 h-3.5" />} />
+      <ToolButton
+        label={gridOn ? 'Hide grid' : 'Show grid'}
+        onClick={onToggleGrid}
+        icon={<Grid3x3 className="w-3.5 h-3.5" />}
+        pressed={gridOn}
+      />
     </div>
   );
 }
@@ -79,10 +108,12 @@ function ToolButton({
   label,
   onClick,
   icon,
+  pressed,
 }: {
   label: string;
   onClick(): void;
   icon: ReactNode;
+  pressed?: boolean;
 }) {
   return (
     <button
@@ -90,7 +121,8 @@ function ToolButton({
       title={label}
       aria-label={label}
       onClick={onClick}
-      className="tk-canvas-tool"
+      {...(pressed !== undefined ? { 'aria-pressed': pressed } : {})}
+      className={`tk-canvas-tool ${pressed ? 'is-armed' : ''}`}
     >
       {icon}
     </button>

@@ -1,19 +1,27 @@
 import type { BlueprintLane, BlueprintStage } from './types';
 import { LANE_KINDS, laneKindLabel } from './types';
 
+/** The engine's lane-tint AA failure, keyed by lane id (ratio + the bg fix). */
+export interface TintWarning {
+  ratio: number;
+  suggestionBg?: string;
+}
+
 export interface VisualArchitectProps {
   eyebrow: string;
   title: string;
   intro: string;
   stages: BlueprintStage[];
   lanes: BlueprintLane[];
+  /** AA verdicts for lane tints (live from the engine lint). */
+  tintWarnings: Record<string, TintWarning>;
   onMetaChange(field: 'eyebrow' | 'title' | 'intro', value: string): void;
   onStageChange(index: number, field: 'name' | 'blurb', value: string): void;
   onStageAdd(): void;
   onStageRemove(index: number): void;
   onLaneChange(
     index: number,
-    field: 'name' | 'blurb' | 'kind' | 'interpretation',
+    field: 'name' | 'blurb' | 'kind' | 'tint' | 'divider' | 'interpretation',
     value: string,
   ): void;
   onLaneAdd(): void;
@@ -32,7 +40,10 @@ export function VisualArchitect(props: VisualArchitectProps) {
       <section className="tk-arch-section">
         <h3>Document metadata</h3>
         <label className="tk-field">
-          <span>Eyebrow</span>
+          <span>Tagline</span>
+          <span className="tk-field-help">
+            The short label above the title — designers call this the &ldquo;eyebrow&rdquo;.
+          </span>
           <input
             type="text"
             value={props.eyebrow}
@@ -40,7 +51,10 @@ export function VisualArchitect(props: VisualArchitectProps) {
           />
         </label>
         <label className="tk-field">
-          <span>Blueprint title</span>
+          <span>Title</span>
+          <span className="tk-field-help">
+            What this blueprint is called — it also becomes the saved file&apos;s name.
+          </span>
           <input
             type="text"
             value={props.title}
@@ -48,7 +62,10 @@ export function VisualArchitect(props: VisualArchitectProps) {
           />
         </label>
         <label className="tk-field">
-          <span>Introduction</span>
+          <span>Opening sentence</span>
+          <span className="tk-field-help">
+            Frames the service and the moment being designed for.
+          </span>
           <textarea
             rows={3}
             value={props.intro}
@@ -128,11 +145,77 @@ export function VisualArchitect(props: VisualArchitectProps) {
                   <option key={k} value={k}>{laneKindLabel(k)}</option>
                 ))}
               </select>
+              <input
+                type="text"
+                value={lane.divider ?? ''}
+                aria-label={`Lane ${i + 1} separation line`}
+                placeholder="Separation line label (e.g. — Line of visibility —)…"
+                onChange={(e) => props.onLaneChange(i, 'divider', e.target.value)}
+              />
+              {/* Row color — overrides the kind's default tint when set;
+                  the kind dropdown above provides the default. */}
+              <div className="tk-tint-field">
+                <input
+                  type="color"
+                  className="tk-tint-swatch"
+                  aria-label={`Lane ${i + 1} card color`}
+                  value={/^#[0-9a-fA-F]{6}$/.test(lane.tint ?? '') ? lane.tint : '#ffffff'}
+                  onChange={(e) => props.onLaneChange(i, 'tint', e.target.value)}
+                />
+                <span className="tk-tint-caption">
+                  {lane.tint ? 'Card color override' : 'Card color (kind default)'}
+                </span>
+                {lane.tint && (
+                  <button
+                    type="button"
+                    className="tk-remove"
+                    aria-label={`Clear lane ${i + 1} card color`}
+                    onClick={() => props.onLaneChange(i, 'tint', '')}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+              {/* Live AA verdict for this row's color — a warn + fix path, never
+                  a dead end: apply the engine's suggested background, or reset
+                  to the kind's audited default. The canvas stays live either way. */}
+              {props.tintWarnings[lane.id] && (
+                <div className="tk-tint-warning" role="status" data-testid="tint-warning">
+                  <span className="tk-tint-warning-text">
+                    Card text on this row = {props.tintWarnings[lane.id].ratio.toFixed(2)}:1 —
+                    fails WCAG AA (needs 4.5:1)
+                  </span>
+                  {props.tintWarnings[lane.id].suggestionBg && (
+                    <button
+                      type="button"
+                      className="tk-fix"
+                      onClick={() =>
+                        props.onLaneChange(
+                          i,
+                          'tint',
+                          props.tintWarnings[lane.id].suggestionBg ?? '',
+                        )
+                      }
+                    >
+                      Apply suggested color
+                    </button>
+                  )}
+                  {lane.tint && (
+                    <button
+                      type="button"
+                      className="tk-fix"
+                      onClick={() => props.onLaneChange(i, 'tint', '')}
+                    >
+                      Reset to kind default
+                    </button>
+                  )}
+                </div>
+              )}
               <textarea
                 rows={2}
                 value={lane.interpretation ?? ''}
                 aria-label={`Lane ${i + 1} interpretation`}
-                placeholder="Service design interpretation (drawer text)…"
+                placeholder="What a reader must understand about this lane (shows in the card drawer)…"
                 onChange={(e) => props.onLaneChange(i, 'interpretation', e.target.value)}
               />
             </div>

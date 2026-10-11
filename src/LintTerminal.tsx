@@ -6,6 +6,8 @@ export interface LintTerminalProps {
   issues: EngineIssue[];
   open: boolean;
   onToggle(): void;
+  /** Navigates a card-located validation issue to its card (fix flow). */
+  onFixIssue?(issue: EngineIssue): void;
 }
 
 /**
@@ -13,7 +15,7 @@ export interface LintTerminalProps {
  * prototype), collapsible like an editor terminal. The target line reads
  * WCAG 2.2 (the prototype said 2.1 — rejected; 2.2 is the product standard).
  */
-export function LintTerminal({ findings, issues, open, onToggle }: LintTerminalProps) {
+export function LintTerminal({ findings, issues, open, onToggle, onFixIssue }: LintTerminalProps) {
   const failures = findings.filter((f) => !f.aa).length;
   return (
     <section className="tk-terminal" aria-label="Contrast lint terminal">
@@ -42,7 +44,7 @@ export function LintTerminal({ findings, issues, open, onToggle }: LintTerminalP
         <div id="tk-terminal-body" className="tk-terminal-body">
           <p className="tk-terminal-summary">{lintSummary(findings)}</p>
           <LintPanel findings={findings} />
-          <ValidationPanel issues={issues} />
+          <ValidationPanel issues={issues} onFixIssue={onFixIssue} />
         </div>
       )}
     </section>

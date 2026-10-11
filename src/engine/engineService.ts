@@ -26,6 +26,11 @@ export interface EngineService {
   validate(yaml: string): Promise<EngineValidation>;
   parse(yaml: string): Promise<BlueprintDocument>;
   serialize(doc: BlueprintDocument): Promise<string>;
+  /** Parse YAML *or* JSON source (auto-detected) into the document model. */
+  loadSource(text: string): Promise<BlueprintDocument>;
+  /** Pretty JSON of the canonical model — the Save-as-JSON file format and
+   * the JSONB payload shape for the future PIN `toolkit_instances` row. */
+  toJson(doc: BlueprintDocument): Promise<string>;
 }
 
 /** True when running inside the Tauri desktop shell. */
@@ -71,6 +76,16 @@ class WasmEngine implements EngineService {
     const m = await this.load();
     return m.serialize_blueprint(JSON.stringify(doc));
   }
+
+  async loadSource(text: string): Promise<BlueprintDocument> {
+    const m = await this.load();
+    return JSON.parse(await m.load_source(text)) as BlueprintDocument;
+  }
+
+  async toJson(doc: BlueprintDocument): Promise<string> {
+    const m = await this.load();
+    return m.document_to_json(JSON.stringify(doc));
+  }
 }
 
 class TauriEngine implements EngineService {
@@ -83,6 +98,8 @@ class TauriEngine implements EngineService {
   validate(): Promise<EngineValidation> { return this.unsupported(); }
   parse(): Promise<BlueprintDocument> { return this.unsupported(); }
   serialize(): Promise<string> { return this.unsupported(); }
+  loadSource(): Promise<BlueprintDocument> { return this.unsupported(); }
+  toJson(): Promise<string> { return this.unsupported(); }
 }
 
 export const engine: EngineService = isTauriHost ? new TauriEngine() : new WasmEngine();
