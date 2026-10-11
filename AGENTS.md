@@ -38,7 +38,32 @@ Born from the hand-built `agentic_ecommerce_service_blueprint.html` (Serta Simmo
 | Desktop shell | `src-tauri/` | Tauri 2 (phase 2) |
 | Editor | `src/` | React 18 + Vite + TS strict, Tekhne-token themed (phase 2) |
 
-**Status: phase 2 in progress — editor studio live (Gemini-prototype adoption).** `blueprint-core` + `tekton` CLI complete (34 tests). The browser editor at `http://192.168.10.138:6041` now runs the adopted three-zone studio layout from `Resources/phoenix_tekton_studio.html` (design reference): **Visual Architect** (structured meta/stage/lane editing, lane kinds) left, **Build canvas** (light-theme editable grid, click-card → inspector drawer) center with a **Build/Preview toggle** (Preview = live engine render), collapsible **Aisthehkne lint terminal** (WCAG 2.2) docked bottom. Document-as-state: the Rust model is the single source of truth via wasm `parse_blueprint`/`serialize_blueprint`; the YAML tab is a derived serialization view. **Adopted from the prototype:** layout, Build/Preview, terminal lint, lane-kind selector (now `LaneKind` in the engine with kind-derived default tints). **Rejected (recorded):** `#03A9F4` accent (fails the engine's own AA gate — `#1D4ED8` stays), "WCAG 2.1" label (product standard is 2.2), hover-only destructive controls (now hover + focus-within), hardcoded hexes (Tekhne tokens stay), fixed-height lint panel (collapsible). **Next:** theme editor with live lint, drag-reorder, Tauri desktop shell (system deps installed; needs a display machine).
+## Architecture (platform scaffolding — owner direction)
+
+Modularity is the contract that makes the Rust cross-platform app and the future PIN
+module possible. Layers, strictest first:
+
+| Layer | Contents | Rule |
+|---|---|---|
+| **Rust core** | `crates/blueprint-core` | Pure, no I/O, wasm32-clean — the engine (model, validate, lint, render) |
+| **Bindings** | `crates/blueprint-wasm` (+ future `crates/blueprint-tauri-commands`) | Thin wrappers over the core only |
+| **Editor core** | `src/core/useBlueprintDocument.ts` | All document state + engine pipeline + edit ops. **No platform imports** — any shell (web/Tauri/PIN) composes it |
+| **Presentational** | `src/*.tsx` components | Pure props-in/components-out; no engine or state imports |
+| **Platform shell** | `src/main.tsx` + `src/App.tsx` today; `platforms/tauri`, `platforms/pin` later | The ONLY layer that may know how it is hosted (engineService adapter picks wasm vs invoke) |
+
+**YAML is the headless authoring format**: a blueprint can be written entirely without
+the visual editor (hand or `tekton` CLI) — the visual editor is a view of the same
+document. Editor UX decisions follow from this (the YAML panel is a first-class,
+wider authoring surface, not a raw peek).
+
+**Shell model (2026-10-10 decisions)**: collapsible StudioNav (56px icons ↔ 240px
+labeled menu — a panel menu, not a static thin rail; no horizontal overflow by
+construction) → pushing ExpandablePanel (architect 260px / YAML 460px — the panel
+PUSHES the canvas; nothing overlays; no click-outside-to-close — it is a persistent
+workspace pane, Esc closes, one layer at a time) → workspace column (toolbar / canvas
+or preview / docked lint terminal / status footer).
+
+**Status: phase 2 in progress — PIN-family shell with push layout.** Engine + CLI complete (34 tests); editor at `http://192.168.10.138:6041` runs the PIN-family palette (Tailwind 3.4 + lucide, midnight/brand blues via Tekhne tokens), three-zone shell rebuilt as collapsible nav + pushing panels, `useBlueprintDocument` core hook extracted for platform scaffolding. **Next:** theme editor with live lint, drag-reorder, Tauri desktop shell (deps installed; needs display), PIN toolkit module (`/toolkit/:projectId/toolkit/blueprint`).
 
 ## Repository
 

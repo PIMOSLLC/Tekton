@@ -1,20 +1,15 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import fixtureYaml from '../fixtures/serta-simmons.yaml?raw';
-import { engine, type OutputFormat } from './engine/engineService';
-import type { EngineFinding, EngineIssue } from './engine/engineServiceTypes';
+import { useBlueprintDocument } from './core/useBlueprintDocument';
 import { BuildCanvas } from './BuildCanvas';
 import { CardInspector } from './CardInspector';
 import { ExpandablePanel } from './ExpandablePanel';
-import { IconRail } from './IconRail';
+import { StudioNav } from './StudioNav';
 import { LintTerminal } from './LintTerminal';
 import { VisualArchitect } from './VisualArchitect';
-import type { BlueprintDocument } from './types';
 import './index.css';
 import './styles/tekton-theme.css';
 import './App.css';
-
-const DEBOUNCE_MS = 150;
-const YAML_COMMIT_MS = 500;
 
 type PanelSection = 'architect' | 'yaml' | null;
 type ViewMode = 'build' | 'preview';
@@ -24,219 +19,24 @@ interface CardPosition {
   stage: number;
 }
 
-const slugify = (s: string) =>
-  s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'stage';
-
 /**
- * App shell — the PIM family standard (adopted from Phoenix Insight Nexus):
- * IconRail (56px) → ExpandablePanel (260px) → content column with a slim
- * toolbar, the workspace (Build canvas / engine preview), the docked lint
- * terminal, and a StatusFooter bar. The document pipeline, CardInspector, and
- * all engine bindings are unchanged from the previous iteration.
+ * App shell — thin composition (owner direction: modular for platform
+ * scaffolding). All document logic lives in `useBlueprintDocument` (core); all
+ * shells — web today, Tauri desktop and the PIN toolkit module later —
+ * compose that hook with presentational components. Layout: collapsible
+ * StudioNav → pushing ExpandablePanel → workspace column. Nothing overlays;
+ * every panel pushes.
  */
 export function App() {
-  const [doc, setDoc] = useState<BlueprintDocument | null>(null);
+  const bp = useBlueprintDocument(fixtureYaml);
+
+  // Shell UI state (not document state)
+  const [navExpanded, setNavExpanded] = useState(false);
   const [view, setView] = useState<ViewMode>('build');
   const [panelSection, setPanelSection] = useState<PanelSection>('architect');
-  const [format, setFormat] = useState<OutputFormat>('standalone');
-  const [yamlText, setYamlText] = useState<string>(fixtureYaml);
-  const yamlFocused = useRef(false);
   const [selectedCard, setSelectedCard] = useState<CardPosition | null>(null);
   const [terminalOpen, setTerminalOpen] = useState(true);
 
-  const [html, setHtml] = useState<string | null>(null);
-  const [renderError, setRenderError] = useState<string | null>(null);
-  const [findings, setFindings] = useState<EngineFinding[]>([]);
-  const [issues, setIssues] = useState<EngineIssue[]>([]);
-  const [engineReady, setEngineReady] = useState(false);
-
-  // Boot: parse the fixture through the Rust model.
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const parsed = await engine.parse(fixtureYaml);
-      if (!cancelled) {
-        setDoc(parsed);
-        setEngineReady(true);
-      }
-    })().catch((e: unknown) => {
-      if (!cancelled) {
-        setRenderError(e instanceof Error ? e.message : String(e));
-        setEngineReady(true);
-      }
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const updateDoc = useCallback((mutate: (draft: BlueprintDocument) => void) => {
-    setDoc((prev) => {
-      if (!prev) return prev;
-      const next = structuredClone(prev);
-      mutate(next);
-      return next;
-    });
-  }, []);
-
-  // Visual edits refresh the YAML view unless the author is typing in it.
-  useEffect(() => {
-    if (!doc || yamlFocused.current) return;
-    let cancelled = false;
-    engine
-      .serialize(doc)
-      .then((yaml) => {
-        if (!cancelled) setYamlText(yaml);
-      })
-      .catch(() => {
-        /* invalid intermediate edits keep the last good YAML */
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [doc]);
-
-  const commitYaml = useCallback((text: string) => {
-    engine
-      .parse(text)
-      .then(setDoc)
-      .catch(() => {
-        /* keep editing; render gate reports the error */
-      });
-  }, []);
-  useEffect(() => {
-    if (!yamlFocused.current) return;
-    const t = setTimeout(() => commitYaml(yamlText), YAML_COMMIT_MS);
-    return () => clearTimeout(t);
-  }, [yamlText, commitYaml]);
-
-  // Engine pipeline: doc → serialize → render + lint + validate (debounced).
-  useEffect(() => {
-    if (!doc) return;
-    let cancelled = false;
-    const t = setTimeout(async () => {
-      try {
-        const yaml = await engine.serialize(doc);
-        const [rendered, lint, validation] = await Promise.all([
-          engine.render(yaml, format),
-          engine.lint(yaml),
-          engine.validate(yaml),
-        ]);
-        if (cancelled) return;
-        setHtml(rendered);
-        setRenderError(null);
-        setFindings(lint.findings);
-        setIssues(validation.issues);
-      } catch (e) {
-        if (cancelled) return;
-        setHtml(null);
-        setRenderError(e instanceof Error ? e.message : String(e));
-      }
-    }, DEBOUNCE_MS);
-    return () => {
-      cancelled = true;
-      clearTimeout(t);
-    };
-  }, [doc, format]);
-
-  // ── Edit handlers ──────────────────────────────────────────────────────
-  const onMetaChange = useCallback(
-    (field: 'eyebrow' | 'title' | 'intro', value: string) =>
-      updateDoc((d) => {
-        d.meta[field] = value;
-      }),
-    [updateDoc],
-  );
-
-  const onStageChange = useCallback(
-    (index: number, field: 'name' | 'blurb', value: string) =>
-      updateDoc((d) => {
-        d.stages[index][field] = value;
-      }),
-    [updateDoc],
-  );
-
-  const onStageAdd = useCallback(
-    () =>
-      updateDoc((d) => {
-        const name = `Stage ${d.stages.length + 1}`;
-        d.stages.push({ id: slugify(name), name, blurb: '' });
-        for (const lane of d.lanes) lane.cards.push({ title: '', blurb: '' });
-      }),
-    [updateDoc],
-  );
-
-  const onStageRemove = useCallback(
-    (index: number) =>
-      updateDoc((d) => {
-        if (d.stages.length <= 1) return;
-        d.stages.splice(index, 1);
-        for (const lane of d.lanes) lane.cards.splice(index, 1);
-      }),
-    [updateDoc],
-  );
-
-  const onLaneChange = useCallback(
-    (index: number, field: 'name' | 'blurb' | 'kind' | 'interpretation', value: string) =>
-      updateDoc((d) => {
-        const lane = d.lanes[index];
-        if (field === 'kind') {
-          lane.kind = value === '' ? undefined : (value as BlueprintDocument['lanes'][number]['kind']);
-        } else {
-          lane[field] = value;
-        }
-      }),
-    [updateDoc],
-  );
-
-  const onLaneAdd = useCallback(
-    () =>
-      updateDoc((d) => {
-        const name = `Lane ${d.lanes.length + 1}`;
-        const id = slugify(name);
-        d.lanes.push({
-          id: d.lanes.some((l) => l.id === id) ? `${id}-${d.lanes.length}` : id,
-          name,
-          kind: 'backstage',
-          interpretation: '',
-          cards: d.stages.map(() => ({ title: '', blurb: '' })),
-        });
-      }),
-    [updateDoc],
-  );
-
-  const onLaneRemove = useCallback(
-    (index: number) =>
-      updateDoc((d) => {
-        if (d.lanes.length <= 1) return;
-        d.lanes.splice(index, 1);
-      }),
-    [updateDoc],
-  );
-
-  const onCardChange = useCallback(
-    (field: 'title' | 'blurb', value: string) => {
-      if (!selectedCard) return;
-      const { lane, stage } = selectedCard;
-      updateDoc((d) => {
-        d.lanes[lane].cards[stage][field] = value;
-      });
-    },
-    [selectedCard, updateDoc],
-  );
-
-  const onInterpretationChange = useCallback(
-    (value: string) => {
-      if (!selectedCard) return;
-      const { lane } = selectedCard;
-      updateDoc((d) => {
-        d.lanes[lane].interpretation = value;
-      });
-    },
-    [selectedCard, updateDoc],
-  );
-
-  // ── Shell actions ───────────────────────────────────────────────────────
   const toggleSection = useCallback((section: Exclude<PanelSection, null>) => {
     setPanelSection((prev) => (prev === section ? null : section));
   }, []);
@@ -247,71 +47,79 @@ export function App() {
   }, []);
 
   const download = useCallback(() => {
-    if (!html) return;
-    const blob = new Blob([html], { type: 'text/html' });
+    if (!bp.html) return;
+    const blob = new Blob([bp.html], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = format === 'standalone' ? 'blueprint-standalone.html' : 'blueprint-wordpress.html';
+    a.download =
+      bp.format === 'standalone' ? 'blueprint-standalone.html' : 'blueprint-wordpress.html';
     a.click();
     URL.revokeObjectURL(url);
-  }, [html, format]);
+  }, [bp.html, bp.format]);
 
   const selectedLane = useMemo(
-    () => (selectedCard && doc ? doc.lanes[selectedCard.lane] : null),
-    [selectedCard, doc],
+    () => (selectedCard && bp.doc ? bp.doc.lanes[selectedCard.lane] : null),
+    [selectedCard, bp.doc],
   );
   const selectedCardData = useMemo(
     () =>
-      selectedCard && doc && doc.lanes[selectedCard.lane]
-        ? doc.lanes[selectedCard.lane].cards[selectedCard.stage] ?? null
+      selectedCard && bp.doc && bp.doc.lanes[selectedCard.lane]
+        ? bp.doc.lanes[selectedCard.lane].cards[selectedCard.stage] ?? null
         : null,
-    [selectedCard, doc],
+    [selectedCard, bp.doc],
   );
   const stageName = useMemo(
-    () => (selectedCard && doc ? (doc.stages[selectedCard.stage]?.name ?? '') : ''),
-    [selectedCard, doc],
+    () => (selectedCard && bp.doc ? (bp.doc.stages[selectedCard.stage]?.name ?? '') : ''),
+    [selectedCard, bp.doc],
   );
 
-  const lintFailures = findings.filter((f) => !f.aa).length;
-  const errorCount = issues.filter((i) => i.severity === 'error').length;
+  const lintFailures = bp.findings.filter((f) => !f.aa).length;
+  const errorCount = bp.issues.filter((i) => i.severity === 'error').length;
 
   return (
     <div
       className="dark flex h-screen bg-midnight text-gray-200 font-sans overflow-hidden"
       data-phoenix-theme="tekton-dark"
     >
-      <IconRail
+      <StudioNav
+        expanded={navExpanded}
+        onToggleExpanded={() => setNavExpanded((v) => !v)}
         openSection={panelSection}
         terminalOpen={terminalOpen}
-        engineReady={engineReady}
-        engineError={renderError !== null}
+        engineReady={bp.engineReady}
+        engineError={bp.renderError !== null}
         onToggleSection={toggleSection}
         onFocusCanvas={focusCanvas}
         onToggleTerminal={() => setTerminalOpen((v) => !v)}
         onExport={download}
-        canExport={html !== null}
+        canExport={bp.html !== null}
       />
 
       <ExpandablePanel
         section={panelSection}
         title={panelSection === 'yaml' ? 'YAML Source' : 'Visual Architect'}
+        blurb={
+          panelSection === 'yaml'
+            ? 'The headless format — author the blueprint without the visual editor; this document IS the blueprint.'
+            : 'Structure the blueprint: metadata, stages, and lanes.'
+        }
         onClose={() => setPanelSection(null)}
       >
-        {panelSection === 'architect' && doc && (
+        {panelSection === 'architect' && bp.doc && (
           <VisualArchitect
-            eyebrow={doc.meta.eyebrow}
-            title={doc.meta.title}
-            intro={doc.meta.intro}
-            stages={doc.stages}
-            lanes={doc.lanes}
-            onMetaChange={onMetaChange}
-            onStageChange={onStageChange}
-            onStageAdd={onStageAdd}
-            onStageRemove={onStageRemove}
-            onLaneChange={onLaneChange}
-            onLaneAdd={onLaneAdd}
-            onLaneRemove={onLaneRemove}
+            eyebrow={bp.doc.meta.eyebrow}
+            title={bp.doc.meta.title}
+            intro={bp.doc.meta.intro}
+            stages={bp.doc.stages}
+            lanes={bp.doc.lanes}
+            onMetaChange={bp.setMeta}
+            onStageChange={bp.setStage}
+            onStageAdd={bp.addStage}
+            onStageRemove={bp.removeStage}
+            onLaneChange={bp.setLane}
+            onLaneAdd={bp.addLane}
+            onLaneRemove={bp.removeLane}
           />
         )}
         {panelSection === 'yaml' && (
@@ -319,15 +127,10 @@ export function App() {
             className="tk-yaml-source"
             aria-label="Blueprint source (YAML)"
             spellCheck={false}
-            value={yamlText}
-            onFocus={() => {
-              yamlFocused.current = true;
-            }}
-            onBlur={() => {
-              yamlFocused.current = false;
-              commitYaml(yamlText);
-            }}
-            onChange={(e) => setYamlText(e.target.value)}
+            value={bp.yamlText}
+            onFocus={bp.onYamlFocus}
+            onBlur={bp.onYamlBlur}
+            onChange={(e) => bp.onYamlChange(e.target.value)}
           />
         )}
       </ExpandablePanel>
@@ -336,24 +139,24 @@ export function App() {
         {/* Toolbar (PIN-style slim header) */}
         <div className="h-12 flex items-center gap-3 px-4 border-b border-gray-700 bg-gray-900 shrink-0">
           <span className="font-mono text-[10px] text-gray-400 bg-gray-800 px-2 py-1 rounded border border-gray-700">
-            {doc?.meta.title ?? '…'}
+            {bp.doc?.meta.title ?? '…'}
           </span>
           <div className="flex bg-gray-800 rounded-md border border-gray-700 overflow-hidden" role="group" aria-label="Output format">
             <button
               type="button"
               className={`px-3 py-1.5 text-[11px] font-semibold transition-colors ${
-                format === 'standalone' ? 'bg-brand-secondary text-white' : 'text-gray-400 hover:text-gray-200'
+                bp.format === 'standalone' ? 'bg-brand-secondary text-white' : 'text-gray-400 hover:text-gray-200'
               }`}
-              onClick={() => setFormat('standalone')}
+              onClick={() => bp.setFormat('standalone')}
             >
               Standalone
             </button>
             <button
               type="button"
               className={`px-3 py-1.5 text-[11px] font-semibold transition-colors border-l border-gray-700 ${
-                format === 'wordpress' ? 'bg-brand-secondary text-white' : 'text-gray-400 hover:text-gray-200'
+                bp.format === 'wordpress' ? 'bg-brand-secondary text-white' : 'text-gray-400 hover:text-gray-200'
               }`}
-              onClick={() => setFormat('wordpress')}
+              onClick={() => bp.setFormat('wordpress')}
             >
               WordPress
             </button>
@@ -386,26 +189,26 @@ export function App() {
         {/* Workspace */}
         <main className="flex-1 flex flex-col min-h-0 relative">
           <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-            {renderError ? (
+            {bp.renderError ? (
               <div className="tk-error m-5" role="alert" data-testid="render-error">
-                <strong>Render blocked:</strong> {renderError}
+                <strong>Render blocked:</strong> {bp.renderError}
               </div>
             ) : view === 'build' ? (
-              doc ? (
+              bp.doc ? (
                 <BuildCanvas
-                  doc={doc}
+                  doc={bp.doc}
                   selectedCard={selectedCard}
                   onSelectCard={setSelectedCard}
                 />
               ) : (
                 <p className="tk-loading">loading…</p>
               )
-            ) : html ? (
+            ) : bp.html ? (
               <iframe
                 title="Blueprint preview"
                 className="tk-preview"
                 sandbox="allow-scripts allow-modals"
-                srcDoc={html}
+                srcDoc={bp.html}
               />
             ) : (
               <p className="tk-loading">Rendering…</p>
@@ -413,8 +216,8 @@ export function App() {
           </div>
 
           <LintTerminal
-            findings={findings}
-            issues={issues}
+            findings={bp.findings}
+            issues={bp.issues}
             open={terminalOpen}
             onToggle={() => setTerminalOpen((v) => !v)}
           />
@@ -422,17 +225,17 @@ export function App() {
 
         {/* Status footer (PIN family language) */}
         <footer className="h-7 flex items-center gap-5 px-4 border-t border-gray-700 bg-gray-900 text-[9px] font-mono uppercase tracking-widest text-gray-500 shrink-0">
-          <span>{doc?.meta.eyebrow ?? '—'}</span>
-          <span>{format}</span>
-          <span>{engineReady ? `engine: ${engine.backend}` : 'engine: loading'}</span>
+          <span>{bp.doc?.meta.eyebrow ?? '—'}</span>
+          <span>{bp.format}</span>
+          <span>{bp.engineReady ? 'engine: wasm' : 'engine: loading'}</span>
           <span className={errorCount === 0 ? 'text-emerald-400' : 'text-amber-400'}>
             {errorCount === 0 ? 'valid ✓' : `${errorCount} error(s)`}
           </span>
           <span className={lintFailures === 0 ? 'text-emerald-400' : 'text-amber-400'}>
-            {findings.length > 0
+            {bp.findings.length > 0
               ? lintFailures === 0
-                ? `wcag aa ✓ (${findings.length})`
-                : `wcag aa ✗ ${lintFailures}/${findings.length}`
+                ? `wcag aa ✓ (${bp.findings.length})`
+                : `wcag aa ✗ ${lintFailures}/${bp.findings.length}`
               : 'wcag aa —'}
           </span>
         </footer>
@@ -443,8 +246,12 @@ export function App() {
         lane={selectedLane}
         stageName={stageName}
         card={selectedCardData}
-        onCardChange={onCardChange}
-        onInterpretationChange={onInterpretationChange}
+        onCardChange={(field, value) => {
+          if (selectedCard) bp.setCard(selectedCard.lane, selectedCard.stage, field, value);
+        }}
+        onInterpretationChange={(value) => {
+          if (selectedCard) bp.setInterpretation(selectedCard.lane, value);
+        }}
         onClose={() => setSelectedCard(null)}
       />
     </div>
