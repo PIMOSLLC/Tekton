@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1440" height="900" viewBox="0 0 1440 900" xmlns="http://www.w3.org/2000/svg"><title>phoenix-Tekton · Canvas focus — panel closed</title><rect x="0" y="0" width="1440" height="900" rx="0" fill="#0B0F1A"/>
+<rect x="0" y="0" width="1440" height="44" rx="0" fill="#111827"/>
+<line x1="0" y1="44.5" x2="1440" y2="44.5" stroke="#374151"/>
+<g transform="translate(16,9) scale(0.043)"><path fill="#1B3954" d="M121.1,405.34c-3.87,0-7-3.13-7-7c0-23.88-19.42-43.3-43.3-43.3s-43.3,19.42-43.3,43.3c0,3.87-3.13,7-7,7s-7-3.13-7-7V113.66c0-31.6,25.7-57.3,57.3-57.3s57.3,25.7,57.3,57.3v284.68C128.1,402.21,124.97,405.34,121.1,405.34z M70.8,341.04c17.27,0,32.79,7.68,43.3,19.81V113.66c0-23.88-19.42-43.3-43.3-43.3s-43.3,19.42-43.3,43.3v247.19C38.01,348.72,53.53,341.04,70.8,341.04z"/><path fill="#1B3954" d="M491.5,455.64c-3.87,0-7-3.13-7-7V120.66H128.1v277.68c0,3.87-3.13,7-7,7s-7-3.13-7-7c0-23.88-19.42-43.3-43.3-43.3s-43.3,19.42-43.3,43.3c0,23.88,19.42,43.3,43.3,43.3h380.67c3.87,0,7,3.13,7,7s-3.13,7-7,7H70.8c-31.59,0-57.3-25.7-57.3-57.3c0-31.6,25.71-57.3,57.3-57.3c17.27,0,32.79,7.68,43.3,19.81V113.66c0-3.87,3.13-7,7-7h370.4c3.87,0,7,3.13,7,7v334.98C498.5,452.51,495.37,455.64,491.5,455.64z"/><path fill="#1B3954" d="M227.3,235.68h-68.43c-3.87,0-7-3.13-7-7v-68.43c0-3.87,3.13-7,7-7h68.43c3.87,0,7,3.13,7,7v68.43C234.3,232.55,231.16,235.68,227.3,235.68z M165.87,221.68h54.43v-54.43h-54.43V221.68z"/><path fill="#16ADE1" d="M286.53,405.73H234.7c-3.87,0-7-3.13-7-7s3.13-7,7-7h44.83V278.07H165.87v113.66h9.34c3.87,0,7,3.13,7,7s-3.13,7-7,7h-16.34c-3.87,0-7-3.13-7-7V271.07c0-3.87,3.13-7,7-7h127.66c3.87,0,7,3.13,7,7v127.66C293.53,402.59,290.4,405.73,286.53,405.73z"/><path fill="#1B3954" d="M368.23,409.04h-38.3c-3.87,0-7-3.13-7-7V271.07c0-3.87,3.13-7,7-7h38.3c3.87,0,7,3.13,7,7v130.98C375.23,405.91,372.1,409.04,368.23,409.04z M336.94,395.04h24.3V278.07h-24.3V395.04z"/><path fill="#1B3954" d="M436.66,409.04h-38.3c-3.87,0-7-3.13-7-7V271.07c0-3.87,3.13-7,7-7h38.3c3.87,0,7,3.13,7,7v130.98C443.66,405.91,440.53,409.04,436.66,409.04z M405.36,395.04h24.3V278.07h-24.3V395.04z"/><path fill="#1B3954" d="M67.81,314.87c-3.87,0-7-3.13-7-7V121.32c0-3.87,3.13-7,7-7s7,3.13,7,7v186.55C74.81,311.74,71.67,314.87,67.81,314.87z"/><path fill="#16ADE1" d="M67.81,106.24c-1.85,0-3.65-0.75-4.95-2.05c-1.3-1.31-2.05-3.11-2.05-4.95c0-1.85,0.75-3.65,2.05-4.95c1.62-1.63,4.04-2.37,6.32-1.92c0.44,0.09,0.88,0.23,1.31,0.4c0.42,0.18,0.82,0.39,1.2,0.65c0.39,0.25,0.75,0.54,1.07,0.87c1.3,1.3,2.05,3.1,2.05,4.95c0,1.84-0.75,3.64-2.05,4.95c-0.32,0.32-0.68,0.61-1.07,0.87c-0.38,0.25-0.78,0.47-1.2,0.64c-0.43,0.18-0.87,0.31-1.31,0.4C68.73,106.19,68.27,106.24,67.81,106.24z"/></g>
+<text x="46" y="27" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="12" font-weight="800" fill="#FFFFFF" letter-spacing="3">TEKTON</text>
+<text x="104" y="27" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="700" fill="#6B7280" letter-spacing="2">SERVICE BLUEPRINT STUDIO</text>
+<rect x="216" y="12" width="1" height="20" rx="0" fill="#374151"/>
+<rect x="230" y="11" width="172" height="22" rx="6" fill="#1F2937" stroke="#374151" stroke-width="1"/>
+<text x="238" y="25" font-family="JetBrains Mono, monospace" font-size="10" font-weight="400" fill="#94A3B8" letter-spacing="0">agentic-ai-ecommerce</text>
+<text x="1424" y="25" font-family="JetBrains Mono, monospace" font-size="9" font-weight="400" fill="#6B7280" letter-spacing="2" text-anchor="end">STANDALONE</text>
+<rect x="0" y="44" width="56" height="856" rx="0" fill="#111827"/>
+<line x1="56.5" y1="44" x2="56.5" y2="900" stroke="#374151"/>
+<rect x="8" y="52" width="40" height="40" rx="8" fill="#FFFFFF"/>
+<g transform="translate(15,59) scale(0.05)"><path fill="#1B3954" d="M121.1,405.34c-3.87,0-7-3.13-7-7c0-23.88-19.42-43.3-43.3-43.3s-43.3,19.42-43.3,43.3c0,3.87-3.13,7-7,7s-7-3.13-7-7V113.66c0-31.6,25.7-57.3,57.3-57.3s57.3,25.7,57.3,57.3v284.68C128.1,402.21,124.97,405.34,121.1,405.34z M70.8,341.04c17.27,0,32.79,7.68,43.3,19.81V113.66c0-23.88-19.42-43.3-43.3-43.3s-43.3,19.42-43.3,43.3v247.19C38.01,348.72,53.53,341.04,70.8,341.04z"/><path fill="#1B3954" d="M491.5,455.64c-3.87,0-7-3.13-7-7V120.66H128.1v277.68c0,3.87-3.13,7-7,7s-7-3.13-7-7c0-23.88-19.42-43.3-43.3-43.3s-43.3,19.42-43.3,43.3c0,23.88,19.42,43.3,43.3,43.3h380.67c3.87,0,7,3.13,7,7s-3.13,7-7,7H70.8c-31.59,0-57.3-25.7-57.3-57.3c0-31.6,25.71-57.3,57.3-57.3c17.27,0,32.79,7.68,43.3,19.81V113.66c0-3.87,3.13-7,7-7h370.4c3.87,0,7,3.13,7,7v334.98C498.5,452.51,495.37,455.64,491.5,455.64z"/><path fill="#1B3954" d="M227.3,235.68h-68.43c-3.87,0-7-3.13-7-7v-68.43c0-3.87,3.13-7,7-7h68.43c3.87,0,7,3.13,7,7v68.43C234.3,232.55,231.16,235.68,227.3,235.68z M165.87,221.68h54.43v-54.43h-54.43V221.68z"/><path fill="#16ADE1" d="M286.53,405.73H234.7c-3.87,0-7-3.13-7-7s3.13-7,7-7h44.83V278.07H165.87v113.66h9.34c3.87,0,7,3.13,7,7s-3.13,7-7,7h-16.34c-3.87,0-7-3.13-7-7V271.07c0-3.87,3.13-7,7-7h127.66c3.87,0,7,3.13,7,7v127.66C293.53,402.59,290.4,405.73,286.53,405.73z"/><path fill="#1B3954" d="M368.23,409.04h-38.3c-3.87,0-7-3.13-7-7V271.07c0-3.87,3.13-7,7-7h38.3c3.87,0,7,3.13,7,7v130.98C375.23,405.91,372.1,409.04,368.23,409.04z M336.94,395.04h24.3V278.07h-24.3V395.04z"/><path fill="#1B3954" d="M436.66,409.04h-38.3c-3.87,0-7-3.13-7-7V271.07c0-3.87,3.13-7,7-7h38.3c3.87,0,7,3.13,7,7v130.98C443.66,405.91,440.53,409.04,436.66,409.04z M405.36,395.04h24.3V278.07h-24.3V395.04z"/><path fill="#1B3954" d="M67.81,314.87c-3.87,0-7-3.13-7-7V121.32c0-3.87,3.13-7,7-7s7,3.13,7,7v186.55C74.81,311.74,71.67,314.87,67.81,314.87z"/><path fill="#16ADE1" d="M67.81,106.24c-1.85,0-3.65-0.75-4.95-2.05c-1.3-1.31-2.05-3.11-2.05-4.95c0-1.85,0.75-3.65,2.05-4.95c1.62-1.63,4.04-2.37,6.32-1.92c0.44,0.09,0.88,0.23,1.31,0.4c0.42,0.18,0.82,0.39,1.2,0.65c0.39,0.25,0.75,0.54,1.07,0.87c1.3,1.3,2.05,3.1,2.05,4.95c0,1.84-0.75,3.64-2.05,4.95c-0.32,0.32-0.68,0.61-1.07,0.87c-0.38,0.25-0.78,0.47-1.2,0.64c-0.43,0.18-0.87,0.31-1.31,0.4C68.73,106.19,68.27,106.24,67.81,106.24z"/></g>
+<rect x="14" y="100" width="28" height="1" rx="0" fill="#374151"/>
+<text x="14" y="156" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="800" fill="#94A3B8" letter-spacing="1.8">DOCUMENT</text>
+<g transform="translate(16,174) scale(0.833)" stroke="#94A3B8" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M12 9v6M9 12h6"/></g>
+<text x="46" y="190" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800" fill="#E2E8F0" letter-spacing="0.4">NEW BLUEPRINT</text>
+<text x="46" y="204" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="400" fill="#64748B" letter-spacing="0">Pick starter or example</text>
+<g transform="translate(16,222) scale(0.833)" stroke="#94A3B8" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h6l2 3h10v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7z"/></g>
+<text x="46" y="238" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800" fill="#E2E8F0" letter-spacing="0.4">OPEN BLUEPRINT</text>
+<text x="46" y="252" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="400" fill="#64748B" letter-spacing="0">.yaml or .json file</text>
+<g transform="translate(16,270) scale(0.833)" stroke="#4B5563" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h12l4 4v14H5z"/><rect x="8" y="15" width="8" height="5"/></g>
+<text x="46" y="286" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800" fill="#4B5563" letter-spacing="0.4">SAVE</text>
+<text x="46" y="300" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="400" fill="#64748B" letter-spacing="0">Download current document</text>
+<g transform="translate(16,318) scale(0.833)" stroke="#4B5563" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"><text x="12" y="17" font-size="13" font-weight="700" text-anchor="middle">{ }</text></g>
+<text x="46" y="334" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800" fill="#4B5563" letter-spacing="0.4">SAVE JSON</text>
+<text x="46" y="348" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="400" fill="#64748B" letter-spacing="0">Structured format (PIN payload)</text>
+<text x="14" y="368" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="800" fill="#94A3B8" letter-spacing="1.8">AUTHOR</text>
+<g transform="translate(16,386) scale(0.833)" stroke="#94A3B8" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v20M16 2v20M2 8h20M2 16h20"/></g>
+<text x="46" y="402" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800" fill="#E2E8F0" letter-spacing="0.4">BLUEPRINT CANVAS</text>
+<text x="46" y="416" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="400" fill="#64748B" letter-spacing="0">The workspace</text>
+<g transform="translate(16,434) scale(0.833)" stroke="#3B82F6" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></g>
+<text x="46" y="450" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800" fill="#93C5FD" letter-spacing="0.4">VISUAL ARCHITECT</text>
+<text x="46" y="464" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="400" fill="#64748B" letter-spacing="0">The model: metadata, stages, lanes</text>
+<g transform="translate(16,482) scale(0.833)" stroke="#94A3B8" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10" r="1.2" fill="#94A3B8" stroke="none"/><circle cx="12" cy="8" r="1.2" fill="#94A3B8" stroke="none"/><circle cx="15.5" cy="10" r="1.2" fill="#94A3B8" stroke="none"/></g>
+<text x="46" y="498" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800" fill="#E2E8F0" letter-spacing="0.4">THEME COLORS</text>
+<text x="46" y="512" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="400" fill="#64748B" letter-spacing="0">Live WCAG verdicts</text>
+<g transform="translate(16,530) scale(0.833)" stroke="#94A3B8" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M10 12l-2 2 2 2M14 12l2 2-2 2"/></g>
+<text x="46" y="546" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800" fill="#E2E8F0" letter-spacing="0.4">YAML SOURCE</text>
+<text x="46" y="560" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="400" fill="#64748B" letter-spacing="0">The headless layer</text>
+<text x="14" y="580" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="800" fill="#94A3B8" letter-spacing="1.8">SHIP</text>
+<g transform="translate(16,598) scale(0.833)" stroke="#3B82F6" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></g>
+<text x="46" y="614" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800" fill="#93C5FD" letter-spacing="0.4">CONTRAST LINT</text>
+<text x="46" y="628" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="400" fill="#64748B" letter-spacing="0">The WCAG 2.2 AA gate — check first</text>
+<g transform="translate(16,646) scale(0.833)" stroke="#94A3B8" stroke-width="2.0" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10M8 10l4 4 4-4"/><path d="M4 19h16"/></g>
+<text x="46" y="662" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800" fill="#E2E8F0" letter-spacing="0.4">EXPORT</text>
+<text x="46" y="676" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="400" fill="#64748B" letter-spacing="0">HTML + data layer</text>
+<rect x="56" y="44" width="1384" height="48" rx="0" fill="#111827"/>
+<line x1="56" y1="92.5" x2="1440" y2="92.5" stroke="#374151"/>
+<rect x="72" y="55" width="174.2" height="30" rx="6" fill="#1F2937" stroke="#374151" stroke-width="1"/>
+<rect x="73" y="56" width="90.0" height="28" rx="4" fill="#3B82F6"/>
+<text x="118.0" y="75" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" letter-spacing="0" text-anchor="middle">Standalone</text>
+<text x="204.6" y="75" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="600" fill="#94A3B8" letter-spacing="0" text-anchor="middle">WordPress</text>
+<rect x="273.2" y="55" width="140.2" height="30" rx="6" fill="#1F2937" stroke="#374151" stroke-width="1"/>
+<rect x="274.2" y="56" width="90.0" height="28" rx="4" fill="#3B82F6"/>
+<text x="319.2" y="75" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" letter-spacing="0" text-anchor="middle">Data: YAML</text>
+<text x="388.8" y="75" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="600" fill="#94A3B8" letter-spacing="0" text-anchor="middle">JSON</text>
+<rect x="440.4" y="55" width="126.6" height="30" rx="6" fill="#1F2937" stroke="#374151" stroke-width="1"/>
+<rect x="441.4" y="56" width="56.0" height="28" rx="4" fill="#3B82F6"/>
+<text x="469.4" y="75" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" letter-spacing="0" text-anchor="middle">Build</text>
+<text x="532.1999999999999" y="75" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="600" fill="#94A3B8" letter-spacing="0" text-anchor="middle">Preview</text>
+<text x="1424" y="74" font-family="JetBrains Mono, monospace" font-size="10" font-weight="400" fill="#6B7280" letter-spacing="0" text-anchor="end">click a card to edit · Esc closes</text>
+<rect x="56" y="92" width="1384" height="724" rx="0" fill="#F8FAFC"/>
+<rect x="76" y="112" width="920" height="640" rx="12" fill="#FFFFFF" stroke="#DBE3EF" stroke-width="1"/>
+<rect x="76" y="112" width="130" height="56" rx="12" fill="#161F4C"/>
+<text x="86" y="136" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#FFFFFF" letter-spacing="0" opacity="0.9">Service layer ↓</text>
+<text x="86" y="152" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#FFFFFF" letter-spacing="0" opacity="0.7">Stage →</text>
+<rect x="206" y="112" width="154" height="56" rx="0" fill="#EAF1FF"/>
+<text x="214" y="124" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="7" font-weight="700" fill="#94A3B8" letter-spacing="1.5">STAGE 1</text>
+<text x="214" y="144" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="13" font-weight="800" fill="#17256D" letter-spacing="0">Signal</text>
+<text x="214" y="158" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#566B8E" letter-spacing="0">Observe storefront behavior and operatio</text>
+<rect x="360" y="112" width="154" height="56" rx="0" fill="#EAF1FF"/>
+<text x="368" y="124" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="7" font-weight="700" fill="#94A3B8" letter-spacing="1.5">STAGE 2</text>
+<text x="368" y="144" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="13" font-weight="800" fill="#17256D" letter-spacing="0">Analyze</text>
+<text x="368" y="158" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#566B8E" letter-spacing="0">Prioritize evidence-backed opportunities</text>
+<rect x="514" y="112" width="154" height="56" rx="0" fill="#EAF1FF"/>
+<text x="522" y="124" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="7" font-weight="700" fill="#94A3B8" letter-spacing="1.5">STAGE 3</text>
+<text x="522" y="144" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="13" font-weight="800" fill="#17256D" letter-spacing="0">Prepare</text>
+<text x="522" y="158" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#566B8E" letter-spacing="0">Build constrained change proposals</text>
+<rect x="668" y="112" width="154" height="56" rx="0" fill="#EAF1FF"/>
+<text x="676" y="124" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="7" font-weight="700" fill="#94A3B8" letter-spacing="1.5">STAGE 4</text>
+<text x="676" y="144" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="13" font-weight="800" fill="#17256D" letter-spacing="0">Approve</text>
+<text x="676" y="158" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#566B8E" letter-spacing="0">Human decision and release gate</text>
+<rect x="822" y="112" width="154" height="56" rx="0" fill="#EAF1FF"/>
+<text x="830" y="124" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="7" font-weight="700" fill="#94A3B8" letter-spacing="1.5">STAGE 5</text>
+<text x="830" y="144" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="13" font-weight="800" fill="#17256D" letter-spacing="0">Measure</text>
+<text x="830" y="158" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#566B8E" letter-spacing="0">Monitor performance and iterate</text>
+<line x1="76" y1="168" x2="996" y2="168" stroke="#E3E8F1"/>
+<rect x="76" y="168" width="130" height="62" rx="0" fill="#F0F4FA"/>
+<line x1="76" y1="230" x2="996" y2="230" stroke="#E3E8F1"/>
+<text x="86" y="196" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800" fill="#141B3D" letter-spacing="0">Customer actions</text>
+<text x="86" y="212" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="7" font-weight="400" fill="#5E6D83" letter-spacing="0">WHAT SHOPPERS DO</text>
+<rect x="206" y="168" width="154" height="62" rx="0" fill="#FFFFFF"/>
+<line x1="206" y1="168" x2="206" y2="230" stroke="#E3E8F1"/>
+<text x="216" y="192" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Browse and compare</text>
+<text x="216" y="208" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Explore mattress products and offers</text>
+<rect x="360" y="168" width="154" height="62" rx="0" fill="#FFFFFF"/>
+<line x1="360" y1="168" x2="360" y2="230" stroke="#E3E8F1"/>
+<text x="370" y="192" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Consider options</text>
+<text x="370" y="208" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Review details and product information</text>
+<rect x="514" y="168" width="154" height="62" rx="0" fill="#FFFFFF"/>
+<line x1="514" y1="168" x2="514" y2="230" stroke="#E3E8F1"/>
+<text x="524" y="192" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Experience page content</text>
+<text x="524" y="208" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Interact with the current storefront</text>
+<rect x="668" y="168" width="154" height="62" rx="0" fill="#FFFFFF"/>
+<line x1="668" y1="168" x2="668" y2="230" stroke="#E3E8F1"/>
+<text x="678" y="192" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Continue shopping</text>
+<text x="678" y="208" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Only approved changes become visible</text>
+<rect x="822" y="168" width="154" height="62" rx="0" fill="#FFFFFF"/>
+<line x1="822" y1="168" x2="822" y2="230" stroke="#E3E8F1"/>
+<text x="832" y="192" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Respond to experience</text>
+<text x="832" y="208" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Browse, convert, or abandon</text>
+<rect x="76" y="230" width="130" height="62" rx="0" fill="#F0F4FA"/>
+<line x1="76" y1="292" x2="996" y2="292" stroke="#E3E8F1"/>
+<text x="86" y="258" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800" fill="#141B3D" letter-spacing="0">Frontstage experience</text>
+<text x="86" y="274" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="7" font-weight="400" fill="#5E6D83" letter-spacing="0">WHAT CUSTOMERS SEE</text>
+<rect x="206" y="230" width="154" height="62" rx="0" fill="#FFFFFF"/>
+<line x1="206" y1="230" x2="206" y2="292" stroke="#E3E8F1"/>
+<text x="216" y="254" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Shopify storefront</text>
+<text x="216" y="270" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Product and collection pages</text>
+<rect x="360" y="230" width="154" height="62" rx="0" fill="#FFFFFF"/>
+<line x1="360" y1="230" x2="360" y2="292" stroke="#E3E8F1"/>
+<text x="370" y="254" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Existing site experience</text>
+<text x="370" y="270" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Observable navigation and content</text>
+<rect x="514" y="230" width="154" height="62" rx="0" fill="#FFFFFF"/>
+<line x1="514" y1="230" x2="514" y2="292" stroke="#E3E8F1"/>
+<text x="524" y="254" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Preview environment</text>
+<text x="524" y="270" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Proposed variants are not public</text>
+<rect x="668" y="230" width="154" height="62" rx="0" fill="#FFFFFF"/>
+<line x1="668" y1="230" x2="668" y2="292" stroke="#E3E8F1"/>
+<text x="678" y="254" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Approved publication</text>
+<text x="678" y="270" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Published Shopify changes only</text>
+<rect x="822" y="230" width="154" height="62" rx="0" fill="#FFFFFF"/>
+<line x1="822" y1="230" x2="822" y2="292" stroke="#E3E8F1"/>
+<text x="832" y="254" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Updated storefront</text>
+<text x="832" y="270" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Live experience measured</text>
+<rect x="76" y="292" width="920" height="20" rx="0" fill="#182150"/>
+<text x="90" y="306" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="700" fill="#FFFFFF" letter-spacing="2">— Line of interaction —</text>
+<rect x="76" y="312" width="130" height="62" rx="0" fill="#F0F4FA"/>
+<line x1="76" y1="374" x2="996" y2="374" stroke="#E3E8F1"/>
+<text x="86" y="340" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800" fill="#141B3D" letter-spacing="0">AI agent workflow</text>
+<text x="86" y="356" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="7" font-weight="400" fill="#5E6D83" letter-spacing="0">AGENT-PREPARED WORK</text>
+<rect x="206" y="312" width="154" height="62" rx="0" fill="#F3F0FF"/>
+<line x1="206" y1="312" x2="206" y2="374" stroke="#E3E8F1"/>
+<text x="216" y="336" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Signal intake</text>
+<text x="216" y="352" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Receive approved behavioral and CRM sign</text>
+<rect x="360" y="312" width="154" height="62" rx="0" fill="#F3F0FF"/>
+<line x1="360" y1="312" x2="360" y2="374" stroke="#E3E8F1"/>
+<text x="370" y="336" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Recommendation agent</text>
+<text x="370" y="352" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Rank friction points and opportunities</text>
+<rect x="514" y="312" width="154" height="62" rx="0" fill="#F3F0FF"/>
+<line x1="514" y1="312" x2="514" y2="374" stroke="#E3E8F1"/>
+<text x="524" y="336" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Site operations agent</text>
+<text x="524" y="352" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Package component and content variants</text>
+<rect x="668" y="312" width="154" height="62" rx="0" fill="#F3F0FF"/>
+<line x1="668" y1="312" x2="668" y2="374" stroke="#E3E8F1"/>
+<text x="678" y="336" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Hold for review</text>
+<text x="678" y="352" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">No autonomous production publishing</text>
+<rect x="822" y="312" width="154" height="62" rx="0" fill="#F3F0FF"/>
+<line x1="822" y1="312" x2="822" y2="374" stroke="#E3E8F1"/>
+<text x="832" y="336" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Evaluation support</text>
+<text x="832" y="352" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Summarize performance and next actions</text>
+<rect x="76" y="374" width="920" height="20" rx="0" fill="#182150"/>
+<text x="90" y="388" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="700" fill="#FFFFFF" letter-spacing="2">— Line of visibility —</text>
+<rect x="76" y="394" width="130" height="62" rx="0" fill="#F0F4FA"/>
+<line x1="76" y1="456" x2="996" y2="456" stroke="#E3E8F1"/>
+<text x="86" y="422" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800" fill="#141B3D" letter-spacing="0">Backstage human actions</text>
+<text x="86" y="438" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="7" font-weight="400" fill="#5E6D83" letter-spacing="0">UX AND MERCHANDISING TEAMS</text>
+<rect x="206" y="394" width="154" height="62" rx="0" fill="#FFFFFF"/>
+<line x1="206" y1="394" x2="206" y2="456" stroke="#E3E8F1"/>
+<text x="216" y="418" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">UX and merchandising</text>
+<text x="216" y="434" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Set objectives and research questions</text>
+<rect x="360" y="394" width="154" height="62" rx="0" fill="#FFFFFF"/>
+<line x1="360" y1="394" x2="360" y2="456" stroke="#E3E8F1"/>
+<text x="370" y="418" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Research and prioritization</text>
+<text x="370" y="434" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Validate signals and recommendation rele</text>
+<rect x="514" y="394" width="154" height="62" rx="0" fill="#FFFFFF"/>
+<line x1="514" y1="394" x2="514" y2="456" stroke="#E3E8F1"/>
+<text x="524" y="418" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Design and content review</text>
+<text x="524" y="434" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Inspect brand, UX and accessibility</text>
+<rect x="668" y="394" width="154" height="62" rx="0" fill="#FFFFFF" stroke="#3B82F6" stroke-width="2"/>
+<line x1="668" y1="394" x2="668" y2="456" stroke="#E3E8F1"/>
+<text x="678" y="418" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Human command</text>
+<text x="678" y="434" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Approve, revise, or reject change</text>
+<rect x="822" y="394" width="154" height="62" rx="0" fill="#FFFFFF"/>
+<line x1="822" y1="394" x2="822" y2="456" stroke="#E3E8F1"/>
+<text x="832" y="418" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">UX and commerce review</text>
+<text x="832" y="434" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Interpret results and decide next iterat</text>
+<rect x="76" y="456" width="920" height="20" rx="0" fill="#182150"/>
+<text x="90" y="470" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="700" fill="#FFFFFF" letter-spacing="2">— Line of internal interaction —</text>
+<rect x="76" y="476" width="130" height="62" rx="0" fill="#F0F4FA"/>
+<line x1="76" y1="538" x2="996" y2="538" stroke="#E3E8F1"/>
+<text x="86" y="504" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800" fill="#141B3D" letter-spacing="0">Supporting systems</text>
+<text x="86" y="520" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="7" font-weight="400" fill="#5E6D83" letter-spacing="0">TOOLS AND INFRASTRUCTURE</text>
+<rect x="206" y="476" width="154" height="62" rx="0" fill="#EFF9F8"/>
+<line x1="206" y1="476" x2="206" y2="538" stroke="#E3E8F1"/>
+<text x="216" y="500" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Shopify DTC</text>
+<text x="216" y="516" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Storefront and CRM</text>
+<rect x="360" y="476" width="154" height="62" rx="0" fill="#EFF9F8"/>
+<line x1="360" y1="476" x2="360" y2="538" stroke="#E3E8F1"/>
+<text x="370" y="500" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Analytics instrumentation</text>
+<text x="370" y="516" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Behavioral tracking and analysis</text>
+<rect x="514" y="476" width="154" height="62" rx="0" fill="#EFF9F8"/>
+<line x1="514" y1="476" x2="514" y2="538" stroke="#E3E8F1"/>
+<text x="524" y="500" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Agent-ready design system</text>
+<text x="524" y="516" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Tokens, components, brand constraints</text>
+<rect x="668" y="476" width="154" height="62" rx="0" fill="#EFF9F8"/>
+<line x1="668" y1="476" x2="668" y2="538" stroke="#E3E8F1"/>
+<text x="678" y="500" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Review and release workflow</text>
+<text x="678" y="516" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Approval surface and deployment path</text>
+<rect x="822" y="476" width="154" height="62" rx="0" fill="#EFF9F8"/>
+<line x1="822" y1="476" x2="822" y2="538" stroke="#E3E8F1"/>
+<text x="832" y="500" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Monitoring and rollback</text>
+<text x="832" y="516" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Performance checks and reversibility</text>
+<rect x="76" y="538" width="130" height="62" rx="0" fill="#F0F4FA"/>
+<line x1="76" y1="600" x2="996" y2="600" stroke="#E3E8F1"/>
+<text x="86" y="566" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800" fill="#141B3D" letter-spacing="0">Evidence and data</text>
+<text x="86" y="582" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="7" font-weight="400" fill="#5E6D83" letter-spacing="0">SIGNALS AND TRACEABILITY</text>
+<rect x="206" y="538" width="154" height="62" rx="0" fill="#F3F8FF"/>
+<line x1="206" y1="538" x2="206" y2="600" stroke="#E3E8F1"/>
+<text x="216" y="562" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Behavioral signals</text>
+<text x="216" y="578" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Views, journeys and drop-off events</text>
+<rect x="360" y="538" width="154" height="62" rx="0" fill="#F3F8FF"/>
+<line x1="360" y1="538" x2="360" y2="600" stroke="#E3E8F1"/>
+<text x="370" y="562" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">CRM + analytics</text>
+<text x="370" y="578" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Ranked, source-linked recommendations</text>
+<rect x="514" y="538" width="154" height="62" rx="0" fill="#F3F8FF"/>
+<line x1="514" y1="538" x2="514" y2="600" stroke="#E3E8F1"/>
+<text x="524" y="562" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Change specification</text>
+<text x="524" y="578" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Variant, rationale and test brief</text>
+<rect x="668" y="538" width="154" height="62" rx="0" fill="#F3F8FF"/>
+<line x1="668" y1="538" x2="668" y2="600" stroke="#E3E8F1"/>
+<text x="678" y="562" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Decision record</text>
+<text x="678" y="578" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Reviewer, status, rationale and version</text>
+<rect x="822" y="538" width="154" height="62" rx="0" fill="#F3F8FF"/>
+<line x1="822" y1="538" x2="822" y2="600" stroke="#E3E8F1"/>
+<text x="832" y="562" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Experiment measures</text>
+<text x="832" y="578" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Conversion and operational velocity</text>
+<rect x="76" y="600" width="920" height="20" rx="0" fill="#182150"/>
+<text x="90" y="614" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="700" fill="#FFFFFF" letter-spacing="2">— Control and accountability boundary —</text>
+<rect x="76" y="620" width="130" height="62" rx="0" fill="#F0F4FA"/>
+<line x1="76" y1="682" x2="996" y2="682" stroke="#E3E8F1"/>
+<text x="86" y="648" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800" fill="#141B3D" letter-spacing="0">Governance</text>
+<text x="86" y="664" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="7" font-weight="400" fill="#5E6D83" letter-spacing="0">CONTROLS AND APPROVAL</text>
+<rect x="206" y="620" width="154" height="62" rx="0" fill="#FFF3E9"/>
+<line x1="206" y1="620" x2="206" y2="682" stroke="#E3E8F1"/>
+<text x="216" y="644" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Data access boundaries</text>
+<text x="216" y="660" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Approved sources and privacy constraints</text>
+<rect x="360" y="620" width="154" height="62" rx="0" fill="#FFF3E9"/>
+<line x1="360" y1="620" x2="360" y2="682" stroke="#E3E8F1"/>
+<text x="370" y="644" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Evidence traceability</text>
+<text x="370" y="660" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Every recommendation linked to signals</text>
+<rect x="514" y="620" width="154" height="62" rx="0" fill="#FFF3E9"/>
+<line x1="514" y1="620" x2="514" y2="682" stroke="#E3E8F1"/>
+<text x="524" y="644" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Preflight checks</text>
+<text x="524" y="660" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Brand, accessibility and component rules</text>
+<rect x="668" y="620" width="154" height="62" rx="0" fill="#FFF3E9"/>
+<line x1="668" y1="620" x2="668" y2="682" stroke="#E3E8F1"/>
+<text x="678" y="644" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Mandatory approval gate</text>
+<text x="678" y="660" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Explicit human sign-off before productio</text>
+<rect x="822" y="620" width="154" height="62" rx="0" fill="#FFF3E9"/>
+<line x1="822" y1="620" x2="822" y2="682" stroke="#E3E8F1"/>
+<text x="832" y="644" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Audit and rollback</text>
+<text x="832" y="660" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Review impact and revert if necessary</text>
+<rect x="76" y="682" width="130" height="62" rx="0" fill="#F0F4FA"/>
+<line x1="76" y1="744" x2="996" y2="744" stroke="#E3E8F1"/>
+<text x="86" y="710" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="11" font-weight="800" fill="#141B3D" letter-spacing="0">Service outcomes</text>
+<text x="86" y="726" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="7" font-weight="400" fill="#5E6D83" letter-spacing="0">EXPECTED OR REPORTED VALUE</text>
+<rect x="206" y="682" width="154" height="62" rx="0" fill="#F0FBF4"/>
+<line x1="206" y1="682" x2="206" y2="744" stroke="#E3E8F1"/>
+<text x="216" y="706" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Opportunity visibility</text>
+<text x="216" y="722" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Find actionable storefront friction</text>
+<rect x="360" y="682" width="154" height="62" rx="0" fill="#F0FBF4"/>
+<line x1="360" y1="682" x2="360" y2="744" stroke="#E3E8F1"/>
+<text x="370" y="706" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Prioritized work</text>
+<text x="370" y="722" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Less distance between insight and action</text>
+<rect x="514" y="682" width="154" height="62" rx="0" fill="#F0FBF4"/>
+<line x1="514" y1="682" x2="514" y2="744" stroke="#E3E8F1"/>
+<text x="524" y="706" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Faster prototyping</text>
+<text x="524" y="722" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Reported page updates prepared in hours</text>
+<rect x="668" y="682" width="154" height="62" rx="0" fill="#F0FBF4"/>
+<line x1="668" y1="682" x2="668" y2="744" stroke="#E3E8F1"/>
+<text x="678" y="706" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Controlled deployment</text>
+<text x="678" y="722" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Zero unreviewed agent changes published</text>
+<rect x="822" y="682" width="154" height="62" rx="0" fill="#F0FBF4"/>
+<line x1="822" y1="682" x2="822" y2="744" stroke="#E3E8F1"/>
+<text x="832" y="706" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10.5" font-weight="700" fill="#141B3D" letter-spacing="0">Continuous improvement</text>
+<text x="832" y="722" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="8" font-weight="400" fill="#455670" letter-spacing="0">Operational and conversion targets monit</text>
+<rect x="628" y="768" width="240" height="34" rx="8" fill="#1F2937" stroke="#374151" stroke-width="1" opacity="0.97"/>
+<g transform="translate(638,778) scale(0.583)" stroke="#E2E8F0" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M8 12h8"/></g>
+<g transform="translate(662,778) scale(0.583)" stroke="#E2E8F0" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M8 12h8"/></g>
+<text x="684" y="789" font-family="JetBrains Mono, monospace" font-size="10" font-weight="400" fill="#E2E8F0" letter-spacing="0">100%</text>
+<g transform="translate(724,778) scale(0.583)" stroke="#E2E8F0" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="7" width="14" height="10" rx="2"/></g>
+<g transform="translate(750,778) scale(0.583)" stroke="#E2E8F0" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 1 3 6"/><path d="M4 18v-6h6"/></g>
+<g transform="translate(776,778) scale(0.583)" stroke="#E2E8F0" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v20M16 2v20M2 8h20M2 16h20"/></g>
+<rect x="0" y="816" width="1440" height="40" rx="0" fill="#0B0F1A"/>
+<line x1="0" y1="816.5" x2="1440" y2="816.5" stroke="#374151"/>
+<text x="44" y="842" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#FFFFFF" letter-spacing="1">▸ AISTHEHKNE CONTRAST LINT</text>
+<rect x="250" y="826" width="104" height="22" rx="99" fill="#10B981" opacity="0.16"/>
+<text x="274" y="841" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="10" font-weight="700" fill="#34D399" letter-spacing="0">26 pairs passed</text>
+<text x="382" y="841" font-family="JetBrains Mono, monospace" font-size="9" font-weight="400" fill="#6B7280" letter-spacing="0">Target: WCAG 2.2 AA</text>
+<rect x="0" y="856" width="1440" height="44" rx="0" fill="#111827"/>
+<line x1="0" y1="856.5" x2="1440" y2="856.5" stroke="#374151"/>
+<text x="44" y="883" font-family="JetBrains Mono, monospace" font-size="10" font-weight="400" fill="#6B7280" letter-spacing="1">PHOENIX TEKTON · 2026 · BUILD 0.1.0</text>
+<text x="320" y="883" font-family="JetBrains Mono, monospace" font-size="10" font-weight="400" fill="#94A3B8" letter-spacing="1">PORTFOLIO CASE STUDY · FUTURE-STATE</text>
+<rect x="876" y="865" width="148" height="26" rx="99" fill="#1F2937" opacity="0.85"/>
+<circle cx="889" cy="878" r="3.5" fill="#34D399"/>
+<g transform="translate(898,871) scale(0.500)" stroke="#94A3B8" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M4 10h3M4 14h3M17 10h3M17 14h3M10 4v3M14 4v3M10 17v3M14 17v3"/></g>
+<text x="916" y="882" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="700" fill="#E2E8F0" letter-spacing="0.8">ENGINE · WASM</text>
+<rect x="1032" y="865" width="148" height="26" rx="99" fill="#1F2937" opacity="0.85"/>
+<circle cx="1045" cy="878" r="3.5" fill="#94A3B8"/>
+<g transform="translate(1054,871) scale(0.500)" stroke="#94A3B8" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 13l3 3 3-3M12 8v8"/></g>
+<text x="1072" y="882" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="700" fill="#E2E8F0" letter-spacing="0.8">FORMAT · STANDALONE</text>
+<rect x="1188" y="865" width="148" height="26" rx="99" fill="#1F2937" opacity="0.85"/>
+<circle cx="1201" cy="878" r="3.5" fill="#34D399"/>
+<g transform="translate(1210,871) scale(0.500)" stroke="#94A3B8" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4 10-11"/></g>
+<text x="1228" y="882" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="700" fill="#E2E8F0" letter-spacing="0.8">STRUCTURE · VALID</text>
+<rect x="1344" y="865" width="148" height="26" rx="99" fill="#1F2937" opacity="0.85"/>
+<circle cx="1357" cy="878" r="3.5" fill="#34D399"/>
+<g transform="translate(1366,871) scale(0.500)" stroke="#94A3B8" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></g>
+<text x="1384" y="882" font-family="Plus Jakarta Sans, Inter, sans-serif" font-size="9" font-weight="700" fill="#E2E8F0" letter-spacing="0.8">WCAG AA · PASS</text></svg>

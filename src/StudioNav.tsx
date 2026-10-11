@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {
   LayoutGrid,
   Frame,
@@ -69,93 +70,120 @@ export function StudioNav(props: StudioNavProps) {
 
       <div className="w-8 h-px bg-gray-700 shrink-0 self-center mb-2" />
 
-      {/* Document group — the lifecycle lives at the top of the menu */}
+      {/* The workflow, grouped: DOCUMENT (lifecycle) → AUTHOR (the build
+          surfaces, canvas first) → SHIP (the AA gate before the export).
+          Group labels = tiny caps, same language as the toolbar/theme panel. */}
       <div className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden py-1">
-        <NavItem
-          expanded={expanded}
-          icon={<FilePlus2 className="w-5 h-5 shrink-0" />}
-          label="New Blueprint"
-          hint="Pick starter or example"
-          active={false}
-          onClick={props.onNew}
-        />
-        <NavItem
-          expanded={expanded}
-          icon={<FolderOpen className="w-5 h-5 shrink-0" />}
-          label="Open Blueprint"
-          hint=".yaml or .json file"
-          active={false}
-          onClick={props.onOpen}
-        />
-        <NavItem
-          expanded={expanded}
-          icon={<Save className="w-5 h-5 shrink-0" />}
-          label="Save"
-          hint="Download current document"
-          active={false}
-          disabled={!props.canSave}
-          onClick={props.onSave}
-        />
-        <NavItem
-          expanded={expanded}
-          icon={<Braces className="w-5 h-5 shrink-0" />}
-          label="Save JSON"
-          hint="Structured format (PIN payload)"
-          active={false}
-          disabled={!props.canSave}
-          onClick={props.onSaveJson}
-        />
-        <NavItem
-          expanded={expanded}
-          icon={<LayoutGrid className="w-5 h-5 shrink-0" />}
-          label="Visual Architect"
-          hint="Structured editor"
-          active={props.openSection === 'architect'}
-          onClick={() => props.onToggleSection('architect')}
-        />
-        <NavItem
-          expanded={expanded}
-          icon={<Frame className="w-5 h-5 shrink-0" />}
-          label="Canvas"
-          hint="Blueprint workspace"
-          active={props.openSection === null}
-          onClick={props.onFocusCanvas}
-        />
-        <NavItem
-          expanded={expanded}
-          icon={<ShieldCheck className="w-5 h-5 shrink-0" />}
-          label="Contrast Lint"
-          hint="WCAG 2.2 AA gate"
-          active={props.terminalOpen}
-          onClick={props.onToggleTerminal}
-        />
-        <NavItem
-          expanded={expanded}
-          icon={<Palette className="w-5 h-5 shrink-0" />}
-          label="Theme Colors"
-          hint="Live WCAG lint"
-          active={props.openSection === 'theme'}
-          onClick={() => props.onToggleSection('theme')}
-        />
-        <NavItem
-          expanded={expanded}
-          icon={<FileCode className="w-5 h-5 shrink-0" />}
-          label="YAML Source"
-          hint="The headless format"
-          active={props.openSection === 'yaml'}
-          onClick={() => props.onToggleSection('yaml')}
-        />
-        <NavItem
-          expanded={expanded}
-          icon={<Download className="w-5 h-5 shrink-0" />}
-          label="Export"
-          hint="HTML + data layer"
-          active={false}
-          disabled={!props.canExport}
-          onClick={props.onExport}
-        />
+        <NavGroup label="Document" expanded={expanded}>
+          <NavItem
+            expanded={expanded}
+            icon={<FilePlus2 className="w-5 h-5 shrink-0" />}
+            label="New Blueprint"
+            hint="Pick starter or example"
+            active={false}
+            onClick={props.onNew}
+          />
+          <NavItem
+            expanded={expanded}
+            icon={<FolderOpen className="w-5 h-5 shrink-0" />}
+            label="Open Blueprint"
+            hint=".yaml or .json file"
+            active={false}
+            onClick={props.onOpen}
+          />
+          <NavItem
+            expanded={expanded}
+            icon={<Save className="w-5 h-5 shrink-0" />}
+            label="Save"
+            hint="Download current document"
+            active={false}
+            disabled={!props.canSave}
+            onClick={props.onSave}
+          />
+          <NavItem
+            expanded={expanded}
+            icon={<Braces className="w-5 h-5 shrink-0" />}
+            label="Save JSON"
+            hint="Structured format (PIN payload)"
+            active={false}
+            disabled={!props.canSave}
+            onClick={props.onSaveJson}
+          />
+        </NavGroup>
+        <NavGroup label="Author" expanded={expanded}>
+          <NavItem
+            expanded={expanded}
+            icon={<Frame className="w-5 h-5 shrink-0" />}
+            label="Blueprint Canvas"
+            hint="The workspace — the grid you fill"
+            active={props.openSection === null}
+            onClick={props.onFocusCanvas}
+          />
+          <NavItem
+            expanded={expanded}
+            icon={<LayoutGrid className="w-5 h-5 shrink-0" />}
+            label="Visual Architect"
+            hint="The model: metadata, stages, lanes"
+            active={props.openSection === 'architect'}
+            onClick={() => props.onToggleSection('architect')}
+          />
+          <NavItem
+            expanded={expanded}
+            icon={<Palette className="w-5 h-5 shrink-0" />}
+            label="Theme Colors"
+            hint="Live WCAG verdicts"
+            active={props.openSection === 'theme'}
+            onClick={() => props.onToggleSection('theme')}
+          />
+          <NavItem
+            expanded={expanded}
+            icon={<FileCode className="w-5 h-5 shrink-0" />}
+            label="YAML Source"
+            hint="The headless layer"
+            active={props.openSection === 'yaml'}
+            onClick={() => props.onToggleSection('yaml')}
+          />
+        </NavGroup>
+        <NavGroup label="Ship" expanded={expanded}>
+          <NavItem
+            expanded={expanded}
+            icon={<ShieldCheck className="w-5 h-5 shrink-0" />}
+            label="Contrast Lint"
+            hint="The WCAG 2.2 AA gate — check first"
+            active={props.terminalOpen}
+            onClick={props.onToggleTerminal}
+          />
+          <NavItem
+            expanded={expanded}
+            icon={<Download className="w-5 h-5 shrink-0" />}
+            label="Export"
+            hint="HTML + data layer"
+            active={false}
+            disabled={!props.canExport}
+            onClick={props.onExport}
+          />
+        </NavGroup>
       </div>
     </nav>
+  );
+}
+
+/** A workflow group: a labeled zone (role=group) — the label ships only in
+ * the expanded rail, so the collapsed rail never reflows. */
+function NavGroup({
+  label,
+  expanded,
+  children,
+}: {
+  label: string;
+  expanded: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <div role="group" aria-label={label} className="tk-nav-group">
+      {expanded && <div className="tk-nav-group-label">{label}</div>}
+      {children}
+    </div>
   );
 }
 

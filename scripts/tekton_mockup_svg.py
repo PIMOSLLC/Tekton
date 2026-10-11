@@ -171,39 +171,39 @@ def board_default(panel_open=True, rail_expanded=False):
     out.append(f'<g transform="translate({rail_w // 2 - 13},{59}) scale(0.05)">{L_LOGO}</g>')
     out.append(R(rail_w // 2 - 14, 44 + 56, 28, 1, BORDER))
 
-    items = [
-        ("file-plus", "NEW BLUEPRINT", "Pick starter or example", False, False),
-        ("folder-open", "OPEN BLUEPRINT", ".yaml or .json file", False, False),
-        ("save", "SAVE", "Download current document", False, True),
-        ("braces", "SAVE JSON", "Structured format (PIN payload)", False, True),
-        ("layout-grid", "VISUAL ARCHITECT", "Structured editor", True, False),
-        ("frame", "CANVAS", "Blueprint workspace", False, False),
-        ("shield-check", "CONTRAST LINT", "WCAG 2.2 AA gate", True, False),
-        ("palette", "THEME COLORS", "Live WCAG lint", False, False),
-        ("file-code", "YAML SOURCE", "The headless format", False, False),
-        ("download", "EXPORT", "HTML + data layer", False, False),
+    groups = [
+        ("DOCUMENT", [
+            ("file-plus", "NEW BLUEPRINT", "Pick starter or example", False, False),
+            ("folder-open", "OPEN BLUEPRINT", ".yaml or .json file", False, False),
+            ("save", "SAVE", "Download current document", False, True),
+            ("braces", "SAVE JSON", "Structured format (PIN payload)", False, True),
+        ]),
+        ("AUTHOR", [
+            ("frame", "BLUEPRINT CANVAS", "The workspace", False, False),
+            ("layout-grid", "VISUAL ARCHITECT", "The model: metadata, stages, lanes", True, False),
+            ("palette", "THEME COLORS", "Live WCAG verdicts", False, False),
+            ("file-code", "YAML SOURCE", "The headless layer", False, False),
+        ]),
+        ("SHIP", [
+            ("shield-check", "CONTRAST LINT", "The WCAG 2.2 AA gate — check first", True, False),
+            ("download", "EXPORT", "HTML + data layer", False, False),
+        ]),
     ]
     y = 44 + 108
-    for ic, label, hint, active, disabled in items:
-        col_icon = "#94A3B8"
-        if active:
-            col_icon = "#3B82F6"
-        if disabled:
-            col_icon = "#4B5563"
-        if rail_expanded:
+    for g_name, g_items in groups:
+        out.append(T(14, y + 4, g_name, 9, 800, "#94A3B8", ls=1.8))
+        y += 20
+        for ic, label, hint, active, disabled in g_items:
+            col_icon = "#94A3B8"
             if active:
-                out.append(R(8, y - 2, 224, 44, "#1E40AF", 8, opacity=0.22))
-                out.append(R(0, y - 2, 3, 44, "#3B82F6", 2))
+                col_icon = "#3B82F6"
+            if disabled:
+                col_icon = "#4B5563"
             out.append(icon(ic, 16, y + 2, 20, col_icon))
             c_label = "#93C5FD" if active else ("#4B5563" if disabled else "#E2E8F0")
-            out.append(T(46, y + 16, label, 11, 800, c_label, ls=0.4))
-            out.append(T(46, y + 31, hint, 9, 400, "#64748B"))
-            y += 44 + 4
-        else:
-            if active:
-                out.append(R(8, y, 40, 40, "#1E40AF", 8, opacity=0.25))
-            out.append(icon(ic, 18, y + 10, 20, col_icon))
-            y += 44
+            out.append(T(46, y + 18, label, 11, 800, c_label, ls=0.4))
+            out.append(T(46, y + 32, hint, 9, 400, "#64748B"))
+            y += 48
 
     mx = rail_w
     main_w = 1440 - mx
@@ -244,6 +244,8 @@ def board_default(panel_open=True, rail_expanded=False):
         out.append(f'<line x1="{px}" y1="{BAND_TOP + 46}" x2="{px + pw}" y2="{BAND_TOP + 46}" stroke="{BORDER}"/>')
 
         fy = BAND_TOP + 62
+        out.append(T(px + 20, fy + 8, "DOCUMENT", 9, 800, "#94A3B8", ls=1.8))
+        fy += 18
         def field(fy, label, help_text, value, h=30):
             lines = [T(px + 20, fy + 12, label, 11, 600, "#E2E8F0"),
                      T(px + 20, fy + 27, help_text, 9, 400, "#6B7280", anchor="start"),
@@ -258,7 +260,7 @@ def board_default(panel_open=True, rail_expanded=False):
         out.extend(lines)
         out.append(f'<line x1="{px + 20}" y1="{fy}" x2="{px + pw - 20}" y2="{fy}" stroke="{BORDER}"/>')
         fy += 16
-        out.append(T(px + 20, fy + 10, "CHRONOLOGICAL STAGES", 10, 700, "#94A3B8", ls=2))
+        out.append(T(px + 20, fy + 10, "STAGES", 10, 800, "#94A3B8", ls=2))
         out.append(R(px + 174, fy, 66, 17, "#3B82F6", 99, opacity=0.14))
         out.append(T(px + 207, fy + 13, "5 STAGES", 9, 400, "#93C5FD", MONO, anchor="middle", caps=False))
         fy += 26

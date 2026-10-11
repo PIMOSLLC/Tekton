@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import type { BlueprintLane, BlueprintStage } from './types';
 import { LANE_TINT_SWATCHES, LANE_KINDS, laneKindLabel } from './types';
 
@@ -40,10 +42,22 @@ export interface VisualArchitectProps {
  * the prototype's hover-only pattern fails WCAG 2.2 and stays rejected).
  */
 export function VisualArchitect(props: VisualArchitectProps) {
+  // The accordion: ONE lane open at a time (the app's one-layer doctrine).
+  // Lane 0 starts open so the full editing pattern is visible on boot; a
+  // freshly added lane opens itself, ready for typing.
+  const [openLane, setOpenLane] = useState<number | null>(0);
+  const [laneCount, setLaneCount] = useState(props.lanes.length);
+  useEffect(() => {
+    if (props.lanes.length > laneCount) setOpenLane(props.lanes.length - 1);
+    setLaneCount(props.lanes.length);
+  }, [props.lanes.length, laneCount]);
+
   return (
     <div className="tk-architect">
       <section className="tk-arch-section">
-        <h3>Document metadata</h3>
+        <div className="tk-arch-group-label" role="group" aria-label="Document">
+          DOCUMENT
+        </div>
         <label className="tk-field">
           <span>Tagline</span>
           <span className="tk-field-help">
@@ -80,10 +94,10 @@ export function VisualArchitect(props: VisualArchitectProps) {
       </section>
 
       <section className="tk-arch-section">
-        <h3>
-          Chronological stages
+        <div className="tk-arch-group-label" role="group" aria-label="Stages">
+          <span>Stages</span>
           <span className="tk-count-pill">{props.stages.length} stages</span>
-        </h3>
+        </div>
         {props.stages.map((stage, i) => (
           <div className="tk-row-card" key={`stage-${i}`}>
             <span className="tk-grab" aria-hidden="true">⋮⋮</span>
@@ -119,134 +133,180 @@ export function VisualArchitect(props: VisualArchitectProps) {
       </section>
 
       <section className="tk-arch-section">
-        <h3>
-          Operational lanes
+        <div className="tk-arch-group-label" role="group" aria-label="Lanes">
+          <span>Lanes</span>
           <span className="tk-count-pill">{props.lanes.length} lanes</span>
-        </h3>
-        {props.lanes.map((lane, i) => (
-          <div className="tk-row-card" key={`lane-${i}`}>
-            <span className="tk-grab" aria-hidden="true">⋮⋮</span>
-            <div className="tk-row-card-main">
-              <input
-                type="text"
-                value={lane.name}
-                aria-label={`Lane ${i + 1} name`}
-                onChange={(e) => props.onLaneChange(i, 'name', e.target.value)}
-              />
-              <input
-                type="text"
-                value={lane.blurb ?? ''}
-                aria-label={`Lane ${i + 1} description`}
-                placeholder="Lane description…"
-                onChange={(e) => props.onLaneChange(i, 'blurb', e.target.value)}
-              />
-              <select
-                value={lane.kind ?? ''}
-                aria-label={`Lane ${i + 1} kind`}
-                onChange={(e) => props.onLaneChange(i, 'kind', e.target.value)}
-              >
-                <option value="">— no kind —</option>
-                {LANE_KINDS.map((k) => (
-                  <option key={k} value={k}>{laneKindLabel(k)}</option>
-                ))}
-              </select>
-              <input
-                type="text"
-                value={lane.divider ?? ''}
-                aria-label={`Lane ${i + 1} separation line`}
-                placeholder="Separation line label (e.g. — Line of visibility —)…"
-                onChange={(e) => props.onLaneChange(i, 'divider', e.target.value)}
-              />
-              {/* Row color — a curated, engine-validated swatch palette instead
-                  of a free color picker: only tints that pass AA with the
-                  card text are offered, so a failing pair cannot be picked. */}
-              <div
-                className="tk-tint-field"
-                role="group"
-                aria-label={`Lane ${i + 1}: card colors that pass AA`}
-              >
-                {LANE_TINT_SWATCHES.map((s) => {
-                  const verdict = props.swatchVerdicts[s.hex];
-                  const pass = verdict?.pass ?? false;
-                  const selected = (lane.tint ?? '').toUpperCase() === s.hex.toUpperCase();
-                  if (!pass && !selected) return null;
-                  return (
-                    <button
-                      key={s.hex}
-                      type="button"
-                      className={`tk-swatch ${selected ? 'is-selected' : ''}`}
-                      style={{ background: s.hex }}
-                      aria-pressed={selected}
-                      aria-label={`Card color: ${s.name}${selected ? ' (current)' : ''}`}
-                      title={selected ? `${s.name} — current color` : `${s.name} — ${verdict?.ratio.toFixed(2)}:1, passes AA`}
-                      onClick={() => props.onLaneChange(i, 'tint', selected ? '' : s.hex)}
-                    />
-                  );
-                })}
-                <button
-                  type="button"
-                  className="tk-remove"
-                  aria-label={`Clear lane ${i + 1} card color`}
-                  disabled={!lane.tint}
-                  onClick={() => props.onLaneChange(i, 'tint', '')}
-                >
-                  ×
-                </button>
-              </div>
-              {/* Live AA verdict for this row's color — a warn + fix path, never
-                  a dead end: apply the engine's suggested background, or reset
-                  to the kind's audited default. The canvas stays live either way. */}
-              {props.tintWarnings[lane.id] && (
-                <div className="tk-tint-warning" role="status" data-testid="tint-warning">
-                  <span className="tk-tint-warning-text">
-                    Card text on this row = {props.tintWarnings[lane.id].ratio.toFixed(2)}:1 —
-                    fails WCAG AA (needs 4.5:1)
-                  </span>
-                  {props.tintWarnings[lane.id].suggestionBg && (
-                    <button
-                      type="button"
-                      className="tk-fix"
-                      onClick={() =>
-                        props.onLaneChange(
-                          i,
-                          'tint',
-                          props.tintWarnings[lane.id].suggestionBg ?? '',
-                        )
-                      }
-                    >
-                      Apply suggested color
-                    </button>
-                  )}
-                  {lane.tint && (
-                    <button
-                      type="button"
-                      className="tk-fix"
-                      onClick={() => props.onLaneChange(i, 'tint', '')}
-                    >
-                      Reset to kind default
-                    </button>
-                  )}
+        </div>
+        {props.lanes.map((lane, i) =>
+          openLane === i ? (
+            /* THE OPEN LANE — the full editing card: shared compact head +
+               all controls; the fold button collapses it */
+            <div className="tk-row-card tk-lane-open" key={`lane-${i}`}>
+              <span className="tk-grab" aria-hidden="true">⋮⋮</span>
+              <div className="tk-row-card-main">
+                <div className="tk-lane-head">
+                  <input
+                    type="text"
+                    value={lane.name}
+                    aria-label={`Lane ${i + 1} name`}
+                    onChange={(e) => props.onLaneChange(i, 'name', e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="tk-lane-fold"
+                    aria-expanded="true"
+                    aria-label={`Collapse lane ${i + 1}`}
+                    title="Collapse this lane"
+                    onClick={() => setOpenLane(null)}
+                  >
+                    <ChevronDown className="w-4 h-4" aria-hidden="true" />
+                  </button>
                 </div>
-              )}
-              <textarea
-                rows={2}
-                value={lane.interpretation ?? ''}
-                aria-label={`Lane ${i + 1} interpretation`}
-                placeholder="What a reader must understand about this lane (shows in the card drawer)…"
-                onChange={(e) => props.onLaneChange(i, 'interpretation', e.target.value)}
-              />
+                <input
+                  type="text"
+                  value={lane.blurb ?? ''}
+                  aria-label={`Lane ${i + 1} description`}
+                  placeholder="Lane description…"
+                  onChange={(e) => props.onLaneChange(i, 'blurb', e.target.value)}
+                />
+                <select
+                  value={lane.kind ?? ''}
+                  aria-label={`Lane ${i + 1} kind`}
+                  onChange={(e) => props.onLaneChange(i, 'kind', e.target.value)}
+                >
+                  <option value="">— no kind —</option>
+                  {LANE_KINDS.map((k) => (
+                    <option key={k} value={k}>{laneKindLabel(k)}</option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  value={lane.divider ?? ''}
+                  aria-label={`Lane ${i + 1} separation line`}
+                  placeholder="Separation line label (e.g. — Line of visibility —)…"
+                  onChange={(e) => props.onLaneChange(i, 'divider', e.target.value)}
+                />
+                {/* Row color — a curated, engine-validated swatch palette instead
+                    of a free color picker: only tints that pass AA with the
+                    card text are offered, so a failing pair cannot be picked. */}
+                <div
+                  className="tk-tint-field"
+                  role="group"
+                  aria-label={`Lane ${i + 1}: card colors that pass AA`}
+                >
+                  {LANE_TINT_SWATCHES.map((s) => {
+                    const verdict = props.swatchVerdicts[s.hex];
+                    const pass = verdict?.pass ?? false;
+                    const selected = (lane.tint ?? '').toUpperCase() === s.hex.toUpperCase();
+                    if (!pass && !selected) return null;
+                    return (
+                      <button
+                        key={s.hex}
+                        type="button"
+                        className={`tk-swatch ${selected ? 'is-selected' : ''}`}
+                        style={{ background: s.hex }}
+                        aria-pressed={selected}
+                        aria-label={`Card color: ${s.name}${selected ? ' (current)' : ''}`}
+                        title={selected ? `${s.name} — current color` : `${s.name} — ${verdict?.ratio.toFixed(2)}:1, passes AA`}
+                        onClick={() => props.onLaneChange(i, 'tint', selected ? '' : s.hex)}
+                      />
+                    );
+                  })}
+                  <button
+                    type="button"
+                    className="tk-remove"
+                    aria-label={`Clear lane ${i + 1} card color`}
+                    disabled={!lane.tint}
+                    onClick={() => props.onLaneChange(i, 'tint', '')}
+                  >
+                    ×
+                  </button>
+                </div>
+                {/* Live AA verdict for this row's color — a warn + fix path, never
+                    a dead end: apply the engine's suggested background, or reset
+                    to the kind's audited default. The canvas stays live either way. */}
+                {props.tintWarnings[lane.id] && (
+                  <div className="tk-tint-warning" role="status" data-testid="tint-warning">
+                    <span className="tk-tint-warning-text">
+                      Card text on this row = {props.tintWarnings[lane.id].ratio.toFixed(2)}:1 —
+                      fails WCAG AA (needs 4.5:1)
+                    </span>
+                    {props.tintWarnings[lane.id].suggestionBg && (
+                      <button
+                        type="button"
+                        className="tk-fix"
+                        onClick={() =>
+                          props.onLaneChange(
+                            i,
+                            'tint',
+                            props.tintWarnings[lane.id].suggestionBg ?? '',
+                          )
+                        }
+                      >
+                        Apply suggested color
+                      </button>
+                    )}
+                    {lane.tint && (
+                      <button
+                        type="button"
+                        className="tk-fix"
+                        onClick={() => props.onLaneChange(i, 'tint', '')}
+                      >
+                        Reset to kind default
+                      </button>
+                    )}
+                  </div>
+                )}
+                <textarea
+                  rows={2}
+                  value={lane.interpretation ?? ''}
+                  aria-label={`Lane ${i + 1} interpretation`}
+                  placeholder="What a reader must understand about this lane (shows in the card drawer)…"
+                  onChange={(e) => props.onLaneChange(i, 'interpretation', e.target.value)}
+                />
+              </div>
+              <button
+                type="button"
+                className="tk-remove"
+                aria-label={`Remove lane ${lane.name}`}
+                disabled={props.lanes.length <= 1}
+                onClick={() => props.onLaneRemove(i)}
+              >
+                ×
+              </button>
             </div>
-            <button
-              type="button"
-              className="tk-remove"
-              aria-label={`Remove lane ${lane.name}`}
-              disabled={props.lanes.length <= 1}
-              onClick={() => props.onLaneRemove(i)}
-            >
-              ×
-            </button>
-          </div>
-        ))}
+          ) : (
+            /* THE COLLAPSED LANE — a one-line summary; the click expands it
+               (exactly one open at a time) */
+            <div className="tk-row-card tk-lane-collapsed" key={`lane-${i}`}>
+              <span className="tk-grab" aria-hidden="true">⋮⋮</span>
+              <button
+                type="button"
+                className="tk-lane-summary"
+                aria-expanded="false"
+                aria-label={`Expand lane ${i + 1}: ${lane.name}`}
+                onClick={() => setOpenLane(i)}
+              >
+                <span className="tk-lane-name">{lane.name || 'Untitled lane'}</span>
+                {lane.kind && (
+                  <span className="tk-lane-chip">{laneKindLabel(lane.kind)}</span>
+                )}
+                {lane.tint && (
+                  <span className="tk-lane-tint-dot" style={{ background: lane.tint }} aria-hidden="true" />
+                )}
+              </button>
+              <button
+                type="button"
+                className="tk-remove"
+                aria-label={`Remove lane ${lane.name}`}
+                disabled={props.lanes.length <= 1}
+                onClick={() => props.onLaneRemove(i)}
+              >
+                ×
+              </button>
+            </div>
+          ),
+        )}
         <button type="button" className="tk-add" onClick={props.onLaneAdd}>
           + Add swimlane
         </button>

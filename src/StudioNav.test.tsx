@@ -27,6 +27,28 @@ function renderNav(expanded: boolean, onToggle: () => void) {
 }
 
 describe('StudioNav — the icon-only rail (branding lives in the AppHeader)', () => {
+  it('groups the workflow into labeled zones in workflow order', () => {
+    renderNav(true, () => {});
+    expect(screen.getByRole('group', { name: 'Document' })).toBeDefined();
+    expect(screen.getByRole('group', { name: 'Author' })).toBeDefined();
+    expect(screen.getByRole('group', { name: 'Ship' })).toBeDefined();
+    // the workflow order: Canvas leads Author; Lint leads Ship
+    const nav = screen.getByRole('navigation', { name: 'Studio navigation' });
+    const labels = [...nav.querySelectorAll('.tk-nav-group')].map((g) => {
+      return ([...g.querySelectorAll('button')].map((b) => b.textContent) || []).join('|');
+    });
+    expect(labels[0]).toContain('New Blueprint');
+    expect(labels[1]).toContain('Blueprint Canvas');
+    expect(labels[1].indexOf('Blueprint Canvas')).toBeLessThan(labels[1].indexOf('Visual Architect'));
+    expect(labels[2]).toContain('Contrast Lint');
+    expect(labels[2].indexOf('Contrast Lint')).toBeLessThan(labels[2].indexOf('Export'));
+  });
+
+  it('group labels hide in the collapsed rail (no reflow)', () => {
+    const { container } = renderNav(false, () => {});
+    expect(container.querySelectorAll('.tk-nav-group-label').length).toBe(0);
+  });
+
   it('carries no wordmark in either state — one brand bar, one brand mark', () => {
     renderNav(false, () => {});
     expect(screen.queryByText('TEKTON')).toBeNull();

@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   TransformWrapper,
   TransformComponent,
-  useControls,
 } from 'react-zoom-pan-pinch';
-import type { ReactZoomPanPinchContentRef } from 'react-zoom-pan-pinch';
+import type { ReactZoomPanPinchContentRef, ReactZoomPanPinchRef } from 'react-zoom-pan-pinch';
 import { Minus, Plus, Maximize, RotateCcw, Grid3x3 } from 'lucide-react';
 import type { ReactNode } from 'react';
 
@@ -29,10 +28,22 @@ export function CanvasViewport({ children, fitKey }: CanvasViewportProps) {
   const [scale, setScale] = useState(1);
   // View state: the dot-grid backdrop (design-tool feel; decorative, pointer-transparent).
   const [gridOn, setGridOn] = useState(true);
+  // The pan/zoom API via a ref object (never setState during commit — React
+  // forbids that ref-callback pattern); an effect re-renders once after
+  // mount/reshape so the tools receive the filled api. The tools live OUTSIDE
+  // the transform (stable in the band — never panned, zoomed, or clipped).
+  const apiRef = useRef<ReactZoomPanPinchRef | null>(null);
+  const [wired, setWired] = useState(0);
+  useEffect(() => {
+    setWired((w) => w + 1);
+  }, [fitKey]);
 
   return (
     <div className={`relative h-full w-full tk-panzoom ${gridOn ? 'tk-canvas-dotgrid' : ''}`}>
       <TransformWrapper
+        ref={(r: ReactZoomPanPinchRef | null) => {
+          apiRef.current = r;
+        }}
         key={String(fitKey ?? '')}
         initialScale={1}
         minScale={0.15}
@@ -49,51 +60,51 @@ export function CanvasViewport({ children, fitKey }: CanvasViewportProps) {
           if (typeof s === 'number' && Number.isFinite(s)) setScale(s);
         }}
       >
-        <CanvasTools scale={scale} initial={1} gridOn={gridOn} onToggleGrid={() => setGridOn((v) => !v)} />
         <TransformComponent wrapperClass="!h-full !w-full" contentClass="!w-max">
           {children}
         </TransformComponent>
       </TransformWrapper>
+      <CanvasTools api={wired ? apiRef.current : null} scale={scale} initial={1} gridOn={gridOn} onToggleGrid={() => setGridOn((v) => !v)} />
     </div>
   );
 }
 
 /**
- * Control cluster — must live INSIDE TransformWrapper for `useControls` to
- * bind to it (library-idiomatic; the render-prop instance read crashed).
+ * Control cluster — a SIBLING of the transform (positioned bottom-center of
+ * the canvas band, never panned or clipped), driving the transform via the
+ * wrapper ref. The ref fills on mount; before that the buttons no-op.
  */
 function CanvasTools({
+  api,
   scale,
   initial,
   gridOn,
   onToggleGrid,
 }: {
+  api: ReactZoomPanPinchRef | null;
   scale: number;
   initial: number;
   gridOn: boolean;
   onToggleGrid(): void;
 }) {
-  const api = useControls();
+  const run = <A extends unknown[]>(fn: ((...a: A) => Promise<unknown>) | undefined, ...a: A) => {
+    return () => {
+      void (fn as ((...x: A) => Promise<unknown>) | undefined)?.(...a);
+    };
+  };
   return (
     <div className="tk-canvas-tools" role="toolbar" aria-label="Canvas zoom controls">
-      <ToolButton label="Zoom out" onClick={() => api.zoomOut()} icon={<Minus className="w-3.5 h-3.5" />} />
+      <ToolButton label="Zoom out" onClick={run(api?.zoomOut)} icon={<Minus className="w-3.5 h-3.5" />} />
       <span className="tk-canvas-zoom" aria-live="polite">
         {Math.round((scale ?? initial) * 100)}%
       </span>
-      <ToolButton label="Zoom in" onClick={() => api.zoomIn()} icon={<Plus className="w-3.5 h-3.5" />} />
+      <ToolButton label="Zoom in" onClick={run(api?.zoomIn)} icon={<Plus className="w-3.5 h-3.5" />} />
       <ToolButton
         label="Fit blueprint (see all lanes and cards)"
-        onClick={() =>
-          // contain: show the whole grid, scaled BELOW 100% at most — a real
-          // fit, not a re-centering at fixed scale (which was a no-op when
-          // already centered, the bug the owner reported).
-          api.fitToView({ mode: 'contain', minScale: 0.15, maxScale: 1 }).catch(() => {
-            /* zero-rect environments (headless test DOM) have nothing to fit */
-          })
-        }
+        onClick={run(api?.fitToView, { mode: 'contain', minScale: 0.15, maxScale: 1 })}
         icon={<Maximize className="w-3.5 h-3.5" />}
       />
-      <ToolButton label="Reset view (100%)" onClick={() => api.resetTransform()} icon={<RotateCcw className="w-3.5 h-3.5" />} />
+      <ToolButton label="Reset view (100%)" onClick={run(api?.resetTransform)} icon={<RotateCcw className="w-3.5 h-3.5" />} />
       <ToolButton
         label={gridOn ? 'Hide grid' : 'Show grid'}
         onClick={onToggleGrid}
