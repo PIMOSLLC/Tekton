@@ -77,17 +77,6 @@ export function ExpandablePanel({
   const open = section !== null;
   const resize = (next: number) => onWidthResize(clampPanelWidth(next));
 
-  const onPointerDown = (e: React.PointerEvent) => {
-    resizing.current = true;
-    setIsResizing(true);
-    // Pointer capture keeps the drag attached to the separator across fast moves.
-    (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
-  };
-  const onPointerMove = (e: React.PointerEvent) => {
-    if (!resizing.current || !panelRef.current) return;
-    const left = panelRef.current.getBoundingClientRect().left;
-    resize(e.clientX - left);
-  };
   const endResize = () => {
     resizing.current = false;
     setIsResizing(false);
@@ -107,16 +96,12 @@ export function ExpandablePanel({
       aria-hidden={!open}
       {...(!open ? { inert: 'true' } : {})}
     >
-      {/* Inner content rides the leading edge (right-anchored) and fades —
-          the drawer GLIDES instead of revealing by a hard wipe; fixed width
-          keeps form fields from reflowing mid-animation. The right inset = the
-          resizer's width: the content's scrollbar lives LEFT of the drag
-          divider (the owner's order: content → scrollbar → grip). */}
+      {/* Inner content: flex-1 of the panel (the grip is its own flex child to
+          the right) — content → scrollbar → grip, each a real layer */}
       <div
-        className={`flex flex-col h-full ml-auto transition-opacity duration-300 ease-out motion-reduce:transition-none ${
+        className={`flex flex-col h-full min-w-0 flex-1 transition-opacity duration-300 ease-out motion-reduce:transition-none ${
           open ? 'opacity-100' : 'opacity-0'
         }`}
-        style={{ width, minWidth: width, paddingRight: open ? 10 : 0 }}
         aria-hidden={!open}
         {...(!open ? { inert: 'true' } : {})}
       >
@@ -139,37 +124,46 @@ export function ExpandablePanel({
         <div className="flex-1 overflow-y-auto overflow-x-hidden">{children}</div>
       </div>
 
-      {/* The resize separator lives on the leading edge of the workspace. */}
-      {open && (
-        <div
-          role="separator"
-          aria-orientation="vertical"
-          aria-label={`Resize ${title} width`}
-          aria-valuenow={width}
-          aria-valuemin={PANEL_MIN}
-          aria-valuemax={PANEL_MAX}
-          tabIndex={0}
-          data-testid="panel-resizer"
-          className="tk-panel-resizer"
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={endResize}
-          onPointerCancel={endResize}
-          onDoubleClick={() => resize(defaultWidth)}
-          onKeyDown={(e) => {
-            if (e.key === 'ArrowLeft') {
-              e.preventDefault();
-              onWidthResize(clampPanelWidth(width - 24));
-            } else if (e.key === 'ArrowRight') {
-              e.preventDefault();
-              onWidthResize(clampPanelWidth(width + 24));
-            } else if (e.key === 'Home') {
-              e.preventDefault();
-              resize(defaultWidth);
-            }
-          }}
-        />
-      )}
+      {/* The resize separator: a first-class flex child on the panel's right —
+          visually a scrollbar-like sliver at rest, the accent blob on
+          hover/focus; drag/arrow/Home/dblclick live here */}
+      <div
+        role="separator"
+        aria-orientation="vertical"
+        aria-label={`Resize ${title} width`}
+        aria-valuenow={open ? width : undefined}
+        aria-valuemin={PANEL_MIN}
+        aria-valuemax={PANEL_MAX}
+        tabIndex={open ? 0 : -1}
+        data-testid="panel-resizer"
+        className="tk-panel-grip"
+        {...(!open ? { inert: 'true' } : {})}
+        onPointerDown={(e) => {
+          resizing.current = true;
+          setIsResizing(true);
+          (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+        }}
+        onPointerMove={(e) => {
+          if (!resizing.current || !panelRef.current) return;
+          resize(clampPanelWidth(e.clientX - panelRef.current.getBoundingClientRect().left));
+        }}
+        onPointerUp={endResize}
+        onPointerCancel={endResize}
+        onDoubleClick={() => open && resize(defaultWidth)}
+        onKeyDown={(e) => {
+          if (!open) return;
+          if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            resize(width - 24);
+          } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            resize(width + 24);
+          } else if (e.key === 'Home') {
+            e.preventDefault();
+            resize(defaultWidth);
+          }
+        }}
+      />
     </div>
   );
 }

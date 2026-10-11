@@ -865,33 +865,33 @@
 .tk-canvas-card.is-untitled { border: 2px dashed color-mix(in srgb, #f59e0b 65%, transparent); }
 .tk-canvas-card.is-untitled strong { color: var(--color-tekton-light-text-muted); }
 
-/* Panel resize separator — user-resizable widths (drag, arrows, Home/dblclick reset) */
-.tk-panel-resizer {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
+/* Panel resize grip — a REAL flex child right of the content column:
+   content → scrollbar → grip, three clean layers (no absolute overlay
+   fighting the scrollbar for the same pixels) */
+.tk-panel-grip {
   width: 10px;
+  flex: none;
   cursor: col-resize;
   touch-action: none;
-  z-index: 5;
+  position: relative;
 }
-.tk-panel-resizer::after {
+.tk-panel-grip::after {
   content: '';
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 3px;
+  left: 3.5px;
   width: 3px;
-  border-radius: 2px;
-  background: transparent;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.09);
+  transition: background 0.15s ease;
 }
-.tk-panel-resizer:hover::after,
-.tk-panel-resizer:focus-within::after {
+.tk-panel-grip:hover::after,
+.tk-panel-grip:focus-within::after {
   background: var(--color-tekton-dark-accent-interactive);
-  opacity: 0.55;
+  opacity: 0.65;
 }
-.tk-panel-resizer:focus-visible {
+.tk-panel-grip:focus-visible {
   outline: 2px solid var(--color-tekton-dark-accent-interactive);
   outline-offset: -2px;
 }
