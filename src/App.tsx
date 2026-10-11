@@ -4,16 +4,19 @@ import { engine, type OutputFormat } from './engine/engineService';
 import type { EngineFinding, EngineIssue } from './engine/engineServiceTypes';
 import { BuildCanvas } from './BuildCanvas';
 import { CardInspector } from './CardInspector';
+import { ExpandablePanel } from './ExpandablePanel';
+import { IconRail } from './IconRail';
 import { LintTerminal } from './LintTerminal';
 import { VisualArchitect } from './VisualArchitect';
 import type { BlueprintDocument } from './types';
+import './index.css';
 import './styles/tekton-theme.css';
 import './App.css';
 
 const DEBOUNCE_MS = 150;
 const YAML_COMMIT_MS = 500;
 
-type SourceTab = 'visual' | 'yaml';
+type PanelSection = 'architect' | 'yaml' | null;
 type ViewMode = 'build' | 'preview';
 
 interface CardPosition {
@@ -24,19 +27,23 @@ interface CardPosition {
 const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'stage';
 
+/**
+ * App shell — the PIM family standard (adopted from Phoenix Insight Nexus):
+ * IconRail (56px) → ExpandablePanel (260px) → content column with a slim
+ * toolbar, the workspace (Build canvas / engine preview), the docked lint
+ * terminal, and a StatusFooter bar. The document pipeline, CardInspector, and
+ * all engine bindings are unchanged from the previous iteration.
+ */
 export function App() {
-  // Document-as-state (adopted architecture): the parsed model is the single
-  // source of truth; YAML is a derived serialization view.
   const [doc, setDoc] = useState<BlueprintDocument | null>(null);
   const [view, setView] = useState<ViewMode>('build');
-  const [sourceTab, setSourceTab] = useState<SourceTab>('visual');
+  const [panelSection, setPanelSection] = useState<PanelSection>('architect');
   const [format, setFormat] = useState<OutputFormat>('standalone');
   const [yamlText, setYamlText] = useState<string>(fixtureYaml);
   const yamlFocused = useRef(false);
   const [selectedCard, setSelectedCard] = useState<CardPosition | null>(null);
   const [terminalOpen, setTerminalOpen] = useState(true);
 
-  // Engine outputs
   const [html, setHtml] = useState<string | null>(null);
   const [renderError, setRenderError] = useState<string | null>(null);
   const [findings, setFindings] = useState<EngineFinding[]>([]);
@@ -58,7 +65,9 @@ export function App() {
         setEngineReady(true);
       }
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const updateDoc = useCallback((mutate: (draft: BlueprintDocument) => void) => {
@@ -76,17 +85,24 @@ export function App() {
     let cancelled = false;
     engine
       .serialize(doc)
-      .then((yaml) => { if (!cancelled) setYamlText(yaml); })
-      .catch(() => { /* invalid intermediate edits keep the last good YAML */ });
-    return () => { cancelled = true; };
+      .then((yaml) => {
+        if (!cancelled) setYamlText(yaml);
+      })
+      .catch(() => {
+        /* invalid intermediate edits keep the last good YAML */
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [doc]);
 
-  // YAML edits commit back into the document (debounced).
   const commitYaml = useCallback((text: string) => {
     engine
       .parse(text)
       .then(setDoc)
-      .catch(() => { /* keep editing; render gate reports the error */ });
+      .catch(() => {
+        /* keep editing; render gate reports the error */
+      });
   }, []);
   useEffect(() => {
     if (!yamlFocused.current) return;
@@ -117,37 +133,46 @@ export function App() {
         setRenderError(e instanceof Error ? e.message : String(e));
       }
     }, DEBOUNCE_MS);
-    return () => { cancelled = true; clearTimeout(t); };
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
   }, [doc, format]);
 
   // ── Edit handlers ──────────────────────────────────────────────────────
   const onMetaChange = useCallback(
     (field: 'eyebrow' | 'title' | 'intro', value: string) =>
-      updateDoc((d) => { d.meta[field] = value; }),
+      updateDoc((d) => {
+        d.meta[field] = value;
+      }),
     [updateDoc],
   );
 
   const onStageChange = useCallback(
     (index: number, field: 'name' | 'blurb', value: string) =>
-      updateDoc((d) => { d.stages[index][field] = value; }),
+      updateDoc((d) => {
+        d.stages[index][field] = value;
+      }),
     [updateDoc],
   );
 
   const onStageAdd = useCallback(
-    () => updateDoc((d) => {
-      const name = `Stage ${d.stages.length + 1}`;
-      d.stages.push({ id: slugify(name), name, blurb: '' });
-      for (const lane of d.lanes) lane.cards.push({ title: '', blurb: '' });
-    }),
+    () =>
+      updateDoc((d) => {
+        const name = `Stage ${d.stages.length + 1}`;
+        d.stages.push({ id: slugify(name), name, blurb: '' });
+        for (const lane of d.lanes) lane.cards.push({ title: '', blurb: '' });
+      }),
     [updateDoc],
   );
 
   const onStageRemove = useCallback(
-    (index: number) => updateDoc((d) => {
-      if (d.stages.length <= 1) return;
-      d.stages.splice(index, 1);
-      for (const lane of d.lanes) lane.cards.splice(index, 1);
-    }),
+    (index: number) =>
+      updateDoc((d) => {
+        if (d.stages.length <= 1) return;
+        d.stages.splice(index, 1);
+        for (const lane of d.lanes) lane.cards.splice(index, 1);
+      }),
     [updateDoc],
   );
 
@@ -165,25 +190,27 @@ export function App() {
   );
 
   const onLaneAdd = useCallback(
-    () => updateDoc((d) => {
-      const name = `Lane ${d.lanes.length + 1}`;
-      const id = slugify(name);
-      d.lanes.push({
-        id: d.lanes.some((l) => l.id === id) ? `${id}-${d.lanes.length}` : id,
-        name,
-        kind: 'backstage',
-        interpretation: '',
-        cards: d.stages.map(() => ({ title: '', blurb: '' })),
-      });
-    }),
+    () =>
+      updateDoc((d) => {
+        const name = `Lane ${d.lanes.length + 1}`;
+        const id = slugify(name);
+        d.lanes.push({
+          id: d.lanes.some((l) => l.id === id) ? `${id}-${d.lanes.length}` : id,
+          name,
+          kind: 'backstage',
+          interpretation: '',
+          cards: d.stages.map(() => ({ title: '', blurb: '' })),
+        });
+      }),
     [updateDoc],
   );
 
   const onLaneRemove = useCallback(
-    (index: number) => updateDoc((d) => {
-      if (d.lanes.length <= 1) return;
-      d.lanes.splice(index, 1);
-    }),
+    (index: number) =>
+      updateDoc((d) => {
+        if (d.lanes.length <= 1) return;
+        d.lanes.splice(index, 1);
+      }),
     [updateDoc],
   );
 
@@ -191,7 +218,9 @@ export function App() {
     (field: 'title' | 'blurb', value: string) => {
       if (!selectedCard) return;
       const { lane, stage } = selectedCard;
-      updateDoc((d) => { d.lanes[lane].cards[stage][field] = value; });
+      updateDoc((d) => {
+        d.lanes[lane].cards[stage][field] = value;
+      });
     },
     [selectedCard, updateDoc],
   );
@@ -200,12 +229,23 @@ export function App() {
     (value: string) => {
       if (!selectedCard) return;
       const { lane } = selectedCard;
-      updateDoc((d) => { d.lanes[lane].interpretation = value; });
+      updateDoc((d) => {
+        d.lanes[lane].interpretation = value;
+      });
     },
     [selectedCard, updateDoc],
   );
 
-  // ── Export ─────────────────────────────────────────────────────────────
+  // ── Shell actions ───────────────────────────────────────────────────────
+  const toggleSection = useCallback((section: Exclude<PanelSection, null>) => {
+    setPanelSection((prev) => (prev === section ? null : section));
+  }, []);
+
+  const focusCanvas = useCallback(() => {
+    setPanelSection(null);
+    setSelectedCard(null);
+  }, []);
+
   const download = useCallback(() => {
     if (!html) return;
     const blob = new Blob([html], { type: 'text/html' });
@@ -229,129 +269,125 @@ export function App() {
     [selectedCard, doc],
   );
   const stageName = useMemo(
-    () =>
-      selectedCard && doc
-        ? (doc.stages[selectedCard.stage]?.name ?? '')
-        : '',
+    () => (selectedCard && doc ? (doc.stages[selectedCard.stage]?.name ?? '') : ''),
     [selectedCard, doc],
   );
 
+  const lintFailures = findings.filter((f) => !f.aa).length;
+  const errorCount = issues.filter((i) => i.severity === 'error').length;
+
   return (
-    <div className="tk-root" data-phoenix-theme="tekton-dark">
-      <header className="tk-header">
-        <div className="tk-header-brand">
-          <h1>PHOENIX TEKTON</h1>
-          <span className="tk-tagline">Service Blueprint Studio</span>
-        </div>
-        <span className="tk-project-pill">Serta Simmons Pilot</span>
-        <div className="tk-header-actions">
-          <div className="tk-segmented" role="group" aria-label="Output format">
+    <div
+      className="dark flex h-screen bg-midnight text-gray-200 font-sans overflow-hidden"
+      data-phoenix-theme="tekton-dark"
+    >
+      <IconRail
+        openSection={panelSection}
+        terminalOpen={terminalOpen}
+        engineReady={engineReady}
+        engineError={renderError !== null}
+        onToggleSection={toggleSection}
+        onFocusCanvas={focusCanvas}
+        onToggleTerminal={() => setTerminalOpen((v) => !v)}
+        onExport={download}
+        canExport={html !== null}
+      />
+
+      <ExpandablePanel
+        section={panelSection}
+        title={panelSection === 'yaml' ? 'YAML Source' : 'Visual Architect'}
+        onClose={() => setPanelSection(null)}
+      >
+        {panelSection === 'architect' && doc && (
+          <VisualArchitect
+            eyebrow={doc.meta.eyebrow}
+            title={doc.meta.title}
+            intro={doc.meta.intro}
+            stages={doc.stages}
+            lanes={doc.lanes}
+            onMetaChange={onMetaChange}
+            onStageChange={onStageChange}
+            onStageAdd={onStageAdd}
+            onStageRemove={onStageRemove}
+            onLaneChange={onLaneChange}
+            onLaneAdd={onLaneAdd}
+            onLaneRemove={onLaneRemove}
+          />
+        )}
+        {panelSection === 'yaml' && (
+          <textarea
+            className="tk-yaml-source"
+            aria-label="Blueprint source (YAML)"
+            spellCheck={false}
+            value={yamlText}
+            onFocus={() => {
+              yamlFocused.current = true;
+            }}
+            onBlur={() => {
+              yamlFocused.current = false;
+              commitYaml(yamlText);
+            }}
+            onChange={(e) => setYamlText(e.target.value)}
+          />
+        )}
+      </ExpandablePanel>
+
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Toolbar (PIN-style slim header) */}
+        <div className="h-12 flex items-center gap-3 px-4 border-b border-gray-700 bg-gray-900 shrink-0">
+          <span className="font-mono text-[10px] text-gray-400 bg-gray-800 px-2 py-1 rounded border border-gray-700">
+            {doc?.meta.title ?? '…'}
+          </span>
+          <div className="flex bg-gray-800 rounded-md border border-gray-700 overflow-hidden" role="group" aria-label="Output format">
             <button
               type="button"
-              className={format === 'standalone' ? 'is-active' : ''}
+              className={`px-3 py-1.5 text-[11px] font-semibold transition-colors ${
+                format === 'standalone' ? 'bg-brand-secondary text-white' : 'text-gray-400 hover:text-gray-200'
+              }`}
               onClick={() => setFormat('standalone')}
             >
               Standalone
             </button>
             <button
               type="button"
-              className={format === 'wordpress' ? 'is-active' : ''}
+              className={`px-3 py-1.5 text-[11px] font-semibold transition-colors border-l border-gray-700 ${
+                format === 'wordpress' ? 'bg-brand-secondary text-white' : 'text-gray-400 hover:text-gray-200'
+              }`}
               onClick={() => setFormat('wordpress')}
             >
               WordPress
             </button>
           </div>
-          <button type="button" className="tk-btn" onClick={download} disabled={!html}>
-            Export HTML
-          </button>
-          <span className="tk-status" data-testid="engine-status">
-            {engineReady ? `engine: ${engine.backend} (wasm32)` : 'loading engine…'}
+          <div className="flex bg-gray-800 rounded-md border border-gray-700 overflow-hidden" role="group" aria-label="View mode">
+            <button
+              type="button"
+              className={`px-3 py-1.5 text-[11px] font-semibold transition-colors ${
+                view === 'build' ? 'bg-brand-secondary text-white' : 'text-gray-400 hover:text-gray-200'
+              }`}
+              onClick={() => setView('build')}
+            >
+              Build
+            </button>
+            <button
+              type="button"
+              className={`px-3 py-1.5 text-[11px] font-semibold transition-colors border-l border-gray-700 ${
+                view === 'preview' ? 'bg-brand-secondary text-white' : 'text-gray-400 hover:text-gray-200'
+              }`}
+              onClick={() => setView('preview')}
+            >
+              Preview
+            </button>
+          </div>
+          <span className="ml-auto text-[10px] text-gray-500 font-mono">
+            {view === 'build' ? 'click a card to edit · Esc closes' : 'live engine render'}
           </span>
         </div>
-      </header>
 
-      <main className="tk-layout">
-        <section className="tk-left" aria-label="Visual Architect">
-          <div className="tk-left-tabs" role="tablist">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={sourceTab === 'visual'}
-              className={sourceTab === 'visual' ? 'is-active' : ''}
-              onClick={() => setSourceTab('visual')}
-            >
-              Visual Architect
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={sourceTab === 'yaml'}
-              className={sourceTab === 'yaml' ? 'is-active' : ''}
-              onClick={() => setSourceTab('yaml')}
-            >
-              YAML Source
-            </button>
-          </div>
-          {sourceTab === 'visual' ? (
-            doc ? (
-              <VisualArchitect
-                eyebrow={doc.meta.eyebrow}
-                title={doc.meta.title}
-                intro={doc.meta.intro}
-                stages={doc.stages}
-                lanes={doc.lanes}
-                onMetaChange={onMetaChange}
-                onStageChange={onStageChange}
-                onStageAdd={onStageAdd}
-                onStageRemove={onStageRemove}
-                onLaneChange={onLaneChange}
-                onLaneAdd={onLaneAdd}
-                onLaneRemove={onLaneRemove}
-              />
-            ) : (
-              <p className="tk-loading">loading engine…</p>
-            )
-          ) : (
-            <textarea
-              className="tk-yaml-source"
-              aria-label="Blueprint source (YAML)"
-              spellCheck={false}
-              value={yamlText}
-              onFocus={() => { yamlFocused.current = true; }}
-              onBlur={() => { yamlFocused.current = false; commitYaml(yamlText); }}
-              onChange={(e) => setYamlText(e.target.value)}
-            />
-          )}
-        </section>
-
-        <section className="tk-center" aria-label="Canvas">
-          <div className="tk-canvas-toolbar">
-            <div className="tk-segmented" role="group" aria-label="View mode">
-              <button
-                type="button"
-                className={view === 'build' ? 'is-active' : ''}
-                onClick={() => setView('build')}
-              >
-                Build
-              </button>
-              <button
-                type="button"
-                className={view === 'preview' ? 'is-active' : ''}
-                onClick={() => setView('preview')}
-              >
-                Preview
-              </button>
-            </div>
-            <span className="tk-canvas-hint">
-              {view === 'build'
-                ? 'Click a card to edit it in the inspector'
-                : 'Live engine render — interactions enabled'}
-            </span>
-          </div>
-
-          <div className="tk-canvas-viewport">
+        {/* Workspace */}
+        <main className="flex-1 flex flex-col min-h-0 relative">
+          <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
             {renderError ? (
-              <div className="tk-error" role="alert" data-testid="render-error">
+              <div className="tk-error m-5" role="alert" data-testid="render-error">
                 <strong>Render blocked:</strong> {renderError}
               </div>
             ) : view === 'build' ? (
@@ -382,8 +418,25 @@ export function App() {
             open={terminalOpen}
             onToggle={() => setTerminalOpen((v) => !v)}
           />
-        </section>
-      </main>
+        </main>
+
+        {/* Status footer (PIN family language) */}
+        <footer className="h-7 flex items-center gap-5 px-4 border-t border-gray-700 bg-gray-900 text-[9px] font-mono uppercase tracking-widest text-gray-500 shrink-0">
+          <span>{doc?.meta.eyebrow ?? '—'}</span>
+          <span>{format}</span>
+          <span>{engineReady ? `engine: ${engine.backend}` : 'engine: loading'}</span>
+          <span className={errorCount === 0 ? 'text-emerald-400' : 'text-amber-400'}>
+            {errorCount === 0 ? 'valid ✓' : `${errorCount} error(s)`}
+          </span>
+          <span className={lintFailures === 0 ? 'text-emerald-400' : 'text-amber-400'}>
+            {findings.length > 0
+              ? lintFailures === 0
+                ? `wcag aa ✓ (${findings.length})`
+                : `wcag aa ✗ ${lintFailures}/${findings.length}`
+              : 'wcag aa —'}
+          </span>
+        </footer>
+      </div>
 
       <CardInspector
         open={selectedCard !== null}

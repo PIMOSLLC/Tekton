@@ -1,59 +1,64 @@
 /**
  * phoenix-Tekton editor theme — Phoenix Tekhne tokens (12 per variant, per the
- * PIMOS convention: copied from Tekhne's blank-theme.css and customized).
+ * PIMOS convention), re-aligned to the PIN FAMILY PALETTE so the studio reads
+ * as a PIM app next to Phoenix Insight Nexus and eri_pim (owner decision,
+ * 2026-10-10): midnight chrome, brand blues, Tailwind gray scale.
  *
- * Palette: the hue-230 navy family shared with the product's default blueprint
- * theme and the DLC site header — the tool speaks its own output language.
+ * The token MECHANISM is unchanged (values live here, components never hardcode
+ * colors). The blueprint OUTPUT keeps its own document theme — engine-rendered
+ * HTML is untouched by this file.
  */
 
-[data-phoenix-theme="tekton-dark"],
+/* Dark chrome — PIN's midnight shell */
+[data-phoenix-theme='tekton-dark'],
 .phoenix-tekton-dark {
   /* 60% Foundation */
-  --color-tekton-dark-bg-primary: #060d2f;
-  --color-tekton-dark-bg-secondary: #0b1734;
+  --color-tekton-dark-bg-primary: #0b0f1a; /* midnight */
+  --color-tekton-dark-bg-secondary: #111827; /* gray-900 */
 
   /* 30% Structural */
-  --color-tekton-dark-surface: #141b3d;
+  --color-tekton-dark-surface: #1f2937; /* gray-800 */
 
   /* 10% Neural */
-  --color-tekton-dark-accent: #1d4ed8;
-  --color-tekton-dark-accent-interactive: #3169e8;
+  --color-tekton-dark-accent: #3b82f6; /* brand-secondary */
+  --color-tekton-dark-accent-interactive: #60a5fa; /* blue-400 hover/focus */
 
   /* Text */
-  --color-tekton-dark-text: #f2f5fb;
-  --color-tekton-dark-text-muted: #9fb0d6;
+  --color-tekton-dark-text: #e5e7eb; /* gray-200 */
+  --color-tekton-dark-text-muted: #9ca3af; /* gray-400 */
 
   /* Borders */
-  --color-tekton-dark-border: rgba(255, 255, 255, 0.14);
-  --color-tekton-dark-border-subtle: rgba(255, 255, 255, 0.07);
+  --color-tekton-dark-border: #374151; /* gray-700 */
+  --color-tekton-dark-border-subtle: rgba(255, 255, 255, 0.06);
 
   /* Glow */
-  --color-tekton-dark-glow: rgba(49, 105, 232, 0.4);
-  --color-tekton-dark-glow-subtle: rgba(49, 105, 232, 0.18);
+  --color-tekton-dark-glow: rgba(59, 130, 246, 0.4);
+  --color-tekton-dark-glow-subtle: rgba(59, 130, 246, 0.18);
 }
 
-[data-phoenix-theme="tekton-light"],
+/* Light canvas — the Build workspace (PIN's light surfaces) */
+[data-phoenix-theme='tekton-light'],
 .phoenix-tekton-light {
   /* 60% Foundation */
-  --color-tekton-light-bg-primary: #f5f7fb;
+  --color-tekton-light-bg-primary: #f9fafb; /* gray-50 */
   --color-tekton-light-bg-secondary: #ffffff;
 
   /* 30% Structural */
   --color-tekton-light-surface: #ffffff;
 
   /* 10% Neural */
-  --color-tekton-light-accent: #1d4ed8;
-  --color-tekton-light-accent-interactive: #2563eb;
+  --color-tekton-light-accent: #1e40af; /* brand-primary */
+  --color-tekton-light-accent-interactive: #3b82f6; /* brand-secondary */
 
   /* Text */
-  --color-tekton-light-text: #141b3d;
-  --color-tekton-light-text-muted: #53647c;
+  --color-tekton-light-text: #111827; /* gray-dark */
+  --color-tekton-light-text-muted: #6b7280; /* gray-500 */
 
   /* Borders */
-  --color-tekton-light-border: #d8e1ef;
-  --color-tekton-light-border-subtle: #e3e8f1;
+  --color-tekton-light-border: #e5e7eb; /* gray-200 */
+  --color-tekton-light-border-subtle: #f3f4f6; /* gray-100 */
 
   /* Glow */
-  --color-tekton-light-glow: rgba(29, 78, 216, 0.3);
-  --color-tekton-light-glow-subtle: rgba(29, 78, 216, 0.15);
+  --color-tekton-light-glow: rgba(30, 64, 175, 0.3);
+  --color-tekton-light-glow-subtle: rgba(30, 64, 175, 0.15);
 }

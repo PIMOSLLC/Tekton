@@ -13,6 +13,7 @@
     "wasm": "cargo build -p blueprint-wasm --target wasm32-unknown-unknown --release && wasm-bindgen ~/.cache/cargo-target/phoenix-Tekton/wasm32-unknown-unknown/release/blueprint_wasm.wasm --target web --out-dir src/engine"
   },
   "dependencies": {
+    "lucide-react": "^0.323.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -21,7 +22,10 @@
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^6.1.2",
+    "autoprefixer": "^10.6.1",
     "happy-dom": "^20.14.6",
+    "postcss": "^8.5.29",
+    "tailwindcss": "^3.4.19",
     "typescript": "^7.0.2",
     "vite": "^8.3.4",
     "vitest": "^5.0.3"
