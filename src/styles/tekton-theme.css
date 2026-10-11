@@ -75,4 +75,12 @@
   --tk-status-info-bg: rgba(59, 130, 246, 0.1);
   --tk-status-neutral: #6b7280;
   --tk-status-neutral-bg: rgba(107, 114, 128, 0.12);
+  /* Scrollbar slivers (overlay-style; see index.css) */
+  --tk-scrollbar-thumb: rgba(255, 255, 255, 0.16);
+  --tk-scrollbar-thumb-hover: rgba(255, 255, 255, 0.34);
+}
+[data-phoenix-theme='tekton-light'] {
+  /* the light canvas: a dark sliver on a light field */
+  --tk-scrollbar-thumb: rgba(20, 27, 61, 0.2);
+  --tk-scrollbar-thumb-hover: rgba(20, 27, 61, 0.4);
 }

@@ -2,23 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
-/* PIN family scrollbar (mirrors Phoenix Insight Nexus) */
+/*
+  PIN family scrollbar — OVERLAY-STYLE so it never sits as a permanent strip
+  at the container's divider (the owner's scroll/divider report): the track is
+  fully transparent, the thumb is a subtle rounded sliver that deepens on
+  hover. Thumb color comes from a per-theme CSS var (set in tekton-theme.css)
+  so the light canvas gets a dark sliver and the dark chrome a light one.
+*/
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0b0f1a;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2e4053;
-  border-radius: 4px;
+  background: var(--tk-scrollbar-thumb, rgba(255, 255, 255, 0.14));
+  border-radius: 99px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3b82f6;
+  background: var(--tk-scrollbar-thumb-hover, rgba(255, 255, 255, 0.3));
 }
-.dark ::-webkit-scrollbar-track {
-  background: #0b0f1a;
+
+/* Standards-track equivalents (Firefox + Chrome 121+): thin + no track */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--tk-scrollbar-thumb, rgba(255, 255, 255, 0.14)) transparent;
 }
 
 body {
