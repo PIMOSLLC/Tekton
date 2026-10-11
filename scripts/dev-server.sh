@@ -10,7 +10,7 @@
 
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-LOG="/tmp/opencode/tekton-vite.log"
+LOG="$(cd "$(dirname "$0")/.." && pwd)/logs/dev-server.log"
 PIDFILE=/tmp/opencode/tekton-vite.pid
 
 stop() {

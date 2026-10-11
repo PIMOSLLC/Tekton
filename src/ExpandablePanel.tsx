@@ -51,14 +51,14 @@ export function ExpandablePanel({ section, title, blurb, onClose, children }: Ex
       role="complementary"
       aria-label={`${title} panel`}
       aria-hidden={!open}
-      {...(!open ? { inert: true } : {})}
+      {...(!open ? { inert: 'true' } : {})}
     >
       {/* Inner content is fixed-width so form fields never reflow mid-animation */}
       <div
         className="flex flex-col h-full"
         style={{ width, minWidth: width }}
         aria-hidden={!open}
-        {...(!open ? { inert: true } : {})}
+        {...(!open ? { inert: 'true' } : {})}
       >
         <div className="flex items-center justify-between px-5 py-3 border-b border-gray-700 shrink-0">
           <div>

@@ -40,7 +40,7 @@ export function CardInspector(props: CardInspectorProps) {
       role="region"
       aria-label="Card inspector"
       aria-hidden={!open}
-      {...(!open ? { inert: true } : {})}
+      {...(!open ? { inert: 'true' } : {})}
     >
       <div className="tk-inspector-head">
         <button
