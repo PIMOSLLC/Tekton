@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import fixtureYaml from '../fixtures/serta-simmons.yaml?raw';
 import { useBlueprintDocument } from './core/useBlueprintDocument';
 import { BuildCanvas } from './BuildCanvas';
+import { CanvasViewport } from './CanvasViewport';
 import { CardInspector } from './CardInspector';
 import { ExpandablePanel } from './ExpandablePanel';
 import { StudioNav } from './StudioNav';
@@ -195,11 +196,15 @@ export function App() {
               </div>
             ) : view === 'build' ? (
               bp.doc ? (
-                <BuildCanvas
-                  doc={bp.doc}
-                  selectedCard={selectedCard}
-                  onSelectCard={setSelectedCard}
-                />
+                <CanvasViewport
+                  fitKey={`${bp.doc.stages.length}x${bp.doc.lanes.length}`}
+                >
+                  <BuildCanvas
+                    doc={bp.doc}
+                    selectedCard={selectedCard}
+                    onSelectCard={setSelectedCard}
+                  />
+                </CanvasViewport>
               ) : (
                 <p className="tk-loading">loading…</p>
               )

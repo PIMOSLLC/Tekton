@@ -394,3 +394,46 @@
 @media (prefers-reduced-motion: reduce) {
   .tk-inspector { transition: none; }
 }
+
+/* Canvas zoom tools (Figma-style cluster, adopted design) */
+.tk-canvas-tools {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-tekton-dark-bg-secondary);
+  border: 1px solid var(--color-tekton-dark-border);
+  border-radius: 9px;
+  padding: 5px;
+  box-shadow: 0 6px 18px rgba(6, 13, 47, 0.45);
+}
+.tk-canvas-tool {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--color-tekton-dark-text-muted);
+  cursor: pointer;
+}
+.tk-canvas-tool:hover { background: var(--color-tekton-dark-surface); color: var(--color-tekton-dark-text); }
+.tk-canvas-tool:focus-visible { outline: 2px solid var(--color-tekton-dark-accent-interactive); outline-offset: 1px; }
+.tk-canvas-zoom {
+  min-width: 44px;
+  text-align: center;
+  font-size: 0.66rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-tekton-dark-text-muted);
+  font-family: ui-monospace, 'JetBrains Mono', monospace;
+}
+
+/* Pan/zoom canvas: pan cursor while dragging, canvas is grabbable everywhere
+   except on cards (which stay pointer/click targets) */
+.tk-panzoom { cursor: grab; }
+.tk-panzoom:active { cursor: grabbing; }
