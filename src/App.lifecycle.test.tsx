@@ -12,6 +12,7 @@ const harness = vi.hoisted(() => ({
   recalled: null as WorkspaceSnapshot | null,
   opened: null as { name: string; text: string; format: 'yaml' | 'json' } | null,
   saved: [] as { name: string; text: string }[],
+  remembered: [] as WorkspaceSnapshot[],
   /** The app profile, mocked like localStorage would behave. */
   profile: { showSetupOnStart: false, panelWidths: {} as Record<string, number> },
 }));
@@ -24,8 +25,8 @@ vi.mock('./platform/persistence', () => ({
     openFile: async () => harness.opened,
   }),
   localStorageAutosave: () => ({
-    remember: () => {
-      /* autosave writes are covered by the persistence + recall specs */
+    remember: (snapshot: WorkspaceSnapshot) => {
+      harness.remembered.push(snapshot);
     },
     recall: () => harness.recalled,
     forget: () => {
@@ -51,6 +52,7 @@ beforeEach(() => {
   harness.recalled = null;
   harness.opened = null;
   harness.saved = [];
+  harness.remembered = [];
   harness.profile = { showSetupOnStart: false, panelWidths: {} };
   engineControls.renderError = null;
   engineControls.failFindings = null;
@@ -160,6 +162,27 @@ describe('App blueprint lifecycle', () => {
       expect(harness.saved).toEqual([{ name: 'My Plan.yaml', text: 'canonical yaml' }]),
     );
     await waitFor(() => expect(screen.queryByTestId('dirty-dot')).toBeNull());
+  });
+
+  it('Save on an unsaved document still names a .yaml / .json file (never .txt)', async () => {
+    // recalled content with no file name = dirty + unnamed → the fallback
+    // naming path (the exact flow that minted .txt files before the fix)
+    harness.recalled = { sourceName: null, yaml: 'x' };
+    render(<App />);
+    await waitFor(() =>
+      expect(screen.getByTestId('doc-name').textContent).toBe('sample-blueprint'),
+    );
+    fireEvent.click(screen.getByTitle('Save'));
+    await waitFor(() => expect(harness.saved.length).toBe(1));
+    expect(harness.saved[0]?.name).toBe('sample-blueprint.yaml');
+    // Save disabled after a clean save — re-dirty via a swatch pick, then JSON.
+    fireEvent.click(screen.getByTitle(/Paper — .+:1, passes AA/));
+    await waitFor(() =>
+      expect((screen.getByTitle('Save JSON') as HTMLButtonElement).disabled).toBe(false),
+    );
+    fireEvent.click(screen.getByTitle('Save JSON'));
+    await waitFor(() => expect(harness.saved.length).toBe(2));
+    expect(harness.saved[1]?.name).toBe('sample-blueprint.json');
   });
 
   it('Open loads a JSON blueprint and adopts its file name', async () => {
@@ -530,6 +553,33 @@ describe('App blueprint lifecycle', () => {
     await screen.findByTestId('fill-banner');
     expect(screen.getByText('1 to fill')).toBeDefined();
     engineControls.failIssues = null;
+  });
+
+  it('the autosave flushes immediately when the tab hides', async () => {
+    render(<App />);
+    await screen.findByText('Hello');  // the engine is wired
+    // the debounced write lands first (800ms)
+    await waitFor(() => expect(harness.remembered.length).toBeGreaterThan(0), { timeout: 2600 });
+    const before = harness.remembered.length;
+    // simulate the tab hiding — the flush must run without waiting for the next debounce
+    Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+    Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+    await waitFor(() => expect(harness.remembered.length).toBeGreaterThan(before));
+  });
+
+  it('the Autosave light reports Pending then the flush time', async () => {
+    render(<App />);
+    const light = await screen.findByRole('listitem', { name: /autosave/i }, { timeout: 3000 });
+    void light;
+    await waitFor(
+      () => {
+        const item = screen.getByRole('listitem', { name: /autosave/i });
+        expect(item.textContent).toMatch(/\d{1,2}:\d{2}:\d{2}/);
+      },
+      { timeout: 4000 },
+    );
   });
 
   it('guards closing the tab only while unsaved work exists', async () => {

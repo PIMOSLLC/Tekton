@@ -76,8 +76,12 @@ export function browserFileStore(pick: FilePicker = defaultFilePicker): Blueprin
   return {
     async saveFile(name, text) {
       // Download via object URL — the same pattern the editor's Export HTML
-      // uses. (Native dialog save arrives with the Tauri shell.)
-      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      // uses. (Native dialog save arrives with the Tauri shell.) MIME matches
+      // the extension so text/plain never mints a .txt-named artifact.
+      const mime = /\.json$/i.test(name)
+        ? 'application/json'
+        : 'text/yaml;charset=utf-8';
+      const blob = new Blob([text], { type: mime });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;

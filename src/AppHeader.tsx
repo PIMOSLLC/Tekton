@@ -7,6 +7,8 @@ export interface AppHeaderProps {
   dirty: boolean;
   /** The live export format — mirrored in the header's right tag. */
   format: OutputFormat;
+  /** When the workspace autosave last flushed (null = nothing yet). */
+  lastAutosave: Date | null;
 }
 
 /**
@@ -18,7 +20,7 @@ export interface AppHeaderProps {
  * ever has two canonical locations. The App shell does not render it in
  * PIN-host mode (`__PIN_HOST__`), where PIN's chrome already sits on top.
  */
-export function AppHeader({ docName, dirty, format }: AppHeaderProps) {
+export function AppHeader({ docName, dirty, format, lastAutosave }: AppHeaderProps) {
   return (
     <header
       className="h-11 flex items-center gap-3 px-4 bg-gray-900 border-b border-gray-700 shrink-0"
@@ -38,7 +40,7 @@ export function AppHeader({ docName, dirty, format }: AppHeaderProps) {
         className="flex items-center gap-1.5 min-w-0 font-mono text-[10px] text-gray-400 bg-gray-800 px-2 py-1 rounded border border-gray-700"
         title={
           dirty
-            ? `${docName ?? '…'} — unsaved changes (Save downloads the file)`
+            ? `${docName ?? '…'} — unsaved to a file${lastAutosave ? ` · autosaved to this browser at ${lastAutosave.toLocaleTimeString()}` : ''} (Save downloads the file)`
             : `${docName ?? '…'} — saved`
         }
       >
@@ -48,6 +50,9 @@ export function AppHeader({ docName, dirty, format }: AppHeaderProps) {
         {dirty ? (
           <>
             <span className="sr-only">Unsaved changes</span>
+            <span className="hidden sm:inline text-[8px] uppercase tracking-wider text-emerald-300 shrink-0" data-testid="autosave-tag">
+              {lastAutosave ? `auto ${lastAutosave.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'auto-pending'}
+            </span>
             <span
               aria-hidden="true"
               className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"

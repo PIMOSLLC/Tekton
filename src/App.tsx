@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Cpu, FileOutput, CheckSquare, ShieldCheck } from 'lucide-react';
+import { Cpu, FileOutput, CheckSquare, ShieldCheck, Clock } from 'lucide-react';
 import fixtureYaml from '../fixtures/agentic-ai-ecommerce.yaml?raw';
 import { useBlueprintDocument, slugifyTitle, type BlueprintSetup, type LoadResult } from './core/useBlueprintDocument';
 import { engine } from './engine/engineService';
@@ -59,13 +59,16 @@ const PANEL_DEFAULTS: Record<NonNullSection, number> = {
 };
 
 /** File name for a Save: keep the open/save file's name (same format), else
- * re-derive from the title — the name IS the title, slugified. */
+ * re-derive from the title — the name IS the title, slugified. ALWAYS lands
+ * with the format's extension: an extensionless text/plain download makes
+ * the browser append .txt (the bug the owner caught). */
 function saveName(sourceName: string | null, metaTitle: string, format: 'yaml' | 'json'): string {
+  const ext = format === 'json' ? '.json' : '.yaml';
   if (sourceName) {
     if (matchesFormat(sourceName, format)) return sourceName;
-    return stripExtension(sourceName) || slugifyTitle(metaTitle);
+    return `${stripExtension(sourceName) || slugifyTitle(metaTitle)}${ext}`;
   }
-  return slugifyTitle(metaTitle) || 'blueprint';
+  return `${slugifyTitle(metaTitle) || 'blueprint'}${ext}`;
 }
 
 const isTyping = (target: EventTarget | null): boolean =>
@@ -324,20 +327,48 @@ export function App() {
   const flowSave = useCallback(() => void saveBlueprint('yaml'), [saveBlueprint]);
   const flowSaveJson = useCallback(() => void saveBlueprint('json'), [saveBlueprint]);
 
-  // Workspace autosave: the document, debounced. Recall restores it on the
-  // next boot; the PIN phase later writes the same document into its
-  // `toolkit_instances` row instead.
-  useEffect(() => {
-    if (!bp.engineReady || !bp.doc) return;
-    const t = setTimeout(() => {
+  // Workspace autosave: the document, debounced; + FLUSHED IMMEDIATELY when
+  // the tab is hidden/closing (the debounce's unflushed tail would otherwise
+  // die with the tab — the exact work-loss the hardening closes). Recall
+  // restores it on the next boot; the PIN phase later writes the same
+  // document into its `toolkit_instances` row instead.
+  const writeAutosave = useCallback(
+    (name: string | null) => {
       void bp.getYaml()
-        .then((yaml) => workspace.remember({ sourceName, yaml }))
+        .then((yaml) => {
+          workspace.remember({ sourceName: name, yaml });
+          setLastAutosave(new Date());
+        })
         .catch(() => {
           /* invalid intermediate state keeps the last good snapshot */
         });
-    }, 800);
+    },
+    [bp],
+  );
+
+  useEffect(() => {
+    if (!bp.engineReady || !bp.doc) return;
+    const t = setTimeout(() => writeAutosave(sourceName), 800);
     return () => clearTimeout(t);
-  }, [bp.doc, bp.engineReady, bp.getYaml, sourceName]);
+  }, [bp.doc, bp.engineReady, bp.getYaml, sourceName, writeAutosave]);
+
+  useEffect(() => {
+    const flush = () => writeAutosave(sourceName);
+    const onHide = () => {
+      if (document.visibilityState === 'hidden') flush();
+    };
+    document.addEventListener('visibilitychange', onHide);
+    window.addEventListener('pagehide', flush);
+    window.addEventListener('blur', flush);
+    return () => {
+      document.removeEventListener('visibilitychange', onHide);
+      window.removeEventListener('pagehide', flush);
+      window.removeEventListener('blur', flush);
+    };
+  }, [writeAutosave, sourceName]);
+
+  /** Timestamp of the last flushed autosave — surfaced in the footer. */
+  const [lastAutosave, setLastAutosave] = useState<Date | null>(null);
 
   // Keyboard: Cmd/Ctrl+S save (.yaml), +Shift save JSON, O open, N new.
   useEffect(() => {
@@ -437,6 +468,21 @@ export function App() {
     const engineReady = bp.engineReady && !bp.renderError;
     return [
       {
+        id: 'autosave',
+        label: 'Autosave',
+        icon: Clock,
+        led: lastAutosave ? 'success' : 'neutral',
+        value: lastAutosave
+          ? lastAutosave.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+          : 'Pending',
+        tooltip: [
+          lastAutosave
+            ? `last flushed ${lastAutosave.toLocaleTimeString()} — restored on reload`
+            : 'waiting for the first change',
+          'kept in this browser; a Save writes the real file',
+        ],
+      },
+      {
         id: 'engine',
         label: 'Engine',
         icon: Cpu,
@@ -511,7 +557,7 @@ export function App() {
               ],
       },
     ];
-  }, [bp.engineReady, bp.renderError, bp.issues, bp.findings, bp.format, errorCount, warningCount, lintFailures, structuralCount, slotCount]);
+  }, [bp.engineReady, bp.renderError, bp.issues, bp.findings, bp.format, errorCount, warningCount, lintFailures, structuralCount, slotCount, lastAutosave]);
 
   const docStem = sourceName
     ? stripExtension(sourceName)
@@ -525,7 +571,9 @@ export function App() {
       data-phoenix-theme="tekton-dark"
     >
       {/* Standalone brand bar — PIN hosts replace it with their own chrome */}
-      {!isPinModuleHost() && <AppHeader docName={docStem} dirty={bp.dirty} format={bp.format} />}
+      {!isPinModuleHost() && (
+        <AppHeader docName={docStem} dirty={bp.dirty} format={bp.format} lastAutosave={lastAutosave} />
+      )}
 
       <div className="flex-1 flex min-h-0">
       <StudioNav
