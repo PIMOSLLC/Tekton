@@ -9,6 +9,8 @@ export interface AppHeaderProps {
   format: OutputFormat;
   /** When the workspace autosave last flushed (null = nothing yet). */
   lastAutosave: Date | null;
+  /** covered = the work is protected (a file or the autosave); unprotected = amber. */
+  dotState: 'covered' | 'unprotected';
 }
 
 /**
@@ -20,7 +22,7 @@ export interface AppHeaderProps {
  * ever has two canonical locations. The App shell does not render it in
  * PIN-host mode (`__PIN_HOST__`), where PIN's chrome already sits on top.
  */
-export function AppHeader({ docName, dirty, format, lastAutosave }: AppHeaderProps) {
+export function AppHeader({ docName, dirty, format, lastAutosave, dotState }: AppHeaderProps) {
   return (
     <header
       className="h-11 flex items-center gap-3 px-4 bg-gray-900 border-b border-gray-700 shrink-0"
@@ -40,7 +42,7 @@ export function AppHeader({ docName, dirty, format, lastAutosave }: AppHeaderPro
         className="flex items-center gap-1.5 min-w-0 font-mono text-[10px] text-gray-400 bg-gray-800 px-2 py-1 rounded border border-gray-700"
         title={
           dirty
-            ? `${docName ?? '…'} — unsaved to a file${lastAutosave ? ` · autosaved to this browser at ${lastAutosave.toLocaleTimeString()}` : ''} (Save downloads the file)`
+            ? `${docName ?? '…'} — a file copy is pending (Save downloads it)${lastAutosave ? ` · autosave kept this browser at ${lastAutosave.toLocaleTimeString()}` : ''}`
             : `${docName ?? '…'} — saved`
         }
       >
@@ -49,13 +51,17 @@ export function AppHeader({ docName, dirty, format, lastAutosave }: AppHeaderPro
         </span>
         {dirty ? (
           <>
-            <span className="sr-only">Unsaved changes</span>
+            <span className="sr-only">
+              {dotState === 'covered'
+                ? 'Unsaved to a file — protected by autosave'
+                : 'Unsaved — not yet protected'}
+            </span>
             <span className="hidden sm:inline text-[8px] uppercase tracking-wider text-emerald-300 shrink-0" data-testid="autosave-tag">
               {lastAutosave ? `auto ${lastAutosave.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'auto-pending'}
             </span>
             <span
               aria-hidden="true"
-              className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"
+              className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotState === 'covered' ? 'bg-emerald-400' : 'bg-amber-400'}`}
               data-testid="dirty-dot"
             />
           </>

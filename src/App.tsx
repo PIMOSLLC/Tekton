@@ -559,6 +559,13 @@ export function App() {
     ];
   }, [bp.engineReady, bp.renderError, bp.issues, bp.findings, bp.format, errorCount, warningCount, lintFailures, structuralCount, slotCount, lastAutosave]);
 
+  // The chip dot's state (owner semantics): GREEN = the work is covered —
+  // either by a file Save or by the autosave's flush; AMBER = genuinely
+  // unprotected (the pre-flush window / a failed flush). 'File pending' is
+  // still true (Save stays enabled) and lives in the tooltip — it no longer
+  // wears the dot.
+  const dotState: 'covered' | 'unprotected' = !bp.dirty ? 'covered' : lastAutosave ? 'covered' : 'unprotected';
+
   const docStem = sourceName
     ? stripExtension(sourceName)
     : bp.doc
@@ -572,7 +579,7 @@ export function App() {
     >
       {/* Standalone brand bar — PIN hosts replace it with their own chrome */}
       {!isPinModuleHost() && (
-        <AppHeader docName={docStem} dirty={bp.dirty} format={bp.format} lastAutosave={lastAutosave} />
+        <AppHeader docName={docStem} dirty={bp.dirty} format={bp.format} lastAutosave={lastAutosave} dotState={dotState} />
       )}
 
       <div className="flex-1 flex min-h-0">
