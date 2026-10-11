@@ -24,7 +24,7 @@ pub mod render;
 pub mod theme;
 pub mod validate;
 
-pub use model::{Card, Document, Lane, Meta, Note, Stage, Stat};
+pub use model::{Card, Document, Lane, LaneKind, Meta, Note, Stage, Stat};
 pub use render::Format;
 pub use theme::Theme;
 

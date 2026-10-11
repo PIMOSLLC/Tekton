@@ -20,8 +20,8 @@ use wasm_bindgen::prelude::*;
 /// `format`: "standalone" (full page) or "wordpress" (embed fragment).
 #[wasm_bindgen]
 pub fn render_blueprint(yaml: &str, format: &str) -> Result<String, JsValue> {
-    let doc = blueprint_core::Document::from_yaml(yaml)
-        .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let doc =
+        blueprint_core::Document::from_yaml(yaml).map_err(|e| JsValue::from_str(&e.to_string()))?;
     let fmt = match format {
         "wordpress" => blueprint_core::Format::WordPress,
         _ => blueprint_core::Format::Standalone,
@@ -33,8 +33,8 @@ pub fn render_blueprint(yaml: &str, format: &str) -> Result<String, JsValue> {
 /// (`{ findings: [...] }` — see `blueprint_core::lint::Report`).
 #[wasm_bindgen]
 pub fn lint_blueprint(yaml: &str) -> Result<String, JsValue> {
-    let doc = blueprint_core::Document::from_yaml(yaml)
-        .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let doc =
+        blueprint_core::Document::from_yaml(yaml).map_err(|e| JsValue::from_str(&e.to_string()))?;
     let report = blueprint_core::lint::lint(&doc).map_err(|e| JsValue::from_str(&e))?;
     serde_json::to_string(&report).map_err(|e| JsValue::from_str(&e.to_string()))
 }
@@ -43,8 +43,26 @@ pub fn lint_blueprint(yaml: &str) -> Result<String, JsValue> {
 /// (errors block rendering; warnings do not).
 #[wasm_bindgen]
 pub fn validate_blueprint(yaml: &str) -> Result<String, JsValue> {
-    let doc = blueprint_core::Document::from_yaml(yaml)
-        .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    let doc =
+        blueprint_core::Document::from_yaml(yaml).map_err(|e| JsValue::from_str(&e.to_string()))?;
     let validation = blueprint_core::validate::validate(&doc);
     serde_json::to_string(&validation).map_err(|e| JsValue::from_str(&e.to_string()))
+}
+
+/// Parse a YAML document into the canonical JSON form of `Document` — the
+/// editor's state model (single source of truth stays the Rust model; JS holds
+/// the parsed shape for structured editing).
+#[wasm_bindgen]
+pub fn parse_blueprint(yaml: &str) -> Result<String, JsValue> {
+    let doc =
+        blueprint_core::Document::from_yaml(yaml).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    serde_json::to_string(&doc).map_err(|e| JsValue::from_str(&e.to_string()))
+}
+
+/// Serialize a JSON-form `Document` back to YAML (canonical formatting).
+#[wasm_bindgen]
+pub fn serialize_blueprint(json: &str) -> Result<String, JsValue> {
+    let doc: blueprint_core::Document =
+        serde_json::from_str(json).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    doc.to_yaml().map_err(|e| JsValue::from_str(&e.to_string()))
 }

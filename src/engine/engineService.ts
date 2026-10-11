@@ -10,37 +10,22 @@
  *    throws with a clear message rather than pretending).
  */
 
-export interface EngineFinding {
-  element: string;
-  fg: string;
-  bg: string;
-  ratio: number;
-  large: boolean;
-  aa: boolean;
-  aaa: boolean;
-  suggestion?: string;
-}
+import type { BlueprintDocument } from '../types';
+import type {
+  EngineReport,
+  EngineValidation,
+  OutputFormat,
+} from './engineServiceTypes';
 
-export interface EngineIssue {
-  severity: 'error' | 'warning';
-  message: string;
-}
-
-export interface EngineValidation {
-  issues: EngineIssue[];
-}
-
-export interface EngineReport {
-  findings: EngineFinding[];
-}
-
-export type OutputFormat = 'standalone' | 'wordpress';
+export type { EngineFinding, EngineIssue, EngineValidation, EngineReport, OutputFormat } from './engineServiceTypes';
 
 export interface EngineService {
   readonly backend: 'wasm' | 'tauri';
   render(yaml: string, format: OutputFormat): Promise<string>;
   lint(yaml: string): Promise<EngineReport>;
   validate(yaml: string): Promise<EngineValidation>;
+  parse(yaml: string): Promise<BlueprintDocument>;
+  serialize(doc: BlueprintDocument): Promise<string>;
 }
 
 /** True when running inside the Tauri desktop shell. */
@@ -76,21 +61,28 @@ class WasmEngine implements EngineService {
     const m = await this.load();
     return JSON.parse(await m.validate_blueprint(yaml)) as EngineValidation;
   }
+
+  async parse(yaml: string): Promise<BlueprintDocument> {
+    const m = await this.load();
+    return JSON.parse(await m.parse_blueprint(yaml)) as BlueprintDocument;
+  }
+
+  async serialize(doc: BlueprintDocument): Promise<string> {
+    const m = await this.load();
+    return m.serialize_blueprint(JSON.stringify(doc));
+  }
 }
 
 class TauriEngine implements EngineService {
   readonly backend = 'tauri' as const;
-  render(): Promise<string> {
-    return Promise.reject(
-      new Error('Tauri adapter lands with the desktop pass (src-tauri).'),
-    );
+  private unsupported(): Promise<never> {
+    return Promise.reject(new Error('Tauri adapter lands with the desktop pass (src-tauri).'));
   }
-  lint(): Promise<EngineReport> {
-    return Promise.reject(new Error('Tauri adapter lands with the desktop pass.'));
-  }
-  validate(): Promise<EngineValidation> {
-    return Promise.reject(new Error('Tauri adapter lands with the desktop pass.'));
-  }
+  render(): Promise<string> { return this.unsupported(); }
+  lint(): Promise<EngineReport> { return this.unsupported(); }
+  validate(): Promise<EngineValidation> { return this.unsupported(); }
+  parse(): Promise<BlueprintDocument> { return this.unsupported(); }
+  serialize(): Promise<string> { return this.unsupported(); }
 }
 
 export const engine: EngineService = isTauriHost ? new TauriEngine() : new WasmEngine();

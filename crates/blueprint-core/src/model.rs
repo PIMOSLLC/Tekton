@@ -56,6 +56,46 @@ pub struct Stage {
     pub blurb: Option<String>,
 }
 
+/// Semantic lane type — adopted from the Gemini prototype's lane-type selector.
+/// Drives default rendering semantics (each kind has a default card tint) and
+/// gives editors affordances beyond raw strings. Explicit lane `tint` overrides
+/// the kind default; absent tint falls back to the surface color.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum LaneKind {
+    /// Customer actions (top of the blueprint).
+    Customer,
+    /// What the customer sees (frontstage experience).
+    Frontstage,
+    /// Automated / agent workflows.
+    Agents,
+    /// Human backstage work.
+    Backstage,
+    /// Supporting systems and infrastructure.
+    Systems,
+    /// Evidence, data, and traceability.
+    Data,
+    /// Controls, approval gates, accountability.
+    Governance,
+    /// Expected or reported value.
+    Outcome,
+}
+
+impl LaneKind {
+    /// Default lane tint (effective card background) — the palette the Serta
+    /// fixture carried by hand before kinds existed.
+    pub fn default_tint(self) -> Option<&'static str> {
+        Some(match self {
+            LaneKind::Agents => "#f3f0ff",
+            LaneKind::Systems => "#eff9f8",
+            LaneKind::Data => "#f3f8ff",
+            LaneKind::Governance => "#fff3e9",
+            LaneKind::Outcome => "#f0fbf4",
+            _ => return None,
+        })
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Lane {
     pub id: String,
@@ -66,14 +106,28 @@ pub struct Lane {
     /// Full-width divider row rendered before this lane ("Line of interaction" etc.).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub divider: Option<String>,
-    /// Optional tint for this lane's cards/background (#rrggbb).
+    /// Optional tint for this lane's cards/background (#rrggbb). Overrides the
+    /// kind default when both are present.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tint: Option<String>,
+    /// Semantic kind — drives default tinting and editor affordances.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub kind: Option<LaneKind>,
     /// Drawer "Service design interpretation" text for cards in this lane.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub interpretation: Option<String>,
     /// Cards, one per stage, in stage order (validated by `validate`).
     pub cards: Vec<Card>,
+}
+
+impl Lane {
+    /// The card background the renderer will actually use for this lane:
+    /// explicit tint wins, then the kind default, then the theme surface.
+    pub fn effective_tint(&self) -> Option<&str> {
+        self.tint
+            .as_deref()
+            .or_else(|| self.kind.and_then(|k| k.default_tint()))
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -122,5 +176,51 @@ impl Document {
     /// Total card count (stages × lanes when well-formed).
     pub fn card_count(&self) -> usize {
         self.lanes.iter().map(|l| l.cards.len()).sum()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn lane_kind_round_trips_from_yaml() {
+        let yaml = "meta:\n  eyebrow: e\n  title: t\n  intro: i\nstages:\n  - {id: s, name: Signal}\nlanes:\n  - {id: agents, kind: agents, name: Agents, cards: [{title: T, blurb: B}]}\n";
+        let doc = Document::from_yaml(yaml).unwrap();
+        assert_eq!(doc.lanes[0].kind, Some(LaneKind::Agents));
+        // and back out
+        let out = doc.to_yaml().unwrap();
+        assert!(out.contains("kind: agents"), "{out}");
+    }
+
+    #[test]
+    fn unknown_lane_kind_fails_loudly() {
+        let yaml = "meta:\n  eyebrow: e\n  title: t\n  intro: i\nstages:\n  - {id: s, name: Signal}\nlanes:\n  - {id: x, kind: vibes, name: X, cards: [{title: T, blurb: B}]}\n";
+        assert!(
+            Document::from_yaml(yaml).is_err(),
+            "typos must not pass silently"
+        );
+    }
+
+    #[test]
+    fn explicit_tint_overrides_kind_default() {
+        let mut lane = Lane {
+            id: "agents".into(),
+            name: "Agents".into(),
+            blurb: None,
+            divider: None,
+            tint: Some("#eef2ff".into()),
+            kind: Some(LaneKind::Agents),
+            interpretation: None,
+            cards: vec![],
+        };
+        assert_eq!(lane.effective_tint(), Some("#eef2ff"));
+        lane.tint = None;
+        assert_eq!(
+            lane.effective_tint(),
+            Some(LaneKind::Agents.default_tint().unwrap())
+        );
+        lane.kind = None;
+        assert_eq!(lane.effective_tint(), None);
     }
 }

@@ -239,6 +239,7 @@ mod tests {
                 blurb: None,
                 divider: None,
                 tint: None,
+                kind: None,
                 interpretation: None,
                 cards: vec![Card {
                     title: "Browse".into(),

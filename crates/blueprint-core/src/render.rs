@@ -130,8 +130,9 @@ fn theme_vars(doc: &Document) -> String {
     s.push('}');
 
     // Per-lane tints as generated rules (content-specific, so not in the static CSS).
+    // Effective tint = explicit lane tint, else the lane-kind default.
     for lane in &doc.lanes {
-        if let Some(tint) = &lane.tint {
+        if let Some(tint) = lane.effective_tint() {
             s.push_str(&format!(
                 ".bp-root .bp-cell[data-lane=\"{}\"]{{background:{tint};}}",
                 escape_attr(&lane.id)
@@ -511,6 +512,31 @@ mod tests {
         let mut d = doc();
         d.lanes[0].cards.clear();
         assert!(render(&d, Format::Standalone).is_err());
+    }
+
+    #[test]
+    fn lane_kinds_drive_derived_tints_in_css() {
+        // The fixture carries lane kinds (no explicit tints) — the renderer must
+        // emit the kind-default tint rules (adopted from the Gemini prototype).
+        let html = render(&doc(), Format::WordPress).unwrap();
+        for (lane, tint) in [
+            ("agents", "#f3f0ff"),
+            ("systems", "#eff9f8"),
+            ("data", "#f3f8ff"),
+            ("governance", "#fff3e9"),
+            ("outcome", "#f0fbf4"),
+        ] {
+            assert!(
+                html.contains(&format!(
+                    ".bp-cell[data-lane=\"{lane}\"]{{background:{tint};}}"
+                )),
+                "kind-derived tint missing for {lane}"
+            );
+        }
+        // Untinted kinds (customer/frontstage/backstage) must NOT get a rule.
+        for lane in ["customer", "frontstage", "backstage"] {
+            assert!(!html.contains(&format!(".bp-cell[data-lane=\"{lane}\"]{{background:")));
+        }
     }
 
     #[test]

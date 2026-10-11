@@ -317,17 +317,18 @@ pub fn lint(doc: &Document) -> Result<Report, String> {
         },
     ];
 
-    // Per-lane tints: cell text is checked against each tinted background. The
-    // element names are built first so the borrows outlive the pushes.
+    // Per-lane tints (explicit tint, else the lane-kind default): cell text is
+    // checked against each tinted background. The element names are built first
+    // so the borrows outlive the pushes.
     let mut tint_names: Vec<String> = Vec::new();
     for lane in &doc.lanes {
-        if lane.tint.is_some() {
+        if lane.effective_tint().is_some() {
             tint_names.push(format!("Card text ({} lane tint)", lane.id));
         }
     }
     let mut tint_i = 0usize;
     for lane in &doc.lanes {
-        if let Some(tint) = &lane.tint {
+        if let Some(tint) = lane.effective_tint() {
             pairs.push(Pair {
                 element: &tint_names[tint_i],
                 fg: &t.ink_strong,

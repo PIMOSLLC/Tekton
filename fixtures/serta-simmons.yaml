@@ -34,6 +34,7 @@ stages:
     blurb: "Monitor performance and iterate"
 lanes:
   - id: customer
+    kind: customer
     name: "Customer actions"
     blurb: "What shoppers do"
     cards:
@@ -43,6 +44,7 @@ lanes:
       - { title: "Continue shopping", blurb: "Only approved changes become visible" }
       - { title: "Respond to experience", blurb: "Browse, convert, or abandon" }
   - id: frontstage
+    kind: frontstage
     name: "Frontstage experience"
     blurb: "What customers see"
     cards:
@@ -55,7 +57,7 @@ lanes:
     name: "AI agent workflow"
     blurb: "Agent-prepared work"
     divider: "— Line of interaction —"
-    tint: "#f3f0ff"
+    kind: agents
     interpretation: >-
       Agents may analyze and prepare proposals but cannot authorize publication. Every
       output should carry evidence, version, and an accountable reviewer.
@@ -66,6 +68,7 @@ lanes:
       - { title: "Hold for review", blurb: "No autonomous production publishing" }
       - { title: "Evaluation support", blurb: "Summarize performance and next actions" }
   - id: backstage
+    kind: backstage
     name: "Backstage human actions"
     blurb: "UX and merchandising teams"
     divider: "— Line of visibility —"
@@ -82,7 +85,7 @@ lanes:
     name: "Supporting systems"
     blurb: "Tools and infrastructure"
     divider: "— Line of internal interaction —"
-    tint: "#eff9f8"
+    kind: systems
     interpretation: >-
       Design tokens and modular components constrain agent output. A preview and
       rollback path reduce the risk of changes reaching customers.
@@ -93,9 +96,9 @@ lanes:
       - { title: "Review and release workflow", blurb: "Approval surface and deployment path" }
       - { title: "Monitoring and rollback", blurb: "Performance checks and reversibility" }
   - id: data
+    kind: data
     name: "Evidence and data"
     blurb: "Signals and traceability"
-    tint: "#f3f8ff"
     interpretation: >-
       Recommendations should be linked to permitted CRM or behavioral sources and
       assessed for privacy, quality, and relevance.
@@ -109,7 +112,7 @@ lanes:
     name: "Governance"
     blurb: "Controls and approval"
     divider: "— Control and accountability boundary —"
-    tint: "#fff3e9"
+    kind: governance
     interpretation: >-
       Human review is a blocking gate, not a passive notification. Reject and revise
       paths return proposals to preparation; approved changes can proceed to Shopify.
@@ -120,9 +123,9 @@ lanes:
       - { title: "Mandatory approval gate", blurb: "Explicit human sign-off before production" }
       - { title: "Audit and rollback", blurb: "Review impact and revert if necessary" }
   - id: outcome
+    kind: outcome
     name: "Service outcomes"
     blurb: "Expected or reported value"
-    tint: "#f0fbf4"
     interpretation: >-
       Reported and intended benefits should be separated in the final portfolio
       narrative. Do not imply unreleased conversion figures.
