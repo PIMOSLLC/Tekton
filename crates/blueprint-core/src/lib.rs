@@ -11,7 +11,7 @@
 //! use blueprint_core::{Document, Format};
 //!
 //! fn main() -> Result<(), blueprint_core::Error> {
-//!     let doc = Document::from_yaml(include_str!("../../../fixtures/serta-simmons.yaml"))?;
+//!     let doc = Document::from_yaml(include_str!("../../../fixtures/agentic-ai-ecommerce.yaml"))?;
 //!     let html = blueprint_core::render::render(&doc, Format::Standalone)?;
 //!     println!("{html:.60}");
 //!     Ok(())

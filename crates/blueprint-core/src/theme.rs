@@ -65,6 +65,10 @@ pub struct Theme {
     /// Interactive accent (buttons, stats, selected focus).
     #[serde(default = "accent")]
     pub accent: String,
+    /// The ink that sits ON accent surfaces (the active button's text): dark
+    /// themes use a light accent + a dark ink; light themes white-on-blue.
+    #[serde(default = "accent_ink")]
+    pub accent_ink: String,
     /// Pill background.
     #[serde(default = "accent_soft_bg")]
     pub accent_soft_bg: String,
@@ -101,6 +105,34 @@ pub struct Theme {
     /// Control hover background.
     #[serde(default = "hover_soft")]
     pub hover_soft: String,
+    /// Lane-kind default card tints — THEME-DRIVEN so a dark document darkens
+    /// its tinted lanes with everything else (light pastels are the default
+    /// palette's values; a dark theme sets dark tints instead).
+    #[serde(default = "tint_agents")]
+    pub tint_agents: String,
+    #[serde(default = "tint_systems")]
+    pub tint_systems: String,
+    #[serde(default = "tint_data")]
+    pub tint_data: String,
+    #[serde(default = "tint_governance")]
+    pub tint_governance: String,
+    #[serde(default = "tint_outcome")]
+    pub tint_outcome: String,
+}
+
+impl Theme {
+    /// The kind's default tint FROM THE THEME (the model call it `kindDefaultTint`
+    /// mirrors this for the editor's fallback when no theme map exists yet).
+    pub fn kind_tint(&self, kind: Option<crate::model::LaneKind>) -> Option<&str> {
+        Some(match kind? {
+            crate::model::LaneKind::Agents => self.tint_agents.as_str(),
+            crate::model::LaneKind::Systems => self.tint_systems.as_str(),
+            crate::model::LaneKind::Data => self.tint_data.as_str(),
+            crate::model::LaneKind::Governance => self.tint_governance.as_str(),
+            crate::model::LaneKind::Outcome => self.tint_outcome.as_str(),
+            _ => return None,
+        })
+    }
 }
 
 fn band_bg() -> String {
@@ -151,6 +183,9 @@ fn stage_blurb() -> String {
 fn accent() -> String {
     d("#1d4ed8")
 }
+fn accent_ink() -> String {
+    d("#ffffff")
+}
 fn accent_soft_bg() -> String {
     d("#e9efff")
 }
@@ -187,6 +222,21 @@ fn selected_outline() -> String {
 fn hover_soft() -> String {
     d("#e9f0ff")
 }
+fn tint_agents() -> String {
+    d("#f3f0ff")
+}
+fn tint_systems() -> String {
+    d("#eff9f8")
+}
+fn tint_data() -> String {
+    d("#f3f8ff")
+}
+fn tint_governance() -> String {
+    d("#fff3e9")
+}
+fn tint_outcome() -> String {
+    d("#f0fbf4")
+}
 
 impl Default for Theme {
     fn default() -> Self {
@@ -207,6 +257,7 @@ impl Default for Theme {
             stage_ink: stage_ink(),
             stage_blurb: stage_blurb(),
             accent: accent(),
+            accent_ink: accent_ink(),
             accent_soft_bg: accent_soft_bg(),
             accent_soft_ink: accent_soft_ink(),
             item_border: item_border(),
@@ -219,6 +270,11 @@ impl Default for Theme {
             focus_outline: focus_outline(),
             selected_outline: selected_outline(),
             hover_soft: hover_soft(),
+            tint_agents: tint_agents(),
+            tint_systems: tint_systems(),
+            tint_data: tint_data(),
+            tint_governance: tint_governance(),
+            tint_outcome: tint_outcome(),
         }
     }
 }

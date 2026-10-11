@@ -112,6 +112,7 @@ fn theme_vars(doc: &Document) -> String {
         ("stage-ink", &t.stage_ink),
         ("stage-blurb", &t.stage_blurb),
         ("accent", &t.accent),
+        ("accent-ink", &t.accent_ink),
         ("accent-soft-bg", &t.accent_soft_bg),
         ("accent-soft-ink", &t.accent_soft_ink),
         ("item-border", &t.item_border),
@@ -132,7 +133,7 @@ fn theme_vars(doc: &Document) -> String {
     // Per-lane tints as generated rules (content-specific, so not in the static CSS).
     // Effective tint = explicit lane tint, else the lane-kind default.
     for lane in &doc.lanes {
-        if let Some(tint) = lane.effective_tint() {
+        if let Some(tint) = lane.effective_tint(&doc.theme) {
             s.push_str(&format!(
                 ".bp-root .bp-cell[data-lane=\"{}\"]{{background:{tint};}}",
                 escape_attr(&lane.id)
@@ -390,7 +391,7 @@ mod tests {
     use crate::model::*;
 
     fn doc() -> Document {
-        Document::from_yaml(include_str!("../../../fixtures/serta-simmons.yaml")).unwrap()
+        Document::from_yaml(include_str!("../../../fixtures/agentic-ai-ecommerce.yaml")).unwrap()
     }
 
     #[test]
@@ -512,6 +513,29 @@ mod tests {
         let mut d = doc();
         d.lanes[0].cards.clear();
         assert!(render(&d, Format::Standalone).is_err());
+    }
+
+    #[test]
+    fn lane_tint_failure_appears_in_lint_before_render_refuses() {
+        // The editor depends on this contract: the render gate's failing pair
+        // must ALSO be a lint finding, so when the gate blocks, the terminal
+        // still shows the author what to fix (the TS pipeline keeps lint
+        // results via allSettled precisely for this).
+        let yaml = "meta:\n  eyebrow: e\n  title: t\n  intro: i\nstages:\n  - {id: s, name: Signal}\nlanes:\n  - {id: customer, name: Customer, tint: '#c93131', cards: [{title: T, blurb: B}]}\n";
+        let d = crate::Document::from_yaml(yaml).expect("parses");
+        let report = crate::lint::lint(&d).expect("lints");
+        assert!(
+            report
+                .findings
+                .iter()
+                .any(|f| !f.aa && f.element.contains("Card text (customer lane tint)")),
+            "the failing tint pair is a lint finding: {:?}",
+            report.findings
+        );
+        assert!(
+            render(&d, Format::Standalone).is_err(),
+            "the gate refuses the AA-failing tint"
+        );
     }
 
     #[test]

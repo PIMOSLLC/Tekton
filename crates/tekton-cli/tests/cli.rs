@@ -10,7 +10,7 @@ fn tekton() -> Command {
 fn fixture() -> &'static str {
     concat!(
         env!("CARGO_MANIFEST_DIR"),
-        "/../../fixtures/serta-simmons.yaml"
+        "/../../fixtures/agentic-ai-ecommerce.yaml"
     )
 }
 
@@ -64,11 +64,11 @@ fn render_wordpress_is_a_fragment() {
 
 #[test]
 fn default_output_name_derives_from_input() {
-    // No -o: expect <fixture-dir>/serta-simmons-standalone.html
+    // No -o: expect <fixture-dir>/agentic-ai-ecommerce-standalone.html
     let expected = std::path::Path::new(fixture())
         .parent()
         .unwrap()
-        .join("serta-simmons-standalone.html");
+        .join("agentic-ai-ecommerce-standalone.html");
     let (ok, log) = run(&["render", fixture()]);
     assert!(ok, "{log}");
     assert!(log.contains(expected.file_name().unwrap().to_str().unwrap()));

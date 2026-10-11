@@ -6,9 +6,9 @@
 //! refuses to render, mirroring the library contract).
 //!
 //! Visual testing path (documented in the repo AGENTS.md):
-//!   tekton render fixtures/serta-simmons.yaml
+//!   tekton render fixtures/agentic-ai-ecommerce.yaml
 //!   cd <output-dir> && python3 -m http.server 6041
-//!   -> open http://<minerva-lan-ip>:6041/serta-simmons-standalone.html in any browser
+//!   -> open http://<minerva-lan-ip>:6041/agentic-ai-ecommerce-standalone.html in any browser
 
 use blueprint_core::{Document, Format};
 use clap::{Parser, Subcommand};

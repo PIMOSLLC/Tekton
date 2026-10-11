@@ -16,8 +16,17 @@ pub enum Severity {
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct Issue {
     pub severity: Severity,
+    /// Stable machine code (e.g. `card_title_required`) — editors branch on
+    /// this, never on parsing the prose message.
+    pub code: String,
     /// Human-readable explanation, written for the document author.
     pub message: String,
+    /// Card location, when the error pinpoints one — the editor's recovery
+    /// affordances navigate straight to the offending card (None = document-level).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub lane: Option<usize>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub stage: Option<usize>,
 }
 
 #[derive(Debug, Clone, PartialEq, Default, Serialize)]
@@ -42,23 +51,40 @@ pub fn validate(doc: &Document) -> Validation {
 
     // Meta
     if doc.meta.title.trim().is_empty() {
-        issues.push(issue(Severity::Error, "meta.title is required"));
+        issues.push(issue(
+            Severity::Error,
+            "meta_title_required",
+            "The blueprint needs a title in meta.title.",
+        ));
     }
     if doc.meta.eyebrow.trim().is_empty() {
-        issues.push(issue(Severity::Error, "meta.eyebrow is required"));
+        issues.push(issue(
+            Severity::Error,
+            "meta_eyebrow_required",
+            "The blueprint needs an eyebrow in meta.eyebrow.",
+        ));
     }
     if doc.meta.intro.trim().is_empty() {
-        issues.push(issue(Severity::Error, "meta.intro is required"));
+        issues.push(issue(
+            Severity::Error,
+            "meta_intro_required",
+            "The blueprint needs an intro in meta.intro.",
+        ));
     }
 
     // Stages
     if doc.stages.is_empty() {
-        issues.push(issue(Severity::Error, "at least one stage is required"));
+        issues.push(issue(
+            Severity::Error,
+            "no_stages",
+            "At least one stage is required.",
+        ));
     }
     if doc.stages.len() > 10 {
         issues.push(issue(
             Severity::Warning,
-            "more than 10 stages will overflow the grid's minimum width",
+            "too_many_stages",
+            "More than 10 stages will overflow the grid's minimum width.",
         ));
     }
     let mut seen = std::collections::HashSet::new();
@@ -66,60 +92,79 @@ pub fn validate(doc: &Document) -> Validation {
         if s.id.trim().is_empty() {
             issues.push(issue(
                 Severity::Error,
-                format!("stages[{i}].id is required"),
+                "stage_id_required",
+                format!("stages[{i}].id is required."),
             ));
         }
         if !seen.insert(s.id.trim().to_string()) {
             issues.push(issue(
                 Severity::Error,
-                format!("duplicate stage id '{}'", s.id),
+                "duplicate_stage_id",
+                format!("Duplicate stage id '{}'.", s.id),
             ));
         }
         if s.name.trim().is_empty() {
             issues.push(issue(
                 Severity::Error,
-                format!("stages[{i}].name is required"),
+                "stage_name_required",
+                format!("stages[{i}].name is required."),
             ));
         }
     }
 
     // Lanes
     if doc.lanes.is_empty() {
-        issues.push(issue(Severity::Error, "at least one lane is required"));
+        issues.push(issue(
+            Severity::Error,
+            "no_lanes",
+            "At least one lane is required.",
+        ));
     }
     let mut lane_ids = std::collections::HashSet::new();
     for (i, lane) in doc.lanes.iter().enumerate() {
         if lane.id.trim().is_empty() {
-            issues.push(issue(Severity::Error, format!("lanes[{i}].id is required")));
+            issues.push(issue(
+                Severity::Error,
+                "lane_id_required",
+                format!("lanes[{i}].id is required."),
+            ));
         }
         if !lane_ids.insert(lane.id.trim().to_string()) {
             issues.push(issue(
                 Severity::Error,
-                format!("duplicate lane id '{}'", lane.id),
+                "duplicate_lane_id",
+                format!("Duplicate lane id '{}'.", lane.id),
             ));
         }
         if lane.name.trim().is_empty() {
             issues.push(issue(
                 Severity::Error,
-                format!("lanes[{i}].name is required"),
+                "lane_name_required",
+                format!("lanes[{i}].name is required."),
             ));
         }
         // The grid contract: exactly one card per lane per stage, in stage order.
         if lane.cards.len() != doc.stages.len() {
-            issues.push(issue(
-                Severity::Error,
-                format!(
+            issues.push(Issue {
+                severity: Severity::Error,
+                code: "card_count_mismatch".to_string(),
+                message: format!(
                     "lane '{}' has {} cards but there are {} stages — every lane needs exactly one card per stage",
                     lane.id,
                     lane.cards.len(),
                     doc.stages.len()
                 ),
-            ));
+                lane: Some(i),
+                stage: None,
+            });
         }
         for (j, card) in lane.cards.iter().enumerate() {
             if card.title.trim().is_empty() {
-                issues.push(issue(
+                issues.push(card_issue(
                     Severity::Error,
+                    "card_title_required",
+                    i,
+                    j,
                     format!("lanes[{i}].cards[{j}].title is required"),
                 ));
             }
@@ -130,7 +175,8 @@ pub fn validate(doc: &Document) -> Validation {
     if doc.note.is_none() {
         issues.push(issue(
             Severity::Warning,
-            "no evidence/scope note — every published blueprint should disclose what is reported vs. intended",
+            "missing_note",
+            "No evidence/scope note — every published blueprint should disclose what is reported vs. intended.",
         ));
     }
 
@@ -138,17 +184,39 @@ pub fn validate(doc: &Document) -> Validation {
     if let Some(bad) = collect_bad_hexes(doc) {
         issues.push(issue(
             Severity::Error,
-            format!("invalid hex color(s) in theme: {bad}"),
+            "invalid_hex",
+            format!("Invalid hex color(s) in theme: {bad}."),
         ));
     }
 
     Validation { issues }
 }
 
-fn issue(severity: Severity, message: impl Into<String>) -> Issue {
+fn issue(severity: Severity, code: &str, message: impl Into<String>) -> Issue {
     Issue {
         severity,
+        code: code.to_string(),
         message: message.into(),
+        lane: None,
+        stage: None,
+    }
+}
+
+/// A card-located issue — carries the lane/stage indexes the editor needs to
+/// navigate the author to the exact card that needs the fix.
+fn card_issue(
+    severity: Severity,
+    code: &str,
+    lane: usize,
+    stage: usize,
+    message: impl Into<String>,
+) -> Issue {
+    Issue {
+        severity,
+        code: code.to_string(),
+        message: message.into(),
+        lane: Some(lane),
+        stage: Some(stage),
     }
 }
 
@@ -272,6 +340,33 @@ mod tests {
     }
 
     #[test]
+    fn card_errors_carry_navigable_card_locations() {
+        let yaml = "meta:\n  eyebrow: e\n  title: t\n  intro: i\nstages:\n  - {id: s1, name: One}\n  - {id: s2, name: Two}\nlanes:\n  - {id: customer, name: Customer, cards: [{title: T, blurb: B}, {title: '', blurb: ''}]}\n";
+        let doc = Document::from_yaml(yaml).unwrap();
+        let v = validate(&doc);
+        assert!(!v.is_ok());
+        let located: Vec<_> = v
+            .issues
+            .iter()
+            .filter(|i| i.lane.is_some() && i.stage.is_some())
+            .collect();
+        assert_eq!(located.len(), 1, "exactly the empty-title card is located");
+        assert_eq!(located[0].lane, Some(0));
+        assert_eq!(located[0].stage, Some(1));
+        assert_eq!(located[0].code, "card_title_required");
+        // The card-count mismatch locates the lane, never a stage.
+        let yaml_short = "meta:\n  eyebrow: e\n  title: t\n  intro: i\nstages:\n  - {id: s1, name: One}\n  - {id: s2, name: Two}\nlanes:\n  - {id: customer, name: Customer, cards: [{title: T, blurb: B}]}\n";
+        let mismatch = validate(&Document::from_yaml(yaml_short).unwrap());
+        let lane_only = mismatch
+            .issues
+            .iter()
+            .find(|i| i.message.contains("one card per stage"))
+            .expect("mismatch reported");
+        assert_eq!(lane_only.lane, Some(0));
+        assert_eq!(lane_only.stage, None);
+    }
+
+    #[test]
     fn duplicate_lane_id_is_an_error() {
         let mut doc = minimal_doc();
         let second = doc.lanes[0].clone();
@@ -297,6 +392,9 @@ mod tests {
         doc.theme.accent = "blurple".into();
         let v = validate(&doc);
         assert!(!v.is_ok());
-        assert!(v.issues.iter().any(|i| i.message.contains("invalid hex")));
+        assert!(v
+            .issues
+            .iter()
+            .any(|i| i.code == "invalid_hex" && i.message.contains("accent")));
     }
 }

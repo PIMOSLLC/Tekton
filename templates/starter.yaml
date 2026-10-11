@@ -1,0 +1,110 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# phoenix-Tekton starter blueprint
+#
+# A service blueprint is a grid: STAGES are the columns (the flow of time),
+# LANES are the rows (who or what does the work), and every lane×stage
+# intersection is one CARD. This file IS the blueprint — the editor is a view
+# of it. Author here or in the Visual Architect panel; Save downloads the file.
+#
+# The rules the engine enforces (see the Structure light in the editor):
+#   • meta.eyebrow, meta.title and meta.intro are required
+#   • every lane must have EXACTLY one card per stage, in stage order
+#   • every lane and stage needs a unique id + name
+#   • card titles must not be empty (blurbs may be)
+#   • theme may be omitted entirely — this file omits it, so you get the
+#     default hue-230 palette; the WCAG AA contrast lint re-checks it on
+#     every render
+#
+# Lane `kind` is one of: customer | frontstage | agents | backstage | systems |
+# data | governance | outcome. Kind drives the lane's default card tint; an
+# explicit `tint: "#rrggbb"` overrides it.
+# ─────────────────────────────────────────────────────────────────────────────
+meta:
+  eyebrow: "Service blueprint · my first draft"
+  title: "My First Service Blueprint"
+  intro: >-
+    Replace this sentence: frame the service, the scope, and the moment you are
+    designing for. One sentence is enough.
+
+# OPTIONAL — at-a-glance figures shown in a band above the grid. Delete the
+# whole `stats:` block when you don't need it.
+stats:
+  - figure: "3 stages"
+    caption: "Discover → define → deliver"
+  - figure: "5 lanes"
+    caption: "Customer, frontstage, backstage, systems, governance"
+
+# STAGES — the grid's columns. Order matters; ids are kebab-case and unique.
+stages:
+  - id: discover
+    name: Discover
+    blurb: "How the need or signal first appears"
+  - id: define
+    name: Define
+    blurb: "How options and requirements get shaped"
+  - id: deliver
+    name: Deliver
+    blurb: "How the outcome reaches the customer"
+
+# LANES — the grid's rows. `divider` renders a full-width label line BEFORE
+# this lane; `interpretation` is the "Service design interpretation" drawer
+# text. Exactly ONE card per stage per lane — with three stages below, every
+# lane carries exactly three cards, always in stage order.
+lanes:
+  - id: customer
+    kind: customer
+    name: "Customer actions"
+    blurb: "What the customer actually does"
+    cards:
+      - { title: "Arrives with a goal", blurb: "Describe what brings the customer in at this stage" }
+      - { title: "Weighs the options", blurb: "Describe how the customer decides in this stage" }
+      - { title: "Uses the outcome", blurb: "Describe what the customer takes away in this stage" }
+
+  - id: frontstage
+    kind: frontstage
+    name: "Frontstage experience"
+    blurb: "What the customer sees"
+    cards:
+      - { title: "What they encounter at discovery", blurb: "The visible touchpoint for this stage" }
+      - { title: "What they compare and configure", blurb: "The visible touchpoint for this stage" }
+      - { title: "What they receive and do", blurb: "The visible touchpoint for this stage" }
+
+  - id: backstage
+    kind: backstage
+    name: "Backstage human actions"
+    blurb: "The human work behind the scenes"
+    divider: "— Line of visibility —"
+    interpretation: >-
+      Replace this: what a reader must understand about the human work in this
+      lane — intent, authority, and hand-offs.
+    cards:
+      - { title: "Backstage work at discovery", blurb: "Who acts and why" }
+      - { title: "Backstage work at definition", blurb: "Who acts and why" }
+      - { title: "Backstage work at delivery", blurb: "Who acts and why" }
+
+  - id: systems
+    kind: systems
+    name: "Supporting systems"
+    blurb: "Tools and infrastructure"
+    cards:
+      - { title: "System support at discovery", blurb: "The tools powering this stage" }
+      - { title: "System support at definition", blurb: "The tools powering this stage" }
+      - { title: "System support at delivery", blurb: "The tools powering this stage" }
+
+  - id: governance
+    kind: governance
+    name: "Governance"
+    blurb: "Controls, gates, accountability"
+    divider: "— Control and accountability boundary —"
+    cards:
+      - { title: "Control at discovery", blurb: "Gate, approval, or evidence for this stage" }
+      - { title: "Control at definition", blurb: "Gate, approval, or evidence for this stage" }
+      - { title: "Control at delivery", blurb: "Gate, approval, or evidence for this stage" }
+
+# The disclosure note below the grid — the validator flags its absence because
+# every published blueprint should be honest about its evidence.
+note:
+  label: "Scope and evidence:"
+  body: >-
+    Replace this: what the blueprint assumes, what is measured versus intended,
+    and what is out of scope.

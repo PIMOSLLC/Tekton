@@ -22,6 +22,9 @@ pub struct Finding {
     pub aaa: bool,
     /// Suggested replacement foreground when AA fails (nearest passing color).
     pub suggestion: Option<String>,
+    /// Suggested replacement background — only for lane tints, where the text
+    /// is a shared editorial token and the tint is the local, fixable choice.
+    pub bg_suggestion: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -121,6 +124,28 @@ fn suggest(fg: &str, bg: &str, large: bool) -> Option<String> {
         }
         let cand = hsl_to_hex(h, s, l);
         if contrast_ratio(&cand, bg).ok()? >= aa_threshold(large) {
+            return Some(cand);
+        }
+    }
+    None
+}
+
+/// The mirror image of `suggest`: nearest background that passes AA against a
+/// fixed foreground — walk the bg's lightness AWAY from the fg's luminance.
+/// Lane tint fixes use this: the shared card text stays, the tint moves.
+fn suggest_bg(fg: &str, bg: &str, large: bool) -> Option<String> {
+    let fgc = parse_hex_composited(fg, [0.0, 0.0, 0.0]).ok()?;
+    let bgc = parse_hex_composited(bg, [0.0, 0.0, 0.0]).ok()?;
+    let (fg_lum, bg_lum) = (luminance(fgc), luminance(bgc));
+    let darken = fg_lum > bg_lum;
+    let (h, s, mut l) = rgb_to_hsl(bgc);
+    for _ in 0..50 {
+        l = if darken { l - 0.02 } else { l + 0.02 };
+        if !(0.0..=1.0).contains(&l) {
+            return None;
+        }
+        let cand = hsl_to_hex(h, s, l);
+        if contrast_ratio(fg, &cand).ok()? >= aa_threshold(large) {
             return Some(cand);
         }
     }
@@ -269,7 +294,7 @@ pub fn lint(doc: &Document) -> Result<Report, String> {
         },
         Pair {
             element: "Active button text",
-            fg: surface_white(),
+            fg: &t.accent_ink,
             bg: &t.accent,
             large: false,
         },
@@ -322,13 +347,13 @@ pub fn lint(doc: &Document) -> Result<Report, String> {
     // so the borrows outlive the pushes.
     let mut tint_names: Vec<String> = Vec::new();
     for lane in &doc.lanes {
-        if lane.effective_tint().is_some() {
+        if lane.effective_tint(&doc.theme).is_some() {
             tint_names.push(format!("Card text ({} lane tint)", lane.id));
         }
     }
     let mut tint_i = 0usize;
     for lane in &doc.lanes {
-        if let Some(tint) = lane.effective_tint() {
+        if let Some(tint) = lane.effective_tint(&doc.theme) {
             pairs.push(Pair {
                 element: &tint_names[tint_i],
                 fg: &t.ink_strong,
@@ -356,7 +381,17 @@ pub fn lint(doc: &Document) -> Result<Report, String> {
             } else {
                 suggest(p.fg, p.bg, p.large)
             },
+            bg_suggestion: None,
         });
+    }
+    // Post-pass: lane-tint findings (trailing entries in construction order)
+    // get a background fix — the shared card text stays, the tint moves.
+    let tint_count = tint_names.len();
+    let tint_start = findings.len() - tint_count;
+    for f in findings.iter_mut().skip(tint_start) {
+        if !f.aa {
+            f.bg_suggestion = suggest_bg(&f.fg, &f.bg, f.large);
+        }
     }
     Ok(Report { findings })
 }
@@ -409,6 +444,36 @@ mod tests {
         let (.., l_old) = rgb_to_hsl(parse_hex_composited("#566783", [0.0; 3]).unwrap());
         let (.., l_new) = rgb_to_hsl(parse_hex_composited(&s, [0.0; 3]).unwrap());
         assert!(l_new > l_old);
+    }
+
+    #[test]
+    fn bg_suggestion_fixes_a_failing_lane_tint_keeping_the_text() {
+        // The editor's fix path: dark card text on a red tint (3.12:1) — the
+        // background moves, the shared ink_strong token never does.
+        let s = suggest_bg("#131b45", "#c93131", false).expect("a bg fix must exist");
+        assert!(
+            contrast_ratio("#131b45", &s).unwrap() >= 4.5,
+            "suggested bg {s} passes with the text unchanged"
+        );
+    }
+
+    #[test]
+    fn lint_gives_failing_lane_tints_a_background_fix_and_theme_pairs_only_fg() {
+        let yaml = "meta:\n  eyebrow: e\n  title: t\n  intro: i\nstages:\n  - {id: s, name: Signal}\nlanes:\n  - {id: customer, name: Customer, tint: '#c93131', cards: [{title: T, blurb: B}]}\n";
+        let doc = crate::Document::from_yaml(yaml).expect("parses");
+        let report = lint(&doc).expect("lints");
+        for f in &report.findings {
+            if f.element.contains("lane tint") {
+                assert!(!f.aa, "the red tint fails");
+                let fix = f.bg_suggestion.as_ref().expect("tint pairs carry a bg fix");
+                assert!(contrast_ratio(&f.fg, fix).unwrap() >= 4.5, "{fix} passes");
+            } else {
+                assert!(
+                    f.suggestion.is_none() || f.bg_suggestion.is_none(),
+                    "theme pairs keep the fg-suggestion discipline: {f:?}"
+                );
+            }
+        }
     }
 
     #[test]

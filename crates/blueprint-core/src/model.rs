@@ -82,7 +82,7 @@ pub enum LaneKind {
 }
 
 impl LaneKind {
-    /// Default lane tint (effective card background) — the palette the Serta
+    /// Default lane tint (effective card background) — the palette the example
     /// fixture carried by hand before kinds existed.
     pub fn default_tint(self) -> Option<&'static str> {
         Some(match self {
@@ -122,11 +122,11 @@ pub struct Lane {
 
 impl Lane {
     /// The card background the renderer will actually use for this lane:
-    /// explicit tint wins, then the kind default, then the theme surface.
-    pub fn effective_tint(&self) -> Option<&str> {
-        self.tint
-            .as_deref()
-            .or_else(|| self.kind.and_then(|k| k.default_tint()))
+    /// explicit tint wins, then the lane kind's default FROM THE DOCUMENT'S
+    /// THEME (kind tints are theme tokens — a dark theme darkens them), and
+    /// the legacy static pastel map as the last resort.
+    pub fn effective_tint<'a>(&'a self, theme: &'a crate::theme::Theme) -> Option<&'a str> {
+        self.tint.as_deref().or_else(|| theme.kind_tint(self.kind))
     }
 }
 
@@ -214,13 +214,37 @@ mod tests {
             interpretation: None,
             cards: vec![],
         };
-        assert_eq!(lane.effective_tint(), Some("#eef2ff"));
+        let theme = crate::Theme::default();
+        assert_eq!(lane.effective_tint(&theme), Some("#eef2ff"));
         lane.tint = None;
+        // the theme's kind tint = the same pastel map by default
         assert_eq!(
-            lane.effective_tint(),
-            Some(LaneKind::Agents.default_tint().unwrap())
+            lane.effective_tint(&theme),
+            theme.kind_tint(Some(LaneKind::Agents))
         );
         lane.kind = None;
-        assert_eq!(lane.effective_tint(), None);
+        assert_eq!(lane.effective_tint(&theme), None);
+    }
+
+    #[test]
+    fn kind_tints_are_theme_driven() {
+        // the dark-studio case: the theme darkens the kind tints with
+        // everything else; an explicit lane tint still wins over the token.
+        let mut theme = crate::Theme::default();
+        theme.tint_agents = "#2A2140".into();
+        theme.ink_strong = "#F1F5F9".into();
+        let mut lane = Lane {
+            id: "agents".into(),
+            name: "Agents".into(),
+            blurb: None,
+            divider: None,
+            tint: None,
+            kind: Some(LaneKind::Agents),
+            interpretation: None,
+            cards: vec![],
+        };
+        assert_eq!(lane.effective_tint(&theme), Some("#2A2140"));
+        lane.tint = Some("#4A3B66".into());
+        assert_eq!(lane.effective_tint(&theme), Some("#4A3B66"));
     }
 }

@@ -66,3 +66,27 @@ pub fn serialize_blueprint(json: &str) -> Result<String, JsValue> {
         serde_json::from_str(json).map_err(|e| JsValue::from_str(&e.to_string()))?;
     doc.to_yaml().map_err(|e| JsValue::from_str(&e.to_string()))
 }
+
+/// Load a document from YAML *or* JSON source (JSON detected by its leading
+/// `{` — the editor's Open path accepts both file formats, and autosave recall
+/// ships canonical YAML). Returns the canonical JSON form of `Document`.
+#[wasm_bindgen]
+pub fn load_source(text: &str) -> Result<String, JsValue> {
+    let doc = if text.trim_start().starts_with('{') {
+        blueprint_core::Document::from_json(text)
+    } else {
+        blueprint_core::Document::from_yaml(text)
+    }
+    .map_err(|e| JsValue::from_str(&e.to_string()))?;
+    serde_json::to_string(&doc).map_err(|e| JsValue::from_str(&e.to_string()))
+}
+
+/// Render the editor's canonical JSON state as pretty JSON — the structured
+/// file format for Save-as-JSON, and the JSONB payload shape when the future
+/// PIN integration stores the blueprint in `toolkit_instances` (`tool=blueprint`).
+#[wasm_bindgen]
+pub fn document_to_json(json: &str) -> Result<String, JsValue> {
+    let doc: blueprint_core::Document =
+        serde_json::from_str(json).map_err(|e| JsValue::from_str(&e.to_string()))?;
+    doc.to_json().map_err(|e| JsValue::from_str(&e.to_string()))
+}

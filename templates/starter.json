@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "eyebrow": "Service blueprint · my first draft",
+    "title": "My First Service Blueprint",
+    "intro": "Replace this sentence: frame the service, the scope, and the moment you are designing for. One sentence is enough."
+  },
+  "stats": [
+    { "figure": "3 stages", "caption": "Discover → define → deliver" },
+    { "figure": "5 lanes", "caption": "Customer, frontstage, backstage, systems, governance" }
+  ],
+  "stages": [
+    { "id": "discover", "name": "Discover", "blurb": "How the need or signal first appears" },
+    { "id": "define", "name": "Define", "blurb": "How options and requirements get shaped" },
+    { "id": "deliver", "name": "Deliver", "blurb": "How the outcome reaches the customer" }
+  ],
+  "lanes": [
+    {
+      "id": "customer",
+      "kind": "customer",
+      "name": "Customer actions",
+      "blurb": "What the customer actually does",
+      "cards": [
+        { "title": "Arrives with a goal", "blurb": "Describe what brings the customer in at this stage" },
+        { "title": "Weighs the options", "blurb": "Describe how the customer decides in this stage" },
+        { "title": "Uses the outcome", "blurb": "Describe what the customer takes away in this stage" }
+      ]
+    },
+    {
+      "id": "frontstage",
+      "kind": "frontstage",
+      "name": "Frontstage experience",
+      "blurb": "What the customer sees",
+      "cards": [
+        { "title": "What they encounter at discovery", "blurb": "The visible touchpoint for this stage" },
+        { "title": "What they compare and configure", "blurb": "The visible touchpoint for this stage" },
+        { "title": "What they receive and do", "blurb": "The visible touchpoint for this stage" }
+      ]
+    },
+    {
+      "id": "backstage",
+      "kind": "backstage",
+      "name": "Backstage human actions",
+      "blurb": "The human work behind the scenes",
+      "divider": "— Line of visibility —",
+      "interpretation": "Replace this: what a reader must understand about the human work in this lane — intent, authority, and hand-offs.",
+      "cards": [
+        { "title": "Backstage work at discovery", "blurb": "Who acts and why" },
+        { "title": "Backstage work at definition", "blurb": "Who acts and why" },
+        { "title": "Backstage work at delivery", "blurb": "Who acts and why" }
+      ]
+    },
+    {
+      "id": "systems",
+      "kind": "systems",
+      "name": "Supporting systems",
+      "blurb": "Tools and infrastructure",
+      "cards": [
+        { "title": "System support at discovery", "blurb": "The tools powering this stage" },
+        { "title": "System support at definition", "blurb": "The tools powering this stage" },
+        { "title": "System support at delivery", "blurb": "The tools powering this stage" }
+      ]
+    },
+    {
+      "id": "governance",
+      "kind": "governance",
+      "name": "Governance",
+      "blurb": "Controls, gates, accountability",
+      "divider": "— Control and accountability boundary —",
+      "cards": [
+        { "title": "Control at discovery", "blurb": "Gate, approval, or evidence for this stage" },
+        { "title": "Control at definition", "blurb": "Gate, approval, or evidence for this stage" },
+        { "title": "Control at delivery", "blurb": "Gate, approval, or evidence for this stage" }
+      ]
+    }
+  ],
+  "note": {
+    "label": "Scope and evidence:",
+    "body": "Replace this: what the blueprint assumes, what is measured versus intended, and what is out of scope."
+  }
+}
