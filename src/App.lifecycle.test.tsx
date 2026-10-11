@@ -279,15 +279,34 @@ describe('App blueprint lifecycle', () => {
     expect(screen.getByTestId('tint-warning').textContent).toContain('fails WCAG AA');
     // The fix path applies the engine's suggested background…
     fireEvent.click(screen.getByRole('button', { name: 'Apply suggested color' }));
-    expect(
-      (screen.getByLabelText('Lane 1 card color') as HTMLInputElement).value,
-    ).toBe('#eff2fb');
+    await waitFor(() =>
+      expect((screen.getByLabelText('Clear lane 1 card color') as HTMLButtonElement).disabled).toBe(false),
+    );
     // …and the reset returns the kind's audited default.
     fireEvent.click(screen.getByRole('button', { name: 'Reset to kind default' }));
-    expect(
-      (screen.getByLabelText('Lane 1 card color') as HTMLInputElement).value,
-    ).toBe('#ffffff');
+    await waitFor(() =>
+      expect((screen.getByLabelText('Clear lane 1 card color') as HTMLButtonElement).disabled).toBe(true),
+    );
     engineControls.failFindings = null;
+  });
+
+  it('the tint picker offers only engine-validated swatches (passing AA)', async () => {
+    render(<App />);
+    // Paper (near-white) passes with the default dark ink…
+    const paper = await screen.findByTitle(/Paper — .+:1, passes AA/);
+    expect(paper).not.toBeNull();
+    // …while the dark swatches (ink-on-ink) are withheld.
+    expect(screen.queryByTitle(/Violet dark/)).toBeNull();
+    expect(screen.queryByTitle(/Blueprint navy/)).toBeNull();
+    // Picking a swatch toggles it as the lane's tint; clicking again clears.
+    fireEvent.click(paper);
+    await waitFor(() =>
+      expect((screen.getByTitle('Paper — current color') as HTMLButtonElement).getAttribute('aria-pressed')).toBe('true'),
+    );
+    fireEvent.click(screen.getByTitle('Paper — current color'));
+    await waitFor(() =>
+      expect(screen.getByTitle(/Paper — .+:1, passes AA/).getAttribute('aria-pressed')).toBe('false'),
+    );
   });
 
   it('clicking the selected card toggles the inspector closed on itself', async () => {

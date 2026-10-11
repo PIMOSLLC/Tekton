@@ -81,6 +81,14 @@ pub fn load_source(text: &str) -> Result<String, JsValue> {
     serde_json::to_string(&doc).map_err(|e| JsValue::from_str(&e.to_string()))
 }
 
+/// Contrast ratio for one fg/bg pair — the editor's swatch validation runs
+/// through the engine's own math (the WCAG 2.x relative-luminance ratio the
+/// linter uses); nothing recomputes it client-side.
+#[wasm_bindgen]
+pub fn contrast_ratio(fg: &str, bg: &str) -> Result<f64, JsValue> {
+    blueprint_core::lint::contrast_ratio(fg, bg).map_err(|e| JsValue::from_str(&e))
+}
+
 /// Render the editor's canonical JSON state as pretty JSON — the structured
 /// file format for Save-as-JSON, and the JSONB payload shape when the future
 /// PIN integration stores the blueprint in `toolkit_instances` (`tool=blueprint`).

@@ -241,6 +241,31 @@ export interface BlueprintDocument {
   theme?: BlueprintTheme;
 }
 
+/**
+ * Curated lane-tint swatches — the tint picker offers ONLY these (no free
+ * color picker): each is checked LIVE against the theme's card text
+ * (`ink_strong`) through the engine's own contrast math, so every visible
+ * swatch passes WCAG AA — the user never picks a failing combination.
+ * The set spans light, mid, and dark so every theme (light or dark ink)
+ * keeps a healthy passing subset.
+ */
+export const LANE_TINT_SWATCHES: { hex: string; name: string }[] = [
+  { hex: '#FFFFFF', name: 'Paper' },
+  { hex: '#F3F0FF', name: 'Agents violet' },
+  { hex: '#EFF9F8', name: 'Systems teal' },
+  { hex: '#F3F8FF', name: 'Data blue' },
+  { hex: '#FFF3E9', name: 'Governance amber' },
+  { hex: '#F0FBF4', name: 'Outcome green' },
+  { hex: '#EAF1FF', name: 'Stage blue' },
+  { hex: '#FFF1F2', name: 'Rose wash' },
+  { hex: '#2A2140', name: 'Violet dark' },
+  { hex: '#0E3034', name: 'Teal dark' },
+  { hex: '#0F2740', name: 'Blue dark' },
+  { hex: '#33261A', name: 'Amber dark' },
+  { hex: '#10352A', name: 'Green dark' },
+  { hex: '#182150', name: 'Blueprint navy' },
+];
+
 /** Effective card background: explicit tint, then the THEME's kind tints (the
  * Rust model's chain: `lane.tint ?? theme.kind_tint(kind)`), then the legacy
  * static pastel map as the last resort. Mirrors `Lane::effective_tint`. */

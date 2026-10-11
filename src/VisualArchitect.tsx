@@ -1,11 +1,14 @@
 import type { BlueprintLane, BlueprintStage } from './types';
-import { LANE_KINDS, laneKindLabel } from './types';
+import { LANE_TINT_SWATCHES, LANE_KINDS, laneKindLabel } from './types';
 
 /** The engine's lane-tint AA failure, keyed by lane id (ratio + the bg fix). */
 export interface TintWarning {
   ratio: number;
   suggestionBg?: string;
 }
+
+/** Swatch verdicts keyed by hex (pass + ratio), computed via the engine. */
+export type SwatchVerdicts = Record<string, { pass: boolean; ratio: number }>;
 
 export interface VisualArchitectProps {
   eyebrow: string;
@@ -15,6 +18,8 @@ export interface VisualArchitectProps {
   lanes: BlueprintLane[];
   /** AA verdicts for lane tints (live from the engine lint). */
   tintWarnings: Record<string, TintWarning>;
+  /** Engine-computed swatch verdicts — only passing swatches are pickable. */
+  swatchVerdicts: SwatchVerdicts;
   onMetaChange(field: 'eyebrow' | 'title' | 'intro', value: string): void;
   onStageChange(index: number, field: 'name' | 'blurb', value: string): void;
   onStageAdd(): void;
@@ -152,29 +157,41 @@ export function VisualArchitect(props: VisualArchitectProps) {
                 placeholder="Separation line label (e.g. — Line of visibility —)…"
                 onChange={(e) => props.onLaneChange(i, 'divider', e.target.value)}
               />
-              {/* Row color — overrides the kind's default tint when set;
-                  the kind dropdown above provides the default. */}
-              <div className="tk-tint-field">
-                <input
-                  type="color"
-                  className="tk-tint-swatch"
-                  aria-label={`Lane ${i + 1} card color`}
-                  value={/^#[0-9a-fA-F]{6}$/.test(lane.tint ?? '') ? lane.tint : '#ffffff'}
-                  onChange={(e) => props.onLaneChange(i, 'tint', e.target.value)}
-                />
-                <span className="tk-tint-caption">
-                  {lane.tint ? 'Card color override' : 'Card color (kind default)'}
-                </span>
-                {lane.tint && (
-                  <button
-                    type="button"
-                    className="tk-remove"
-                    aria-label={`Clear lane ${i + 1} card color`}
-                    onClick={() => props.onLaneChange(i, 'tint', '')}
-                  >
-                    ×
-                  </button>
-                )}
+              {/* Row color — a curated, engine-validated swatch palette instead
+                  of a free color picker: only tints that pass AA with the
+                  card text are offered, so a failing pair cannot be picked. */}
+              <div
+                className="tk-tint-field"
+                role="group"
+                aria-label={`Lane ${i + 1}: card colors that pass AA`}
+              >
+                {LANE_TINT_SWATCHES.map((s) => {
+                  const verdict = props.swatchVerdicts[s.hex];
+                  const pass = verdict?.pass ?? false;
+                  const selected = (lane.tint ?? '').toUpperCase() === s.hex.toUpperCase();
+                  if (!pass && !selected) return null;
+                  return (
+                    <button
+                      key={s.hex}
+                      type="button"
+                      className={`tk-swatch ${selected ? 'is-selected' : ''}`}
+                      style={{ background: s.hex }}
+                      aria-pressed={selected}
+                      aria-label={`Card color: ${s.name}${selected ? ' (current)' : ''}`}
+                      title={selected ? `${s.name} — current color` : `${s.name} — ${verdict?.ratio.toFixed(2)}:1, passes AA`}
+                      onClick={() => props.onLaneChange(i, 'tint', selected ? '' : s.hex)}
+                    />
+                  );
+                })}
+                <button
+                  type="button"
+                  className="tk-remove"
+                  aria-label={`Clear lane ${i + 1} card color`}
+                  disabled={!lane.tint}
+                  onClick={() => props.onLaneChange(i, 'tint', '')}
+                >
+                  ×
+                </button>
               </div>
               {/* Live AA verdict for this row's color — a warn + fix path, never
                   a dead end: apply the engine's suggested background, or reset

@@ -1,12 +1,12 @@
-# phoenix-Tekton fixture #1 — the Serta Simmons Bedding agentic e-commerce service
-# blueprint (case study: "AI Agentic Workflows in E-Commerce",
-# delminquoelcunningham.com). Same data as the deployed artifact (page 2508);
-# NDA-conscious wording throughout.
+# phoenix-Tekton fixture #1 — the agentic AI e-commerce service blueprint
+# ("AI Agentic Workflows in E-Commerce"). The shipped example: same data as the
+# deployed case-study artifact (delminquoelcunningham.com, page 2508);
+# wording kept client-neutral throughout.
 meta:
   eyebrow: "Portfolio case study · Future-state service design"
   title: "AI Agentic Workflows in E-Commerce"
   intro: >-
-    Interactive service blueprint for the simmons.com DTC pilot: connecting customer
+    Interactive service blueprint for an agentic DTC e-commerce pilot: connecting customer
     experience, human decisions, AI recommendations, Shopify operations, and
     traceable governance.
 stats:

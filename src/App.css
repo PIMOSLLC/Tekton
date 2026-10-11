@@ -576,6 +576,25 @@
 }
 .tk-tint-swatch::-webkit-color-swatch-wrapper { padding: 2px; }
 .tk-tint-swatch::-webkit-color-swatch { border: none; border-radius: 4px; }
+/* The curated AA swatch grid (lane card colors) */
+.tk-swatch {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--color-tekton-dark-border);
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+.tk-swatch:hover { border-color: var(--color-tekton-dark-accent-interactive); }
+.tk-swatch.is-selected {
+  outline: 2px solid var(--color-tekton-dark-accent-interactive);
+  outline-offset: 1px;
+}
+.tk-swatch:focus-visible {
+  outline: 2px solid var(--color-tekton-dark-accent-interactive);
+  outline-offset: 3px;
+}
 .tk-tint-caption {
   font-size: 0.64rem;
   color: var(--color-tekton-dark-text-muted);

@@ -31,6 +31,8 @@ export interface EngineService {
   /** Pretty JSON of the canonical model — the Save-as-JSON file format and
    * the JSONB payload shape for the future PIN `toolkit_instances` row. */
   toJson(doc: BlueprintDocument): Promise<string>;
+  /** Contrast ratio for one pair — the engine's own WCAG 2.x math. */
+  contrast(fg: string, bg: string): Promise<number>;
 }
 
 /** True when running inside the Tauri desktop shell. */
@@ -86,6 +88,11 @@ class WasmEngine implements EngineService {
     const m = await this.load();
     return m.document_to_json(JSON.stringify(doc));
   }
+
+  async contrast(fg: string, bg: string): Promise<number> {
+    const m = await this.load();
+    return m.contrast_ratio(fg, bg) as number;
+  }
 }
 
 class TauriEngine implements EngineService {
@@ -100,6 +107,7 @@ class TauriEngine implements EngineService {
   serialize(): Promise<string> { return this.unsupported(); }
   loadSource(): Promise<BlueprintDocument> { return this.unsupported(); }
   toJson(): Promise<string> { return this.unsupported(); }
+  contrast(): Promise<number> { return this.unsupported(); }
 }
 
 export const engine: EngineService = isTauriHost ? new TauriEngine() : new WasmEngine();

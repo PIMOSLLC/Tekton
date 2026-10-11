@@ -39,8 +39,24 @@ const SAMPLE_FINDING = {
 };
 
 export function makeFakeEngine() {
+  // honest contrast math (the same WCAG 2.x ratio) for swatch-verdict tests
+  const hexToRgb = (hex: string): [number, number, number] => {
+    const h = hex.trim().replace(/^#/, '');
+    const full = h.length === 3 ? h.split('').map((c) => c + c).join('') : h;
+    return [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16) / 255) as [number, number, number];
+  };
+  const lum = ([r, g, b]: [number, number, number]) => {
+    const lin = (v: number) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+    return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+  };
   return {
     backend: 'wasm' as const,
+    contrast: async (fg: string, bg: string) => {
+      const l1 = lum(hexToRgb(fg));
+      const l2 = lum(hexToRgb(bg));
+      const [hi, lo] = l1 >= l2 ? [l1, l2] : [l2, l1];
+      return (hi + 0.05) / (lo + 0.05);
+    },
     render: async (_yaml: string, _format: OutputFormat) => {
       if (engineControls.renderError) throw new Error(engineControls.renderError);
       return '<!doctype html><title>fake</title>';

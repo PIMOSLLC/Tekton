@@ -2,8 +2,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Cpu, FileOutput, CheckSquare, ShieldCheck } from 'lucide-react';
 import fixtureYaml from '../fixtures/agentic-ai-ecommerce.yaml?raw';
 import { useBlueprintDocument, slugifyTitle, type BlueprintSetup, type LoadResult } from './core/useBlueprintDocument';
+import { engine } from './engine/engineService';
 import type { EngineIssue } from './engine/engineServiceTypes';
 import { TEMPLATES } from './core/templates';
+import { LANE_TINT_SWATCHES } from './types';
 import {
   browserFileStore,
   localStorageAutosave,
@@ -405,6 +407,32 @@ export function App() {
   );
   const structuralCount = errorCount - slotCount;
 
+  // AA-validated swatches: each curated tint is checked LIVE against the
+  // theme's card text through the engine's contrast math — only passing
+  // colors render as pickable, so tint selection can never produce a failing
+  // pair. The verdicts ride to the panel as data (presentational purity).
+  const inkStrong = bp.doc?.theme?.['ink_strong'] ?? '#131b45';
+  const [tintVerdicts, setTintVerdicts] = useState<Record<string, { pass: boolean; ratio: number }>>({});
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const entries = await Promise.all(
+        LANE_TINT_SWATCHES.map(async (s) => {
+          try {
+            const ratio = await engine.contrast(inkStrong, s.hex);
+            return [s.hex, { pass: ratio >= 4.5, ratio: Math.round(ratio * 100) / 100 }] as const;
+          } catch {
+            return [s.hex, { pass: false, ratio: 0 }] as const;
+          }
+        }),
+      );
+      if (!cancelled) setTintVerdicts(Object.fromEntries(entries));
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [inkStrong]);
+
   const statusItems: StatusItem[] = useMemo(() => {
     const engineReady = bp.engineReady && !bp.renderError;
     return [
@@ -638,6 +666,7 @@ export function App() {
                 stages={bp.doc.stages}
                 lanes={bp.doc.lanes}
                 tintWarnings={tintWarnings}
+            swatchVerdicts={tintVerdicts}
                 onMetaChange={bp.setMeta}
                 onStageChange={bp.setStage}
                 onStageAdd={bp.addStage}
