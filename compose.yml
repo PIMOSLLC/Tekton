@@ -1,0 +1,26 @@
+services:
+  # The studio + CLI, served. Browser-mode editor — open http://localhost:6041.
+  # CLI use: podman run --rm -v ./out:/out phoenix-tekton tekton render my-blueprint.yaml -f standalone
+  # (then find artifacts in the container's CWD/whatever it was invoked with).
+  tekton:
+    build:
+      context: .
+      target: runtime
+    image: phoenix-tekton
+    ports:
+      - '6041:6041'
+    restart: unless-stopped
+
+  # Developing inside the container (built on request):
+  #   podman compose --profile dev up dev   (bind-mounts the repo — live edits)
+  # Fedora/rootless: the :Z label relabels the bind mount for SELinux.
+  dev:
+    profiles: ['dev']
+    build:
+      context: .
+      target: devtool
+    working_dir: /work
+    volumes:
+      - '.:/work:Z'
+    ports:
+      - '6041:6041'
