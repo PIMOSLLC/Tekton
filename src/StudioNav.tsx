@@ -110,26 +110,18 @@ export function StudioNav(props: StudioNavProps) {
         />
       </div>
 
-      {/* Engine status footer */}
-      <div className={`flex items-center shrink-0 py-3 border-t border-gray-700 ${expanded ? 'justify-between px-4' : 'justify-center'}`}>
-        <div className="flex items-center gap-1.5">
-          <div
-            className={`w-1.5 h-1.5 rounded-full ${
-              props.engineError ? 'bg-amber-500' : 'bg-emerald-500'
-            } ${props.engineReady && !props.engineError ? 'animate-pulse' : ''}`}
-          />
-          <span className="text-[7px] font-black uppercase tracking-widest text-gray-500">
-            {props.engineError ? 'Err' : props.engineReady ? 'WASM' : '…'}
-          </span>
-        </div>
+      {/* Collapse affordance (expanded mode) — status lights live in the footer now */}
+      <div
+        className={`pb-3 shrink-0 ${expanded ? 'flex justify-center border-t border-gray-700 pt-2' : ''}`}
+      >
         {expanded && (
           <button
             type="button"
             onClick={props.onToggleExpanded}
-            aria-label="Collapse navigation"
-            className="text-gray-500 hover:text-gray-200 transition-colors"
+            className="flex items-center gap-2 text-[9px] uppercase tracking-widest text-gray-500 hover:text-gray-200 transition-colors px-2 py-1"
           >
             <ChevronRight className="w-3.5 h-3.5" />
+            Collapse
           </button>
         )}
       </div>

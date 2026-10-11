@@ -62,3 +62,17 @@
   --color-tekton-light-glow: rgba(30, 64, 175, 0.3);
   --color-tekton-light-glow-subtle: rgba(30, 64, 175, 0.15);
 }
+/* Status system colors (PIN StatusFooter palette — shared for both variants) */
+[data-phoenix-theme='tekton-dark'],
+[data-phoenix-theme='tekton-light'] {
+  --tk-status-success: #22c55e;
+  --tk-status-success-bg: rgba(34, 197, 94, 0.1);
+  --tk-status-warning: #f59e0b;
+  --tk-status-warning-bg: rgba(245, 158, 11, 0.1);
+  --tk-status-error: #ef4444;
+  --tk-status-error-bg: rgba(239, 68, 68, 0.1);
+  --tk-status-info: #3b82f6;
+  --tk-status-info-bg: rgba(59, 130, 246, 0.1);
+  --tk-status-neutral: #6b7280;
+  --tk-status-neutral-bg: rgba(107, 114, 128, 0.12);
+}

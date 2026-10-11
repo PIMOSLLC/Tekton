@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { Cpu, FileOutput, CheckSquare, ShieldCheck } from 'lucide-react';
 import fixtureYaml from '../fixtures/serta-simmons.yaml?raw';
 import { useBlueprintDocument } from './core/useBlueprintDocument';
 import { BuildCanvas } from './BuildCanvas';
@@ -8,6 +9,7 @@ import { ExpandablePanel } from './ExpandablePanel';
 import { StudioNav } from './StudioNav';
 import { LintTerminal } from './LintTerminal';
 import { VisualArchitect } from './VisualArchitect';
+import { StatusFooter, type StatusItem } from './StatusFooter';
 import './index.css';
 import './styles/tekton-theme.css';
 import './App.css';
@@ -77,6 +79,66 @@ export function App() {
 
   const lintFailures = bp.findings.filter((f) => !f.aa).length;
   const errorCount = bp.issues.filter((i) => i.severity === 'error').length;
+  const warningCount = bp.issues.length - errorCount;
+
+  const statusItems: StatusItem[] = useMemo(() => {
+    const engineReady = bp.engineReady && !bp.renderError;
+    return [
+      {
+        id: 'engine',
+        label: 'Engine',
+        icon: Cpu,
+        led: engineReady ? 'success' : bp.renderError ? 'error' : 'warning',
+        // The ready state pulses exactly like PIN's connected LED.
+        ledPulse: engineReady,
+        value: engineReady ? 'WASM' : bp.renderError ? 'Error' : 'Loading',
+        tooltip: [
+          'blueprint-core v0.1.0 · wasm32 · in-browser',
+          'render + lint + validate, single 4.4KB module',
+          bp.renderError ? 'render gate blocked — see the canvas' : 'pipeline: serialize → render/lint/validate',
+        ],
+      },
+      {
+        id: 'format',
+        label: 'Format',
+        icon: FileOutput,
+        led: 'neutral',
+        value: bp.format === 'standalone' ? 'Standalone' : 'WordPress',
+        tooltip: [
+          'standalone: full document (h1)',
+          'wordpress: embed fragment (h2, no shell)',
+        ],
+      },
+      {
+        id: 'validation',
+        label: 'Structure',
+        icon: CheckSquare,
+        led: bp.issues.length === 0 ? 'success' : errorCount > 0 ? 'error' : 'warning',
+        value: errorCount === 0 && warningCount === 0 ? 'Valid' : `${errorCount}E ${warningCount}W`,
+        tooltip:
+          bp.issues.length === 0
+            ? ['document shape complete', 'every lane has one card per stage']
+            : bp.issues.slice(0, 3).map((i) => `${i.severity === 'error' ? 'E' : 'W'} ${i.message}`),
+      },
+      {
+        id: 'contrast',
+        label: 'WCAG AA',
+        icon: ShieldCheck,
+        led: bp.findings.length === 0 ? 'warning' : lintFailures === 0 ? 'success' : 'error',
+        ledPulse: bp.findings.length > 0 && lintFailures === 0,
+        value: bp.findings.length === 0 ? 'Checking' : lintFailures === 0 ? 'Pass' : `${lintFailures}/${bp.findings.length}`,
+        tooltip:
+          bp.findings.length === 0
+            ? ['linting…']
+            : [
+                `${bp.findings.length} contrast pairs checked`,
+                lintFailures === 0
+                  ? 'all pairs pass AA'
+                  : `${lintFailures} pair(s) fail — fix in the YAML or canvas`,
+              ],
+      },
+    ];
+  }, [bp.engineReady, bp.renderError, bp.issues, bp.findings, bp.format, errorCount, warningCount, lintFailures]);
 
   return (
     <div
@@ -228,22 +290,13 @@ export function App() {
           />
         </main>
 
-        {/* Status footer (PIN family language) */}
-        <footer className="h-7 flex items-center gap-5 px-4 border-t border-gray-700 bg-gray-900 text-[9px] font-mono uppercase tracking-widest text-gray-500 shrink-0">
-          <span>{bp.doc?.meta.eyebrow ?? '—'}</span>
-          <span>{bp.format}</span>
-          <span>{bp.engineReady ? 'engine: wasm' : 'engine: loading'}</span>
-          <span className={errorCount === 0 ? 'text-emerald-400' : 'text-amber-400'}>
-            {errorCount === 0 ? 'valid ✓' : `${errorCount} error(s)`}
-          </span>
-          <span className={lintFailures === 0 ? 'text-emerald-400' : 'text-amber-400'}>
-            {bp.findings.length > 0
-              ? lintFailures === 0
-                ? `wcag aa ✓ (${bp.findings.length})`
-                : `wcag aa ✗ ${lintFailures}/${bp.findings.length}`
-              : 'wcag aa —'}
-          </span>
-        </footer>
+        {/* status footer — the PIN pattern, taller (44px): ALL status lights live
+            here, including the engine connection light (moved out of the nav) */}
+        <StatusFooter
+          brand="Phoenix Tekton · 2026 · Build 0.1.0"
+          context={bp.doc?.meta.eyebrow ?? '—'}
+          items={statusItems}
+        />
       </div>
 
       <CardInspector

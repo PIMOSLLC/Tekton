@@ -437,3 +437,135 @@
    except on cards (which stay pointer/click targets) */
 .tk-panzoom { cursor: grab; }
 .tk-panzoom:active { cursor: grabbing; }
+
+/* ══════════════════════════════════════════════════════════════════
+   Status footer — PIN StatusFooter anatomy: brand zone, indicators pill,
+   LED + icon + uppercase label per item, dark tooltip above. 44px tall;
+   all status items (incl. the engine light, moved out of the nav) live
+   here. Tooltips also open on keyboard focus (improvement over PIN's
+   hover-only).
+   ══════════════════════════════════════════════════════════════════ */
+
+.tk-status-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0.5rem 1rem;
+  background: var(--color-tekton-dark-bg-secondary);
+  border-top: 1px solid var(--color-tekton-dark-border);
+  flex: none;
+}
+
+.tk-status-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-tekton-dark-text-muted);
+  min-width: 0;
+}
+.tk-status-context {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 340px;
+}
+
+.tk-status-sep {
+  width: 1px;
+  height: 12px;
+  background: var(--color-tekton-dark-border);
+  flex: none;
+}
+
+.tk-status-indicators {
+  display: flex;
+  align-items: center;
+  background: var(--tk-status-neutral-bg);
+  border-radius: 9999px;
+  padding: 4px 12px;
+  border: 1px solid var(--color-tekton-dark-border);
+  flex: none;
+}
+
+.tk-status-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: help;
+}
+.tk-status-item:hover { background: var(--tk-status-neutral-bg); }
+.tk-status-item:focus-visible {
+  outline: 2px solid var(--color-tekton-dark-accent-interactive);
+  outline-offset: 1px;
+}
+
+.tk-status-led {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: none;
+}
+.tk-status-led-success { background: var(--tk-status-success); box-shadow: 0 0 4px var(--color-tekton-dark-glow); }
+.tk-status-led-warning { background: var(--tk-status-warning); animation: tk-status-blink 1.5s ease-in-out infinite; }
+.tk-status-led-error { background: var(--tk-status-error); }
+.tk-status-led-info { background: var(--tk-status-info); }
+.tk-status-led-neutral { background: var(--tk-status-neutral); }
+.tk-status-led-pulse { animation: tk-status-glow 2s ease-in-out infinite; }
+
+@keyframes tk-status-glow {
+  0%, 100% { box-shadow: 0 0 4px var(--tk-status-success); }
+  50% { box-shadow: 0 0 8px var(--tk-status-success); }
+}
+@keyframes tk-status-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tk-status-led-pulse, .tk-status-led-warning { animation: none; }
+}
+
+.tk-status-label {
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-tekton-dark-text-muted);
+  white-space: nowrap;
+}
+.tk-status-label strong { color: var(--color-tekton-dark-text); font-weight: 700; }
+
+.tk-status-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: #1f2937;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  white-space: nowrap;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+  z-index: 200;
+}
+.tk-status-tooltip-title { font-weight: 700; margin-bottom: 2px; }
+.tk-status-tooltip-line { font-size: 0.66rem; color: #d1d5db; }
+.tk-status-item:hover .tk-status-tooltip,
+.tk-status-item:focus-visible .tk-status-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tk-status-tooltip { transition: none; }
+}
