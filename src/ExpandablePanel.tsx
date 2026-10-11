@@ -8,7 +8,7 @@ export interface ExpandablePanelProps {
   children: ReactNode;
 }
 
-const SECTION_WIDTH = 260;
+const SECTION_WIDTH = 340;
 const YAML_WIDTH = 460;
 
 /**
@@ -65,7 +65,7 @@ export function ExpandablePanel({ section, title, blurb, onClose, children }: Ex
             <h2 className="text-[10px] font-black uppercase tracking-widest text-gray-400">
               {title}
             </h2>
-            {blurb && <p className="text-[9px] text-gray-500 mt-0.5 max-w-[180px]">{blurb}</p>}
+            {blurb && <p className="text-[9px] text-gray-500 mt-0.5 max-w-[280px]">{blurb}</p>}
           </div>
           <button
             type="button"
