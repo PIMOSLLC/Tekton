@@ -234,15 +234,8 @@ export function VisualArchitect(props: VisualArchitectProps) {
               <span className="tk-grab" aria-hidden="true">⋮⋮</span>
               <div className="tk-row-card-main">
                 <div className="tk-lane-head">
-                  <label className="tk-row-field">
-                    <span className="tk-row-label">Lane name</span>
-                    <input
-                      type="text"
-                      value={lane.name}
-                      aria-label={`Lane ${i + 1} name`}
-                      onChange={(e) => props.onLaneChange(i, 'name', e.target.value)}
-                    />
-                  </label>
+                  {/* The disclosure caret LEADS, like the Contrast terminal's
+                      toggle — the lane panel's caret is where the eye starts. */}
                   <button
                     type="button"
                     className="tk-lane-fold"
@@ -253,6 +246,15 @@ export function VisualArchitect(props: VisualArchitectProps) {
                   >
                     <ChevronDown className="w-4 h-4" aria-hidden="true" />
                   </button>
+                  <label className="tk-row-field">
+                    <span className="tk-row-label">Lane name</span>
+                    <input
+                      type="text"
+                      value={lane.name}
+                      aria-label={`Lane ${i + 1} name`}
+                      onChange={(e) => props.onLaneChange(i, 'name', e.target.value)}
+                    />
+                  </label>
                 </div>
                 <label className="tk-row-field">
                   <span className="tk-row-label">Lane description</span>
@@ -394,6 +396,9 @@ export function VisualArchitect(props: VisualArchitectProps) {
                 aria-label={`Expand lane ${i + 1}: ${lane.name}`}
                 onClick={() => setOpenLane(i)}
               >
+                {/* The caret leads the label, rotated to the closed state —
+                    the same one-chevron accordion the contrast terminal uses. */}
+                <ChevronDown className="tk-lane-chevron w-3.5 h-3.5" aria-hidden="true" />
                 <span className="tk-lane-name">{lane.name || 'Untitled lane'}</span>
                 {lane.kind && (
                   <span className="tk-lane-chip">{laneKindLabel(lane.kind)}</span>

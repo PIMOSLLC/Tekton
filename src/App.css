@@ -815,6 +815,18 @@
   cursor: pointer;
   text-align: left;
 }
+
+/* Lane carets — the accordion's one-chevron idiom (the contrast terminal's
+   pattern): open = down, closed = rotated right; the caret LEADS the label. */
+.tk-lane-summary .tk-lane-chevron {
+  color: var(--color-tekton-dark-text-muted);
+  flex: none;
+  transition: transform 0.15s ease;
+  transform: rotate(-90deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tk-lane-summary .tk-lane-chevron { transition: none; }
+}
 .tk-lane-summary:hover { background: rgba(255, 255, 255, 0.05); }
 .tk-lane-summary:focus-visible { outline: 2px solid var(--color-tekton-dark-accent-interactive); outline-offset: 1px; }
 .tk-lane-name {

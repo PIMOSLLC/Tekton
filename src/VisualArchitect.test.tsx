@@ -117,6 +117,14 @@ describe('VisualArchitect — grouped workflow panel with the lane accordion', (
     expect(document.querySelector('.tk-stat-preview')).toBeNull();
   });
 
+  it('lane carets LEAD, terminal-style: the open card\u2019s fold sits left of the name and collapsed rows point right', () => {
+    renderPanel();
+    const head = document.querySelector('.tk-lane-head') as HTMLElement;
+    expect((head.firstElementChild as HTMLElement).className).toContain('tk-lane-fold');
+    const summary = screen.getByLabelText('Expand lane 2: Frontstage');
+    expect(summary.querySelector('.tk-lane-chevron')).not.toBeNull();
+  });
+
   it('stat rows edit figure and caption; add/remove go through the document ops', () => {
     const { handlers } = renderPanel();
     const figure = screen.getByLabelText('Stat 1 figure') as HTMLInputElement;
