@@ -1,12 +1,58 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { VisualArchitect, type SwatchVerdicts } from './VisualArchitect';
-import type { BlueprintLane, BlueprintStage } from './types';
+import type { BlueprintLane, BlueprintStage, BlueprintStat } from './types';
 
 const stages: BlueprintStage[] = [
   { id: 's1', name: 'Signal' },
   { id: 's2', name: 'Analyze' },
 ];
+const baseStats: BlueprintStat[] = [
+  { figure: '4 layers', caption: 'Design system · analytics · site operations · human command' },
+];
+function renderPanel(lanes: BlueprintLane[] = baseLanes, stats: BlueprintStat[] = baseStats) {
+  const handlers = {
+    onMetaChange: vi.fn(),
+    onStageChange: vi.fn(),
+    onStageAdd: vi.fn(),
+    onStageRemove: vi.fn(),
+    onStatChange: vi.fn(),
+    onStatAdd: vi.fn(),
+    onStatRemove: vi.fn(),
+    onLaneChange: vi.fn(),
+    onLaneAdd: vi.fn(),
+    onLaneRemove: vi.fn(),
+  };
+  const view = render(
+    <VisualArchitect
+      eyebrow="e"
+      title="t"
+      intro="i"
+      stages={stages}
+      lanes={lanes}
+      stats={stats}
+      tintWarnings={{}}
+      swatchVerdicts={
+        {
+          '#FFFFFF': { pass: true, ratio: 14.4 },
+          '#F3F0FF': { pass: true, ratio: 12.9 },
+        } as SwatchVerdicts
+      }
+      onMetaChange={handlers.onMetaChange}
+      onStageChange={handlers.onStageChange}
+      onStageAdd={handlers.onStageAdd}
+      onStageRemove={handlers.onStageRemove}
+      onStatChange={handlers.onStatChange}
+      onStatAdd={handlers.onStatAdd}
+      onStatRemove={handlers.onStatRemove}
+      onLaneChange={handlers.onLaneChange}
+      onLaneAdd={handlers.onLaneAdd}
+      onLaneRemove={handlers.onLaneRemove}
+    />,
+  );
+  return { ...view, handlers };
+}
+
 const lane = (id: string, name: string, kind: BlueprintLane['kind']): BlueprintLane => ({
   id,
   name,
@@ -21,48 +67,30 @@ const baseLanes: BlueprintLane[] = [
   lane('frontstage', 'Frontstage', 'frontstage'),
   lane('agents', 'AI agent workflow', 'agents'),
 ];
-function renderPanel(lanes: BlueprintLane[] = baseLanes) {
-  const handlers = {
-    onMetaChange: vi.fn(),
-    onStageChange: vi.fn(),
-    onStageAdd: vi.fn(),
-    onStageRemove: vi.fn(),
-    onLaneChange: vi.fn(),
-    onLaneAdd: vi.fn(),
-    onLaneRemove: vi.fn(),
-  };
-  const view = render(
-    <VisualArchitect
-      eyebrow="e"
-      title="t"
-      intro="i"
-      stages={stages}
-      lanes={lanes}
-      tintWarnings={{}}
-      swatchVerdicts={
-        {
-          '#FFFFFF': { pass: true, ratio: 14.4 },
-          '#F3F0FF': { pass: true, ratio: 12.9 },
-        } as SwatchVerdicts
-      }
-      onMetaChange={handlers.onMetaChange}
-      onStageChange={handlers.onStageChange}
-      onStageAdd={handlers.onStageAdd}
-      onStageRemove={handlers.onStageRemove}
-      onLaneChange={handlers.onLaneChange}
-      onLaneAdd={handlers.onLaneAdd}
-      onLaneRemove={handlers.onLaneRemove}
-    />,
-  );
-  return { ...view, handlers };
-}
 
 describe('VisualArchitect — grouped workflow panel with the lane accordion', () => {
-  it('labels the three workflow groups (Document / Stages / Lanes)', () => {
+  it('labels the four authoring groups (Document / Stats / Stages / Lanes)', () => {
     renderPanel();
     expect(screen.getByRole('group', { name: 'Document' })).toBeDefined();
+    expect(screen.getByRole('group', { name: 'Stats' })).toBeDefined();
     expect(screen.getByRole('group', { name: 'Stages' })).toBeDefined();
     expect(screen.getByRole('group', { name: 'Lanes' })).toBeDefined();
+  });
+
+  it('stat rows edit figure and caption; add/remove go through the document ops', () => {
+    const { handlers } = renderPanel();
+    const figure = screen.getByLabelText('Stat 1 figure') as HTMLInputElement;
+    expect(figure.value).toBe('4 layers');
+    fireEvent.change(figure, { target: { value: '1 week' } });
+    expect(handlers.onStatChange).toHaveBeenCalledWith(0, 'figure', '1 week');
+    fireEvent.change(screen.getByLabelText('Stat 1 caption'), {
+      target: { value: 'Signal to monitored release' },
+    });
+    expect(handlers.onStatChange).toHaveBeenCalledWith(0, 'caption', 'Signal to monitored release');
+    fireEvent.click(screen.getByRole('button', { name: /Add stat/ }));
+    expect(handlers.onStatAdd).toHaveBeenCalledOnce();
+    fireEvent.click(screen.getByRole('button', { name: 'Remove stat 4 layers' }));
+    expect(handlers.onStatRemove).toHaveBeenCalledWith(0);
   });
 
   it('lane 0 starts open; the rest are one-line summaries', () => {
@@ -103,9 +131,12 @@ describe('VisualArchitect — grouped workflow panel with the lane accordion', (
       <VisualArchitect
         eyebrow="e" title="t" intro="i"
         stages={stages} lanes={[...baseLanes, added]}
+        stats={[]}
         tintWarnings={{}} swatchVerdicts={{ '#FFFFFF': { pass: true, ratio: 14.4 } }}
         onMetaChange={handlers.onMetaChange} onStageChange={handlers.onStageChange}
         onStageAdd={handlers.onStageAdd} onStageRemove={handlers.onStageRemove}
+        onStatChange={handlers.onStatChange} onStatAdd={handlers.onStatAdd}
+        onStatRemove={handlers.onStatRemove}
         onLaneChange={handlers.onLaneChange} onLaneAdd={handlers.onLaneAdd}
         onLaneRemove={handlers.onLaneRemove}
       />,
@@ -115,7 +146,7 @@ describe('VisualArchitect — grouped workflow panel with the lane accordion', (
 
   it('STAGES and LANES carry an info hint: the tip is linked to a labeled trigger, not hover-only decoration', () => {
     renderPanel();
-    for (const label of ['About stages', 'About lanes']) {
+    for (const label of ['About stats', 'About stages', 'About lanes']) {
       const trigger = screen.getByRole('button', { name: label });
       const tipId = trigger.getAttribute('aria-describedby');
       expect(tipId).toBeTruthy();

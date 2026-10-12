@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import type { BlueprintLane, BlueprintStage } from './types';
+import type { BlueprintLane, BlueprintStage, BlueprintStat } from './types';
 import { LANE_TINT_SWATCHES, LANE_KINDS, laneKindLabel } from './types';
 import { InfoHint } from './InfoHint';
 
@@ -19,6 +19,8 @@ export interface VisualArchitectProps {
   intro: string;
   stages: BlueprintStage[];
   lanes: BlueprintLane[];
+  /** The under-title quick figures — edited like stages, rendered below the band. */
+  stats: BlueprintStat[];
   /** AA verdicts for lane tints (live from the engine lint). */
   tintWarnings: Record<string, TintWarning>;
   /** Engine-computed swatch verdicts — only passing swatches are pickable. */
@@ -27,6 +29,9 @@ export interface VisualArchitectProps {
   onStageChange(index: number, field: 'name' | 'blurb', value: string): void;
   onStageAdd(): void;
   onStageRemove(index: number): void;
+  onStatChange(index: number, field: 'figure' | 'caption', value: string): void;
+  onStatAdd(): void;
+  onStatRemove(index: number): void;
   onLaneChange(
     index: number,
     field: 'name' | 'blurb' | 'kind' | 'tint' | 'divider' | 'interpretation',
@@ -92,6 +97,49 @@ export function VisualArchitect(props: VisualArchitectProps) {
             onChange={(e) => props.onMetaChange('intro', e.target.value)}
           />
         </label>
+      </section>
+
+      <section className="tk-arch-section">
+        <div className="tk-arch-group-label" role="group" aria-label="Stats">
+          <span>Stats</span>
+          <InfoHint
+            label="About stats"
+            tip="Stat cards are the quick figures under the title — the numbers and guarantees a reader scans first. Figure = the bold value; caption = the one line beneath it."
+          />
+          <span className="tk-count-pill">{props.stats.length} stats</span>
+        </div>
+        {props.stats.map((stat, i) => (
+          <div className="tk-row-card" key={`stat-${i}`}>
+            <span className="tk-grab" aria-hidden="true">⋮⋮</span>
+            <div className="tk-row-card-main">
+              <input
+                type="text"
+                value={stat.figure}
+                aria-label={`Stat ${i + 1} figure`}
+                placeholder="Figure (e.g. 1 week)…"
+                onChange={(e) => props.onStatChange(i, 'figure', e.target.value)}
+              />
+              <input
+                type="text"
+                value={stat.caption}
+                aria-label={`Stat ${i + 1} caption`}
+                placeholder="Caption (e.g. From customer signal to monitored release)…"
+                onChange={(e) => props.onStatChange(i, 'caption', e.target.value)}
+              />
+            </div>
+            <button
+              type="button"
+              className="tk-remove"
+              aria-label={`Remove stat ${stat.figure || i + 1}`}
+              onClick={() => props.onStatRemove(i)}
+            >
+              ×
+            </button>
+          </div>
+        ))}
+        <button type="button" className="tk-add" onClick={props.onStatAdd}>
+          + Add stat
+        </button>
       </section>
 
       <section className="tk-arch-section">

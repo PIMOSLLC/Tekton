@@ -337,6 +337,32 @@ export function useBlueprintDocument(initialYaml: string, options?: UseBlueprint
     [updateDoc],
   );
 
+  /** Under-title quick figures (the stat cards the reader scans first). */
+  const setStat = useCallback(
+    (index: number, field: 'figure' | 'caption', value: string) =>
+      updateDoc((d) => {
+        const stat = d.stats?.[index];
+        if (stat) stat[field] = value;
+      }),
+    [updateDoc],
+  );
+
+  const addStat = useCallback(
+    () =>
+      updateDoc((d) => {
+        d.stats = [...(d.stats ?? []), { figure: '', caption: '' }];
+      }),
+    [updateDoc],
+  );
+
+  const removeStat = useCallback(
+    (index: number) =>
+      updateDoc((d) => {
+        d.stats = (d.stats ?? []).filter((_, i) => i !== index);
+      }),
+    [updateDoc],
+  );
+
   const setLane = useCallback(
     (
       index: number,
@@ -488,6 +514,9 @@ export function useBlueprintDocument(initialYaml: string, options?: UseBlueprint
     setStage,
     addStage,
     removeStage,
+    setStat,
+    addStat,
+    removeStat,
     setLane,
     addLane,
     removeLane,

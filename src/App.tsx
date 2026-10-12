@@ -735,12 +735,16 @@ export function App() {
                 intro={bp.doc.meta.intro}
                 stages={bp.doc.stages}
                 lanes={bp.doc.lanes}
+                stats={bp.doc.stats ?? []}
                 tintWarnings={tintWarnings}
             swatchVerdicts={tintVerdicts}
                 onMetaChange={bp.setMeta}
                 onStageChange={bp.setStage}
                 onStageAdd={bp.addStage}
                 onStageRemove={bp.removeStage}
+                onStatChange={bp.setStat}
+                onStatAdd={bp.addStat}
+                onStatRemove={bp.removeStat}
                 onLaneChange={bp.setLane}
                 onLaneAdd={bp.addLane}
                 onLaneRemove={bp.removeLane}
