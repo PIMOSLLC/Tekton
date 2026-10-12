@@ -6,7 +6,7 @@ members = ["crates/blueprint-core", "crates/blueprint-wasm", "crates/tekton-cli"
 version = "0.1.0"
 edition = "2021"
 authors = ["Dr. Delminquoe L Cunningham <info@phoenixinceptionsmediallc.com>"]
-license = "All rights reserved"
+license = "MIT OR Apache-2.0"
 
 [profile.release]
 lto = true

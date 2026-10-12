@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 description = "Tekton — service blueprint studio (desktop shell)"
 authors = ["Dr. Delminquoe L Cunningham <info@phoenixinceptionsmediallc.com>"]
-license = "All rights reserved"
+license = "MIT OR Apache-2.0"
 
 # Why: without this feature the binary compiles in dev mode — no embedded
 # frontend, and the webview loads the devUrl (localhost:6041), which only
