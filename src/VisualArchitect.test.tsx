@@ -80,8 +80,8 @@ describe('VisualArchitect — grouped workflow panel with the lane accordion', (
   it('every row-card field carries a visible label (discoverability — not aria-only naming)', () => {
     renderPanel();
     for (const text of [
-      'Figure',
-      'Caption',
+      'Figure — the bold stat',
+      'Caption — one line beneath it',
       'Stage name',
       'Stage description',
       'Lane name',

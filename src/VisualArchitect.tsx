@@ -113,22 +113,22 @@ export function VisualArchitect(props: VisualArchitectProps) {
             <span className="tk-grab" aria-hidden="true">⋮⋮</span>
             <div className="tk-row-card-main">
               <label className="tk-row-field">
-                <span className="tk-row-label">Figure</span>
+                <span className="tk-row-label">Figure — the bold stat</span>
                 <input
                   type="text"
                   value={stat.figure}
                   aria-label={`Stat ${i + 1} figure`}
-                  placeholder="Figure (e.g. 1 week)…"
+                  placeholder="The bold stat, e.g. 1 week · 5 stages…"
                   onChange={(e) => props.onStatChange(i, 'figure', e.target.value)}
                 />
               </label>
               <label className="tk-row-field">
-                <span className="tk-row-label">Caption</span>
+                <span className="tk-row-label">Caption — one line beneath it</span>
                 <input
                   type="text"
                   value={stat.caption}
                   aria-label={`Stat ${i + 1} caption`}
-                  placeholder="Caption (e.g. From customer signal to monitored release)…"
+                  placeholder="Its one-line explanation, e.g. From customer signal to monitored release…"
                   onChange={(e) => props.onStatChange(i, 'caption', e.target.value)}
                 />
               </label>
