@@ -66,7 +66,9 @@
   flex: 1;
   border: 1px solid var(--color-tekton-dark-border);
   border-radius: 0;
-  background: #fff;
+  /* Same pasteboard as Build — the rendered artifact floats the same way
+     (the sheet's paint belongs to the document, the furniture to chrome). */
+  background: var(--tk-pasteboard, #26262b);
 }
 
 .tk-error {
@@ -861,6 +863,11 @@
      chrome light background is only the fallback. */
   background: var(--tk-doc-canvas, var(--color-tekton-light-bg-primary));
   padding: 24px;
+  /* Figure/ground: the sheet lifts off the neutral pasteboard — the
+     exported artifact is an object, not a wash across the workspace. */
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  box-shadow: 0 6px 40px rgba(0, 0, 0, 0.35);
 }
 .tk-canvas-grid { display: grid; gap: 10px; min-width: 900px; }
 .tk-canvas-corner {
@@ -1212,38 +1219,29 @@ body.is-panel-resizing {
   font-family: ui-monospace, 'JetBrains Mono', monospace;
 }
 
-/* Pan/zoom canvas: pan cursor while dragging, canvas is grabbable everywhere
-   except on cards (which stay pointer/click targets) */
-.tk-panzoom { cursor: grab; }
+/* ════════ Pasteboard model (Adobe/Figma) ════════
+   The transformed .tk-canvas is the SHEET — the document itself, painted by
+   the document's own theme and exported as-is. The workspace around it is
+   the PASTEBOARD — always this neutral, never the document's color, so any
+   blueprint reads as an object floating above silent furniture. */
+.tk-panzoom {
+  --tk-pasteboard: #26262b;
+  background: var(--tk-pasteboard);
+  cursor: grab;
+}
 
-/* Dot-grid backdrop (toggleable via the canvas tools' grid button) —
-   two layers: the void zones around the canvas sheet, and the sheet itself
-   (the previous version painted only the root backdrop, which the opaque
-   canvas sheet covered — the toggle visibly did nothing) */
+/* Dot-grid backdrop (toggleable via the canvas tools' grid button) — dots
+   belong to the PASTEBOARD only: a chrome aid for layout work. The sheet is
+   clean because the exported artifact has no dots. Fixed bright-on-dark
+   dots; the pasteboard never follows the document. */
 .tk-canvas-dotgrid::before {
   content: '';
   position: absolute;
   inset: 0;
-  /* Dots derive from the document's root-body ink (color-mix, not a second
-     hardcoded value): a dark canvas's light ink dots itself in light gray;
-     a light document keeps the navy dots; the chrome fallback covers the
-     void zones outside the var's scope. */
-  background-image: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--tk-doc-ink, #141b3d) 14%, transparent) 1.2px,
-    transparent 1.2px
-  );
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.09) 1.2px, transparent 1.2px);
   background-size: 24px 24px;
   pointer-events: none;
   z-index: 0;
-}
-.tk-canvas-dotgrid .tk-canvas {
-  background-image: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--tk-doc-ink, #141b3d) 10%, transparent) 1.2px,
-    transparent 1.2px
-  );
-  background-size: 24px 24px;
 }
 .tk-canvas-tool.is-armed { color: var(--color-tekton-dark-text); background: var(--color-tekton-dark-surface); }
 .tk-panzoom:active { cursor: grabbing; }
