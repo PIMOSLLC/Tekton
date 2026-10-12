@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import type { BlueprintDocument } from './types';
 import { effectiveTint } from './types';
 
@@ -27,9 +27,36 @@ export function BuildCanvas({ doc, selectedCard, onSelectCard }: BuildCanvasProp
     gridTemplateColumns: `200px repeat(${stageCount}, minmax(180px, 1fr))`,
   };
   const dividerBg = doc.theme?.['divider_bg'] ?? '#182150';
+  // Canvas↔render parity: untinted cards paint the DOCUMENT's surface (the
+  // engine's --bp-surface), never a chrome color — a dark document's
+  // customer/frontstage/backstage rows must read as dark, exactly as the
+  // exported artifact renders them.
+  const surface = doc.theme?.['surface'] ?? '#ffffff';
+  const inkStrong = doc.theme?.['ink_strong'] ?? '#131b45';
+  // The whole grid scaffolding wears the document too: page, stage columns,
+  // lane labels, grid corner, and the hairline borders — the same tokens the
+  // engine paints the artifact with (each consumed with the chrome look as
+  // fallback so a theme-less document keeps the studio's light view).
+  const docVars = {
+    '--tk-doc-canvas': doc.theme?.['canvas'] ?? '#f5f7fb',
+    '--tk-doc-surface': surface,
+    '--tk-doc-ink': doc.theme?.['ink'] ?? '#141b3d',
+    '--tk-doc-grid-head': doc.theme?.['grid_head'] ?? '#161f4c',
+    '--tk-doc-stage-bg': doc.theme?.['stage_bg'] ?? '#eaf1ff',
+    '--tk-doc-stage-ink': doc.theme?.['stage_ink'] ?? '#17256d',
+    '--tk-doc-stage-blurb': doc.theme?.['stage_blurb'] ?? '#566b8e',
+    '--tk-doc-row-bg': doc.theme?.['row_head_bg'] ?? '#f0f4fa',
+    '--tk-doc-row-ink': doc.theme?.['ink'] ?? '#141b3d',
+    '--tk-doc-row-blurb': doc.theme?.['row_blurb'] ?? '#5e6d83',
+    '--tk-doc-border': doc.theme?.['border_soft'] ?? '#e3e8f1',
+  } as CSSProperties;
 
   return (
-    <div className="tk-canvas" data-phoenix-theme="tekton-light">
+    <div
+      className="tk-canvas"
+      data-phoenix-theme="tekton-light"
+      style={docVars as CSSProperties}
+    >
       <div className="tk-canvas-grid" style={gridStyle}>
         <div className="tk-canvas-corner">Service layer ↓ <small>Stage →</small></div>
         {doc.stages.map((stage, i) => (
@@ -53,6 +80,8 @@ export function BuildCanvas({ doc, selectedCard, onSelectCard }: BuildCanvasProp
               setLineLane((prev) => (prev === li ? null : li))
             }
             tint={effectiveTint(lane, doc.theme)}
+            surface={surface}
+            inkStrong={inkStrong}
             cards={lane.cards}
             selected={selectedCard}
             onSelectCard={onSelectCard}
@@ -72,7 +101,12 @@ interface LaneRowProps {
   /** True when this row is the one the clicked line band governs. */
   associated: boolean;
   onToggleLine(): void;
+  /** The lane's card background — explicit tint, else the kind default. */
   tint?: string;
+  /** The document's card surface (engine: --bp-surface) — untinted fallback. */
+  surface: string;
+  /** The document's card ink (engine: --bp-ink-strong) — the linted pair. */
+  inkStrong: string;
   cards: { title: string; blurb: string }[];
   selected: { lane: number; stage: number } | null;
   onSelectCard(position: { lane: number; stage: number }): void;
@@ -87,6 +121,8 @@ function LaneRow({
   associated,
   onToggleLine,
   tint,
+  surface,
+  inkStrong,
   cards,
   selected,
   onSelectCard,
@@ -119,7 +155,12 @@ function LaneRow({
             className={`tk-canvas-card ${isSelected ? 'is-selected' : ''} ${
               associated ? 'is-associated' : ''
             } ${card.title ? '' : 'is-untitled'}`}
-            style={tint ? { background: tint } : undefined}
+            style={{
+              // Document pairing: the cell background (tint else surface)
+              // and the shared card ink — the same pair the engine lints.
+              background: tint ?? surface,
+              ['--tk-card-ink' as string]: inkStrong,
+            } as CSSProperties}
             aria-pressed={isSelected}
             onClick={() => onSelectCard({ lane: laneIndex, stage: ci })}
           >

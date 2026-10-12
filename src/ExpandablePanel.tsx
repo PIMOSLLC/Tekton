@@ -85,7 +85,7 @@ export function ExpandablePanel({
   return (
     <div
       ref={panelRef}
-      className={`h-full bg-gray-800 border-r border-gray-700 shrink-0 overflow-hidden relative flex flex-col ${
+      className={`h-full bg-gray-800 border-r border-gray-700 shrink-0 overflow-hidden relative flex flex-row ${
         isResizing
           ? 'transition-none'
           : 'transition-[width] duration-300 ease-out motion-reduce:transition-none'

@@ -1,10 +1,15 @@
 import type { BlueprintTheme } from './types';
-import { DARK_STUDIO_PRESET, LIGHT_DEFAULT_PRESET, THEME_GROUPS, THEME_TOKENS } from './types';
+import { THEME_GROUPS, THEME_PRESETS, THEME_TOKENS } from './types';
 
 export interface ThemeEditorProps {
   /** The document's theme map (wire keys; engine guarantees every token). */
   theme: BlueprintTheme;
   onThemeChange(key: string, value: string): void;
+  /** Preset apply is the app's guarded transaction — stale lane tints that
+   * cannot hold the preset's card ink re-base to the kind defaults and the
+   * result is announced. The engine's Rust suite audits the map (the wasm
+   * engine can't be reached from Rust tests, hence the seam). */
+  onApplyPreset(preset: Record<string, string>, label: string): void;
 }
 
 /**
@@ -17,39 +22,42 @@ export interface ThemeEditorProps {
  * with an unparsable hex fails *validate* as an error (render gate) — never
  * silently.
  *
- * PRESETS apply whole themes at once (dark = the studio-matched PIN-family
- * palette, light = the published default). The lane-kind tints and the accent
- * ink ride along, so dark themes keep the tinted lanes and the active
- * buttons legible — the Rust side guards the map's AA conformance by test.
+ * PRESETS live in one registry (`THEME_PRESETS`) that the panel's picker
+ * maps 1:1 — apply is the app's guarded transaction, re-basing lane tints
+ * the new ink cannot carry and announcing the verdict. The AA sets are
+ * audited by the Rust suite; the high-contrast sets carry the AAA tier.
+ * The lane-kind tints and the accent ink ride along, so dark themes keep
+ * the tinted lanes and the active buttons legible.
  */
-export function ThemeEditor({ theme, onThemeChange }: ThemeEditorProps) {
-  const applyPreset = (preset: Record<string, string>) => {
-    for (const [key, value] of Object.entries(preset)) {
-      onThemeChange(key, value);
-    }
-  };
+export function ThemeEditor({ theme, onThemeChange, onApplyPreset }: ThemeEditorProps) {
   return (
     <div className="tk-theme-editor">
       <div className="tk-preset-row" data-testid="theme-presets">
-        <span className="tk-preset-caption">Theme presets</span>
-        <button
-          type="button"
-          className="tk-preset-btn"
-          data-testid="preset-dark"
-          title="The PIN-family dark palette, AA-audited by the engine's test suite"
-          onClick={() => applyPreset(DARK_STUDIO_PRESET)}
+        <label className="tk-preset-caption" htmlFor="tk-theme-preset">
+          Theme presets
+        </label>
+        <select
+          id="tk-theme-preset"
+          className="tk-preset-select"
+          data-testid="preset-select"
+          aria-label="Pick a theme preset to apply"
+          title="Whole-theme sets, AA-audited by the engine's test suite"
+          value=""
+          onChange={(e) => {
+            const pick = THEME_PRESETS[Number(e.target.value)];
+            if (pick) onApplyPreset(pick.map, pick.label);
+            e.target.value = '';
+          }}
         >
-          Match the studio (dark)
-        </button>
-        <button
-          type="button"
-          className="tk-preset-btn"
-          data-testid="preset-light"
-          title="The published artifact's default palette"
-          onClick={() => applyPreset(LIGHT_DEFAULT_PRESET)}
-        >
-          Published default (light)
-        </button>
+          <option value="" disabled>
+            Pick a theme…
+          </option>
+          {THEME_PRESETS.map((p, i) => (
+            <option key={p.id} value={String(i)}>
+              {p.label}
+            </option>
+          ))}
+        </select>
       </div>
       {THEME_GROUPS.map((group) => (
         <section className="tk-arch-section" key={group}>

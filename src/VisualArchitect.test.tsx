@@ -112,4 +112,16 @@ describe('VisualArchitect — grouped workflow panel with the lane accordion', (
     );
     await waitFor(() => expect(screen.getByLabelText('Lane 4 kind')).toBeDefined());
   });
+
+  it('STAGES and LANES carry an info hint: the tip is linked to a labeled trigger, not hover-only decoration', () => {
+    renderPanel();
+    for (const label of ['About stages', 'About lanes']) {
+      const trigger = screen.getByRole('button', { name: label });
+      const tipId = trigger.getAttribute('aria-describedby');
+      expect(tipId).toBeTruthy();
+      const tip = document.getElementById(tipId as string);
+      expect(tip?.getAttribute('role')).toBe('tooltip');
+      expect(tip?.textContent?.length ?? 0).toBeGreaterThan(20);
+    }
+  });
 });

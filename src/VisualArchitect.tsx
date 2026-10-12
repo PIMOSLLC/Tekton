@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import type { BlueprintLane, BlueprintStage } from './types';
 import { LANE_TINT_SWATCHES, LANE_KINDS, laneKindLabel } from './types';
+import { InfoHint } from './InfoHint';
 
 /** The engine's lane-tint AA failure, keyed by lane id (ratio + the bg fix). */
 export interface TintWarning {
@@ -96,6 +97,10 @@ export function VisualArchitect(props: VisualArchitectProps) {
       <section className="tk-arch-section">
         <div className="tk-arch-group-label" role="group" aria-label="Stages">
           <span>Stages</span>
+          <InfoHint
+            label="About stages"
+            tip="Stages are the journey's steps — each becomes a canvas column, laid left → right in this order."
+          />
           <span className="tk-count-pill">{props.stages.length} stages</span>
         </div>
         {props.stages.map((stage, i) => (
@@ -135,6 +140,10 @@ export function VisualArchitect(props: VisualArchitectProps) {
       <section className="tk-arch-section">
         <div className="tk-arch-group-label" role="group" aria-label="Lanes">
           <span>Lanes</span>
+          <InfoHint
+            label="About lanes"
+            tip="Lanes are the bands of who or what does the work — people, backstage processes, systems. Each canvas card lives in one lane."
+          />
           <span className="tk-count-pill">{props.lanes.length} lanes</span>
         </div>
         {props.lanes.map((lane, i) =>

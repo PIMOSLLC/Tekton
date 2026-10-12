@@ -1,3 +1,4 @@
+import { ChevronDown } from 'lucide-react';
 import type { EngineFinding, EngineIssue } from './engine/engineServiceTypes';
 import { LintPanel, ValidationPanel, lintSummary } from './LintPanel';
 
@@ -27,7 +28,7 @@ export function LintTerminal({ findings, issues, open, onToggle, onFixIssue }: L
           aria-controls="tk-terminal-body"
           onClick={onToggle}
         >
-          <span className="tk-terminal-chevron">{open ? '▾' : '▸'}</span>
+          <ChevronDown className="tk-terminal-chevron w-4 h-4" aria-hidden="true" />
           Aisthehkne Contrast Lint
         </button>
         <span

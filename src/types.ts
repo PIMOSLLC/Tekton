@@ -162,7 +162,11 @@ export const DARK_STUDIO_PRESET: Record<string, string> = {
   surface: '#1F2937',
   ink: '#E2E8F0',
   ink_strong: '#F1F5F9',
-  grid_head: '#111827',
+  // The Service-layer corner card — the grid's landmark. The light theme's
+  // corner pops dark on a pale field; the dark theme needs the inverse: a
+  // raised blue panel (band-family) instead of near-page values that vanish
+  // (4.5× the page's luminance vs the old 1.6×).
+  grid_head: '#1B2C52',
   divider_bg: '#182150',
   row_head_bg: '#111827',
   row_blurb: '#94A3B8',
@@ -211,7 +215,7 @@ export const LIGHT_DEFAULT_PRESET: Record<string, string> = {
   accent_soft_bg: '#e9efff',
   accent_soft_ink: '#2147a5',
   item_border: '#d8e1ef',
-  item_type: '#64748b',
+  item_type: '#566783',
   border_soft: '#e3e8f1',
   legend: '#566783',
   stat_caption: '#53647c',
@@ -226,6 +230,104 @@ export const LIGHT_DEFAULT_PRESET: Record<string, string> = {
   tint_governance: '#fff3e9',
   tint_outcome: '#f0fbf4',
 };
+
+/**
+ * HIGH-CONTRAST presets — the AAA tier: every pair the engine lints holds
+ * 7:1 normal text (4.5:1 large) or better, audited by
+ * `crates/blueprint-core/tests/high_contrast_presets.rs`.
+ *
+ * `HIGH_CONTRAST_LIGHT_PRESET` — true white page, near-black inks, the deep
+ * accent that keeps the active button pair in AAA.
+ * `HIGH_CONTRAST_DARK_PRESET` — true voids (#000 canvas/band), white inks,
+ * the raised blue corner landmark, bright outlines for focus visibility.
+ */
+export const HIGH_CONTRAST_LIGHT_PRESET: Record<string, string> = {
+  band_bg: '#0b0f1a',
+  band_border: '#1e40af',
+  band_eyebrow: '#93c5fd',
+  band_text: '#e5e7eb',
+  canvas: '#ffffff',
+  surface: '#ffffff',
+  ink: '#111827',
+  ink_strong: '#0b0f1a',
+  grid_head: '#111827',
+  divider_bg: '#182150',
+  row_head_bg: '#f3f4f6',
+  row_blurb: '#374151',
+  stage_bg: '#e5e7eb',
+  stage_ink: '#111827',
+  stage_blurb: '#374151',
+  accent: '#1b3aa0',
+  accent_ink: '#ffffff',
+  accent_soft_bg: '#dbeafe',
+  accent_soft_ink: '#1e3a8a',
+  item_border: '#1f2937',
+  item_type: '#1f2937',
+  border_soft: '#1f2937',
+  legend: '#1f2937',
+  stat_caption: '#374151',
+  note_ink: '#1f2937',
+  drawer_ink: '#1f2937',
+  focus_outline: '#1b3aa0',
+  selected_outline: '#1b3aa0',
+  hover_soft: '#e5e7eb',
+  tint_agents: '#e3e0f8',
+  tint_systems: '#e0f2f1',
+  tint_data: '#e1ecfa',
+  tint_governance: '#fdeedd',
+  tint_outcome: '#e1f3e9',
+};
+
+export const HIGH_CONTRAST_DARK_PRESET: Record<string, string> = {
+  band_bg: '#000000',
+  band_border: '#3b82f6',
+  band_eyebrow: '#93c5fd',
+  band_text: '#e5e7eb',
+  canvas: '#000000',
+  surface: '#14181f',
+  ink: '#ffffff',
+  ink_strong: '#ffffff',
+  grid_head: '#1B2C52',
+  divider_bg: '#20255e',
+  row_head_bg: '#1a212c',
+  row_blurb: '#c3cbda',
+  stage_bg: '#1f2733',
+  stage_ink: '#ffffff',
+  stage_blurb: '#c3cbda',
+  accent: '#93c5fd',
+  accent_ink: '#0b0f1a',
+  accent_soft_bg: '#0b2a6b',
+  accent_soft_ink: '#dbeafe',
+  item_border: '#565f6e',
+  item_type: '#e2e8f0',
+  border_soft: '#565f6e',
+  legend: '#c3cbda',
+  stat_caption: '#c3cbda',
+  note_ink: '#d1d5db',
+  drawer_ink: '#e5e7eb',
+  focus_outline: '#93c5fd',
+  selected_outline: '#93c5fd',
+  hover_soft: '#2a3242',
+  tint_agents: '#3b3560',
+  tint_systems: '#17454d',
+  tint_data: '#16436b',
+  tint_governance: '#4d3517',
+  tint_outcome: '#175637',
+};
+
+/** The Theme panel's preset picker — one registry, the panel maps it 1:1. */
+export interface ThemePreset {
+  id: string;
+  label: string;
+  map: Record<string, string>;
+}
+
+export const THEME_PRESETS: ThemePreset[] = [
+  { id: 'studio-dark', label: 'Match the studio (dark)', map: DARK_STUDIO_PRESET },
+  { id: 'published-light', label: 'Published default (light)', map: LIGHT_DEFAULT_PRESET },
+  { id: 'high-contrast-light', label: 'High contrast (light · AAA)', map: HIGH_CONTRAST_LIGHT_PRESET },
+  { id: 'high-contrast-dark', label: 'High contrast (dark · AAA)', map: HIGH_CONTRAST_DARK_PRESET },
+];
 
 /**
  * Note on theme casing: the Rust model serializes snake_case field names

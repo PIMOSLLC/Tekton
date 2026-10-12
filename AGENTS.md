@@ -117,12 +117,12 @@ Minerva is headless (CLI-only) — the testing strategy is engine-on-CLI, visual
 
 ```bash
 # 1. Engine + CLI (headless, on Minerva)
-cargo test --workspace          # 40 tests (engine 27 + starter-seed parity 3 + CLI integration 9 + doctest)
+cargo test --workspace          # 49 tests (engine 29 + dark-preset AA audit 3 + high-contrast AAA audit 3 + starter-seed parity 3 + CLI integration 9 + doctest)
 cargo fmt --check
 
 # 2. CLI — render / lint / validate (exit 1 on failures: CI-friendly)
 tekton validate fixtures/agentic-ai-ecommerce.yaml
-tekton lint fixtures/agentic-ai-ecommerce.yaml            # 26 WCAG pairs, AA/AAA verdicts
+tekton lint fixtures/agentic-ai-ecommerce.yaml            # 31 WCAG pairs — card text AND stage tag against every lane tint (AA/AAA verdicts)
 tekton lint fixtures/agentic-ai-ecommerce.yaml --json    # pure JSON on stdout
 tekton render fixtures/agentic-ai-ecommerce.yaml -f standalone   # → fixtures/agentic-ai-ecommerce-standalone.html
 tekton render fixtures/agentic-ai-ecommerce.yaml -f wordpress    # → embed fragment

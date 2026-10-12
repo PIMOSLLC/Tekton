@@ -422,7 +422,9 @@ export function App() {
   const tintWarnings = useMemo(() => {
     const byLane: Record<string, { ratio: number; suggestionBg?: string }> = {};
     for (const f of bp.findings) {
-      const m = /^Card text \((.+) lane tint\)$/.exec(f.element);
+      // Both card-text and stage-tag pairs name the lane they fail on; both
+      // are tint-locally fixable (the shared ink stays, the tint moves).
+      const m = /^(?:Card text|Card stage tag) \((.+) lane tint\)$/.exec(f.element);
       if (m && !f.aa) {
         byLane[m[1]] = { ratio: f.ratio, suggestionBg: f.bg_suggestion };
       }
@@ -710,7 +712,18 @@ export function App() {
             onClose={() => setPanelSection(null)}
           >
             {panelSection === 'theme' && (
-              <ThemeEditor theme={bp.doc?.theme ?? {}} onThemeChange={bp.setTheme} />
+              <>
+                <ThemeEditor
+                  theme={bp.doc?.theme ?? {}}
+                  onThemeChange={bp.setTheme}
+                  onApplyPreset={bp.applyThemePreset}
+                />
+                {bp.presetNotice && (
+                  <p className="tk-preset-note" role="status" data-testid="preset-notice">
+                    {bp.presetNotice}
+                  </p>
+                )}
+              </>
             )}
 
             {panelSection === 'architect' && bp.doc && (

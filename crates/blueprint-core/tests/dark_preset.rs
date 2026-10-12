@@ -6,7 +6,7 @@
 //! no Rust test can reach it: if a token choice breaks AA here, the editor
 //! preset can't ship it. Keep the two maps in sync — the comment anchors why.
 
-use blueprint_core::{validate::validate, validate::Severity, Document, Theme};
+use blueprint_core::{validate::validate, validate::Severity, Document};
 
 const DARK: &[(&str, &str)] = &[
     ("band_bg", "#0B0F1A"),
@@ -17,7 +17,7 @@ const DARK: &[(&str, &str)] = &[
     ("surface", "#1F2937"),
     ("ink", "#E2E8F0"),
     ("ink_strong", "#F1F5F9"),
-    ("grid_head", "#111827"),
+    ("grid_head", "#1B2C52"),
     ("divider_bg", "#182150"),
     ("row_head_bg", "#111827"),
     ("row_blurb", "#94A3B8"),
@@ -105,6 +105,38 @@ fn the_dark_studio_preset_passes_the_aa_gate_without_any_tint_override() {
     assert!(
         failing.is_empty(),
         "the studio-matched dark theme must pass AA with the WHITE active-button text, the tinted-card text, and the drawer — failures: {:?}",
+        failing
+    );
+}
+
+/// The realistic preset scenario: documents authored under the LIGHT artifact
+/// often carry per-lane tints as explicit overrides (the shipped e-commerce
+/// example's customer lane is `#FFFFFF`). Presets own THEMES, never document
+/// data — so a stale override survives a preset switch. The deployment
+/// contract audited here:
+///   1. the lint must REPORT the stale pair (this is the render gate the
+///      preview honors — a broken pairing may never render silently), and
+///   2. re-basing the override to the kind default — exactly the editor's
+///      apply-time fix — must restore full AA conformance.
+#[test]
+fn stale_light_lane_tints_are_reported_and_the_kind_default_rebase_restores_aa() {
+    let mut doc = dark_document();
+    doc.lanes[0].tint = Some("#FFFFFF".into());
+
+    let report = blueprint_core::lint::lint(&doc).expect("lints");
+    let stale: Vec<_> = report.findings.iter().filter(|f| !f.aa).collect();
+    assert!(
+        !stale.is_empty() && stale.iter().any(|f| f.element.contains("customer")),
+        "a stale white override must be REPORTED, never silently rendered: {:?}",
+        stale
+    );
+
+    doc.lanes[0].tint = None;
+    let report = blueprint_core::lint::lint(&doc).expect("lints");
+    let failing: Vec<_> = report.findings.iter().filter(|f| !f.aa).collect();
+    assert!(
+        failing.is_empty(),
+        "the editor's apply-time re-base must restore AA end to end: {:?}",
         failing
     );
 }

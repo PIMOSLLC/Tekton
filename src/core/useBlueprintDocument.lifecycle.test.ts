@@ -1,6 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useBlueprintDocument } from './useBlueprintDocument';
+import { DARK_STUDIO_PRESET } from '../types';
 import { SAMPLE_DOC, engineControls } from '../test-support/fakeEngine';
 import type { BlueprintDocument } from '../types';
 
@@ -165,5 +166,33 @@ describe('useBlueprintDocument lifecycle', () => {
     await expect(result.current.getYaml()).resolves.toBe('canonical yaml');
     const json = await result.current.getJson();
     expect(JSON.parse(json)).toEqual(SAMPLE_DOC);
+  });
+
+  it('a preset apply re-bases a lane tint that cannot hold the new card ink, and announces it', async () => {
+    const { result } = await bootEditor();
+    await act(async () => {
+      result.current.setLane(0, 'tint', '#FFFFFF');
+    });
+    await act(async () => {
+      await result.current.applyThemePreset(DARK_STUDIO_PRESET, 'Match the studio (dark)');
+    });
+    expect(result.current.doc?.theme?.['ink_strong']).toBe('#F1F5F9');
+    expect(result.current.doc?.theme?.['surface']).toBe('#1F2937');
+    // The stale light-artifact tint is gone: the lane falls to its kind default.
+    expect(result.current.doc?.lanes[0]?.tint).toBeUndefined();
+    expect(result.current.presetNotice).toContain("didn't hold AA");
+    expect(result.current.presetNotice).toContain('Customer actions');
+  });
+
+  it('a preset apply keeps lane tints that hold AA under the new card ink', async () => {
+    const { result } = await bootEditor();
+    await act(async () => {
+      result.current.setLane(0, 'tint', '#1F2937');
+    });
+    await act(async () => {
+      await result.current.applyThemePreset(DARK_STUDIO_PRESET, 'Match the studio (dark)');
+    });
+    expect(result.current.doc?.lanes[0]?.tint).toBe('#1F2937');
+    expect(result.current.presetNotice).toContain('every lane tint holds AA');
   });
 });

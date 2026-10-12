@@ -398,6 +398,33 @@
 }
 .tk-preset-btn:focus-visible { outline: 2px solid var(--color-tekton-dark-accent-interactive); outline-offset: 1px; }
 
+/* The preset PICKER — one select for the whole registry (same pill family
+   as the panel's other native selects). It resets to its placeholder after
+   an apply, so a theme can be re-picked at any time. */
+.tk-preset-select {
+  min-width: 200px;
+  padding: 6px 10px;
+  border-radius: 7px;
+  border: 1px solid var(--color-tekton-dark-border);
+  background: var(--color-tekton-dark-surface);
+  color: var(--color-tekton-dark-text);
+  font-size: 0.72rem;
+}
+.tk-preset-select:focus-visible { outline: 2px solid var(--color-tekton-dark-accent-interactive); outline-offset: 1px; }
+
+/* Preset-apply verdict — the guarded transaction's status line (role="status"
+   announces it; the accent bar labels it as the apply's outcome, not noise). */
+.tk-preset-note {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  border-left: 3px solid var(--color-tekton-dark-accent-interactive);
+  background: rgba(96, 165, 250, 0.08);
+  border-radius: 4px;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--color-tekton-dark-text);
+}
+
 .tk-wizard-steps {
   display: flex;
   align-items: center;
@@ -697,6 +724,60 @@
 }
 .tk-arch-group-label + * { margin-top: 4px; }
 
+/* Group-label info hint (ⓘ next to STAGES / LANES) — same tooltip idiom as
+   the status footer: hover AND keyboard focus reveal it, never hover-only.
+   The tip resets the uppercase/letter-spaced label styles it sits in. */
+.tk-info-hint { position: relative; display: inline-flex; }
+.tk-info-hint-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin: -2px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-tekton-dark-text-muted);
+  cursor: help;
+}
+.tk-info-hint-btn:hover { color: var(--color-tekton-dark-text); }
+.tk-info-hint-btn:focus-visible {
+  outline: 2px solid var(--color-tekton-dark-accent-interactive);
+  outline-offset: 1px;
+}
+.tk-info-hint-tip {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: -8px;
+  width: max-content;
+  max-width: 240px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #1f2937;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: left;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+  z-index: 200;
+}
+.tk-info-hint:hover .tk-info-hint-tip,
+.tk-info-hint:focus-within .tk-info-hint-tip {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tk-info-hint-tip { transition: none; }
+}
+
 /* Lane accordion — collapsed: one-line summary; the click opens exactly one */
 .tk-lane-collapsed { align-items: center; }
 .tk-lane-summary {
@@ -776,31 +857,38 @@
 .tk-canvas {
   flex: 1;
   overflow: visible;
-  background: var(--color-tekton-light-bg-primary);
+  /* The page IS the document: the canvas token paints it (doc theme), the
+     chrome light background is only the fallback. */
+  background: var(--tk-doc-canvas, var(--color-tekton-light-bg-primary));
   padding: 24px;
 }
 .tk-canvas-grid { display: grid; gap: 10px; min-width: 900px; }
 .tk-canvas-corner {
   font-size: 0.68rem;
   font-weight: 700;
-  color: var(--color-tekton-light-text);
-  background: #161f4c;
+  background: var(--tk-doc-grid-head, #161f4c);
   border-radius: 8px;
   padding: 12px;
   color: #fff;
 }
 .tk-canvas-corner small { display: block; opacity: 0.75; font-weight: 400; margin-top: 3px; }
-.tk-canvas-stage { text-align: center; padding: 8px 6px 12px; border-bottom: 2px solid var(--color-tekton-light-border-subtle); }
+.tk-canvas-stage {
+  text-align: center;
+  padding: 8px 6px 12px;
+  background: var(--tk-doc-stage-bg, transparent);
+  border-radius: 8px;
+  border-bottom: 2px solid var(--tk-doc-border, var(--color-tekton-light-border-subtle));
+}
 .tk-canvas-stage-index {
   display: block;
   font-size: 0.58rem;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: var(--color-tekton-light-text-muted);
+  color: var(--tk-doc-stage-blurb, var(--color-tekton-light-text-muted));
   font-weight: 700;
 }
-.tk-canvas-stage h3 { margin: 4px 0 2px; font-size: 1rem; color: var(--color-tekton-light-text); }
-.tk-canvas-stage p { margin: 0; font-size: 0.68rem; color: var(--color-tekton-light-text-muted); }
+.tk-canvas-stage h3 { margin: 4px 0 2px; font-size: 1rem; color: var(--tk-doc-stage-ink, var(--color-tekton-light-text)); }
+.tk-canvas-stage p { margin: 0; font-size: 0.68rem; color: var(--tk-doc-stage-blurb, var(--color-tekton-light-text-muted)); }
 .tk-canvas-divider {
   /* The artifact's shaded separation row (theme `divider-bg`, default
      #182150) — a full-width band that visibly belongs to the row below it.
@@ -835,28 +923,36 @@
 .tk-canvas-card.is-associated {
   box-shadow: inset 0 0 0 9999px var(--color-tekton-light-glow-subtle);
 }
-.tk-canvas-lane-label h4 { margin: 0; font-size: 0.92rem; color: var(--color-tekton-light-text); }
+/* Lane label — the artifact's row head: the document's row-head token
+   (dark documents get their dark lane header cell), chrome look as fallback. */
+.tk-canvas-lane-label {
+  background: var(--tk-doc-row-bg, transparent);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+.tk-canvas-lane-label h4 { margin: 0; font-size: 0.92rem; color: var(--tk-doc-row-ink, var(--color-tekton-light-text)); }
 .tk-canvas-lane-label p {
   margin: 3px 0 0;
   font-size: 0.62rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--color-tekton-light-text-muted);
+  color: var(--tk-doc-row-blurb, var(--color-tekton-light-text-muted));
 }
 .tk-canvas-card {
   display: flex;
   flex-direction: column;
   gap: 4px;
   text-align: left;
-  background: var(--color-tekton-light-surface);
-  border: 1px solid var(--color-tekton-light-border);
+  background: var(--tk-card-surface, var(--color-tekton-light-surface));
+  color: var(--tk-card-ink, var(--color-tekton-light-text));
+  border: 1px solid var(--tk-doc-border, var(--color-tekton-light-border));
   border-radius: 12px;
   padding: 12px 14px;
   cursor: pointer;
   min-height: 90px;
 }
-.tk-canvas-card strong { font-size: 0.78rem; color: var(--color-tekton-light-text); }
-.tk-canvas-card span { font-size: 0.68rem; line-height: 1.5; color: var(--color-tekton-light-text-muted); }
+.tk-canvas-card strong { font-size: 0.78rem; color: var(--tk-card-ink, var(--color-tekton-light-text)); }
+.tk-canvas-card span { font-size: 0.68rem; line-height: 1.5; color: var(--tk-card-ink, var(--color-tekton-light-text-muted)); }
 .tk-canvas-card:hover { border-color: var(--color-tekton-light-accent); box-shadow: 0 4px 12px rgba(20, 27, 61, 0.08); }
 .tk-canvas-card:focus-visible { outline: 2px solid var(--color-tekton-light-accent-interactive); outline-offset: 2px; }
 .tk-canvas-card.is-selected { outline: 2px solid var(--color-tekton-light-accent-interactive); outline-offset: 2px; }
@@ -868,7 +964,13 @@
 /* Panel resize grip — a REAL flex child right of the content column:
    content → scrollbar → grip, three clean layers (no absolute overlay
    fighting the scrollbar for the same pixels). 18px wide = a comfortable
-   grab band; the visual sliver sits centered inside it. */
+   grab band; the handle sits centered inside it.
+
+   The handle is deliberately NOT a full-height pill: on the same rail as
+   the content scrollbar that read as a second scrollbar (the "double bar"
+   report) — thumbs have rounded caps, so the pill borrowed the wrong
+   identity (Gestalt SIMILARITY). A short, squared-off handle centered on
+   the rail reads as "grip" instead. */
 .tk-panel-grip {
   width: 18px;
   flex: none;
@@ -880,20 +982,33 @@
 .tk-panel-grip::after {
   content: '';
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 7.5px;
-  width: 3px;
-  border-radius: 99px;
-  background: rgba(255, 255, 255, 0.09);
-  transition: background 0.15s ease, width 0.15s ease, left 0.15s ease;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 7px;
+  width: 4px;
+  height: 40px;
+  border-radius: 2px;
+  /* At rest the handle must read as an affordance, not noise — 9% white
+     vanished against gray-800 (the "no indication of a drag bar" report). */
+  background: rgba(255, 255, 255, 0.16);
+  transition: background 0.15s ease, height 0.15s ease, width 0.15s ease, left 0.15s ease;
 }
 .tk-panel-grip:hover::after,
 .tk-panel-grip:focus-within::after {
-  left: 6.5px;
-  width: 5px;
+  left: 6px;
+  width: 6px;
+  height: 56px;
   background: var(--color-tekton-dark-accent-interactive);
-  opacity: 0.75;
+  opacity: 0.85;
+}
+body.is-panel-resizing .tk-panel-grip::after {
+  /* Mid-drag the handle holds full accent even if the pointer drifts —
+     the active state must never flicker while the width follows. */
+  left: 6px;
+  width: 6px;
+  height: 56px;
+  background: var(--color-tekton-dark-accent-interactive);
+  opacity: 1;
 }
 .tk-panel-grip:focus-visible {
   outline: 2px solid var(--color-tekton-dark-accent-interactive);
@@ -940,9 +1055,21 @@ body.is-panel-resizing {
   text-transform: uppercase;
   letter-spacing: 0.12em;
   cursor: pointer;
+  /* The bare label was a ~14px-tall squint target ("caret is very small" report).
+     Pad the hit area past the WCAG 2.2 24px floor and refund the layout with
+     negative margins, so the header row keeps its shape. */
+  padding: 6px 8px;
+  margin: -6px -8px;
+  border-radius: 4px;
 }
 .tk-terminal-toggle:focus-visible { outline: 2px solid var(--color-tekton-dark-accent-interactive); }
-.tk-terminal-chevron { color: var(--color-tekton-dark-text-muted); }
+/* One disclosure pattern app-wide: the lucide chevron rotates closed→open
+   (same fold affordance as the architect lane cards), not a text glyph. */
+.tk-terminal-chevron { color: var(--color-tekton-dark-text-muted); transition: transform 0.15s ease; }
+.tk-terminal-toggle[aria-expanded='false'] .tk-terminal-chevron { transform: rotate(-90deg); }
+@media (prefers-reduced-motion: reduce) {
+  .tk-terminal-chevron { transition: none; }
+}
 .tk-terminal-badge {
   font-size: 0.62rem;
   font-weight: 700;
@@ -1097,13 +1224,25 @@ body.is-panel-resizing {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle, rgba(20, 27, 61, 0.12) 1.2px, transparent 1.2px);
+  /* Dots derive from the document's root-body ink (color-mix, not a second
+     hardcoded value): a dark canvas's light ink dots itself in light gray;
+     a light document keeps the navy dots; the chrome fallback covers the
+     void zones outside the var's scope. */
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--tk-doc-ink, #141b3d) 14%, transparent) 1.2px,
+    transparent 1.2px
+  );
   background-size: 24px 24px;
   pointer-events: none;
   z-index: 0;
 }
 .tk-canvas-dotgrid .tk-canvas {
-  background-image: radial-gradient(circle, rgba(20, 27, 61, 0.10) 1.2px, transparent 1.2px);
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--tk-doc-ink, #141b3d) 10%, transparent) 1.2px,
+    transparent 1.2px
+  );
   background-size: 24px 24px;
 }
 .tk-canvas-tool.is-armed { color: var(--color-tekton-dark-text); background: var(--color-tekton-dark-surface); }

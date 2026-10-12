@@ -196,7 +196,7 @@ fn item_border() -> String {
     d("#d8e1ef")
 }
 fn item_type() -> String {
-    d("#64748b")
+    d("#566783")
 }
 fn border_soft() -> String {
     d("#e3e8f1")

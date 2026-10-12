@@ -99,3 +99,55 @@ describe('BuildCanvas separation lines', () => {
     expect(screen.queryByText('— Line of interaction —')).toBeNull();
   });
 });
+
+describe('BuildCanvas document-theme parity', () => {
+  it('untinted cards paint the DOCUMENT surface and ink — a dark document reads dark, like the exported artifact', () => {
+    const dark: BlueprintDocument = {
+      ...doc,
+      theme: { surface: '#1F2937', ink_strong: '#F1F5F9' },
+    };
+    render(<BuildCanvas doc={dark} selectedCard={null} onSelectCard={() => {}} />);
+    const card = screen.getByText('Arrive').closest('button');
+    expect(card?.style.background).toBe('#1F2937');
+    expect(card?.style.getPropertyValue('--tk-card-ink')).toBe('#F1F5F9');
+  });
+
+  it('a tinted lane keeps its tint as the card surface under the same ink', () => {
+    const tinted: BlueprintDocument = {
+      ...doc,
+      lanes: [{ ...doc.lanes[0], tint: '#2A2140' }, doc.lanes[1]],
+      theme: { surface: '#1F2937', ink_strong: '#F1F5F9' },
+    };
+    render(<BuildCanvas doc={tinted} selectedCard={null} onSelectCard={() => {}} />);
+    const card = screen.getByText('Arrive').closest('button');
+    expect(card?.style.background).toBe('#2A2140');
+  });
+
+  it('the page, stage columns, and lane headers wear the document theme — no white sheet survives a dark document', () => {
+    const dark: BlueprintDocument = {
+      ...doc,
+      theme: {
+        canvas: '#0B121B',
+        stage_bg: '#0F172A',
+        stage_ink: '#E2E8F0',
+        stage_blurb: '#94A3B8',
+        row_head_bg: '#111827',
+        ink: '#E2E8F0',
+        row_blurb: '#94A3B8',
+      },
+    };
+    render(<BuildCanvas doc={dark} selectedCard={null} onSelectCard={() => {}} />);
+    const root = document.querySelector('.tk-canvas') as HTMLElement;
+    expect(root?.style.getPropertyValue('--tk-doc-canvas')).toBe('#0B121B');
+    expect(root?.style.getPropertyValue('--tk-doc-stage-bg')).toBe('#0F172A');
+    expect(root?.style.getPropertyValue('--tk-doc-row-bg')).toBe('#111827');
+    expect(root?.style.getPropertyValue('--tk-doc-stage-ink')).toBe('#E2E8F0');
+  });
+
+  it('a light document gets no dark vars — the chrome light look carries it', () => {
+    renderCanvas();
+    const root = document.querySelector('.tk-canvas') as HTMLElement;
+    expect(root?.style.getPropertyValue('--tk-doc-canvas')).toBe('#f5f7fb');
+    expect(root?.style.getPropertyValue('--tk-doc-stage-ink')).toBe('#17256d');
+  });
+});

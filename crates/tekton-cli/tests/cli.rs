@@ -122,7 +122,8 @@ fn lint_json_is_machine_readable() {
     let stdout = String::from_utf8_lossy(&out.stdout);
     let parsed: serde_json::Value = serde_json::from_str(&stdout).expect("pure JSON on stdout");
     let findings = parsed["findings"].as_array().expect("findings array");
-    assert_eq!(findings.len(), 26);
+    // 21 theme pairs + 2 per tinted kind lane (card text AND stage tag) → 31.
+    assert_eq!(findings.len(), 31);
     assert!(findings.iter().all(|f| f["aa"].as_bool().unwrap()));
 }
 

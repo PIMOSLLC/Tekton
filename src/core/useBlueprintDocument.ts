@@ -369,6 +369,51 @@ export function useBlueprintDocument(initialYaml: string, options?: UseBlueprint
     [updateDoc],
   );
 
+  /** Status line from the last preset transaction (null until one runs). */
+  const [presetNotice, setPresetNotice] = useState<string | null>(null);
+
+  /**
+   * Apply a shipped theme preset as ONE guarded transaction: the preset map
+   * and the re-basing of stale lane-tint overrides land in the same commit —
+   * no intermediate state where the old tints meet the new ink. An explicit
+   * `lane.tint` is document data authored under the old theme; if it cannot
+   * hold AA against the preset's card ink it would strand the document at
+   * the render gate (warn + fix never ends in a dead end), so the override
+   * reverts to the lane-kind default and the notice names what moved. Tints
+   * that still pass are kept — user choices are never discarded blindly.
+   */
+  const applyThemePreset = useCallback(
+    async (preset: Record<string, string>, label: string) => {
+      const prev = docRef.current;
+      if (!prev) return;
+      // The card-text pair IS the render gate's pair; 4.5 = AA normal text.
+      const ink = preset['ink_strong'] ?? prev.theme?.['ink_strong'] ?? '';
+      const verdicts = prev.lanes.map((lane) => {
+        if (!lane.tint || !ink) return Promise.resolve(false);
+        return engine
+          .contrast(ink, lane.tint)
+          .then((ratio) => ratio < 4.5)
+          .catch(() => true); // unparsable hex would fail the gate — re-base
+      });
+      const failing = await Promise.all(verdicts);
+      const stale = prev.lanes
+        .map((lane, i) => (failing[i] ? lane.name || lane.id : null))
+        .filter((n): n is string => n !== null);
+      updateDoc((draft) => {
+        draft.theme = { ...(draft.theme ?? {}), ...preset };
+        draft.lanes.forEach((lane, i) => {
+          if (failing[i]) lane.tint = undefined;
+        });
+      });
+      setPresetNotice(
+        stale.length === 0
+          ? `${label} applied — every lane tint holds AA.`
+          : `${label} applied — ${stale.length} lane tint${stale.length === 1 ? '' : 's'} didn't hold AA against the new card ink and went back to the theme default (${stale.join(', ')}).`,
+      );
+    },
+    [updateDoc],
+  );
+
   const addLane = useCallback(
     () =>
       updateDoc((d) => {
@@ -449,6 +494,9 @@ export function useBlueprintDocument(initialYaml: string, options?: UseBlueprint
     setCard,
     setInterpretation,
     setTheme,
+    // guarded preset transaction (stale lane tints re-base, announced)
+    presetNotice,
+    applyThemePreset,
     // YAML buffer
     yamlText,
     onYamlChange,
