@@ -196,3 +196,88 @@ describe('useBlueprintDocument lifecycle', () => {
     expect(result.current.presetNotice).toContain('every lane tint holds AA');
   });
 });
+
+describe('useBlueprintDocument reorder invariants', () => {
+  /** A 3×3 matrix: lane j's card at column i is titled `S{i}·L{j}` — the cards
+   * are named by their stage column, so any cross-axis mutation would show. */
+  async function boot3x3() {
+    const { result } = await bootEditor();
+    await act(async () => {
+      result.current.addStage();
+      result.current.addStage();
+      result.current.addLane();
+      result.current.addLane();
+    });
+    await act(async () => {
+      result.current.setStage(0, 'name', 'Signal');
+      result.current.setStage(1, 'name', 'Analyze');
+      result.current.setStage(2, 'name', 'Deliver');
+      const tints = ['#131C2E', '#1E40AF', '#2A2140'];
+      for (const lane of [0, 1, 2]) {
+        result.current.setLane(lane, 'name', `Lane ${lane + 1}`);
+        result.current.setLane(lane, 'tint', tints[lane]);
+        result.current.setInterpretation(lane, `reading ${lane + 1}`);
+        for (const stage of [0, 1, 2]) {
+          result.current.setCard(lane, stage, 'title', `S${stage}·L${lane}`);
+        }
+      }
+    });
+    return result;
+  }
+
+  it('a row move CANNOT cross the matrix: the lane travels whole, every card keeps its stage column', async () => {
+    const result = await boot3x3();
+    await act(async () => {
+      result.current.moveLane(0, 2);
+    });
+    const d = result.current.doc;
+    if (!d) throw new Error('doc missing');
+
+    // The columns never moved: same stages, same order.
+    expect(d.stages.map((s) => s.name)).toEqual(['Signal', 'Analyze', 'Deliver']);
+
+    // Every lane's cards still read S0,S1,S2 in column order — who sits above
+    // whom changed; WHICH COLUMN WHAT CARD LIVES IN did not.
+    for (const lane of d.lanes) {
+      expect(lane.cards.map((c) => c.title.slice(0, 2))).toEqual(['S0', 'S1', 'S2']);
+    }
+
+    // The moved row arrived whole: Lane 1 (row 0's object) at position 3,
+    // fields riding, its own card list intact (titles keep naming their lane).
+    expect(d.lanes[2].name).toBe('Lane 1');
+    expect(d.lanes[2].interpretation).toBe('reading 1');
+    expect(d.lanes[2].tint).toBe('#131C2E');
+    expect(d.lanes[2].cards.map((c) => c.title)).toEqual(['S0·L0', 'S1·L0', 'S2·L0']);
+  });
+
+  it('an inverse row move restores the exact array (ids and all)', async () => {
+    const result = await boot3x3();
+    const before = result.current.doc?.lanes.map((l) => [l.id, ...l.cards.map((c) => c.title)]);
+    await act(async () => {
+      result.current.moveLane(0, 2);
+      result.current.moveLane(2, 0);
+    });
+    expect(
+      result.current.doc?.lanes.map((l) => [l.id, ...l.cards.map((c) => c.title)]),
+    ).toEqual(before);
+  });
+
+  it('moveStat reorders the reading order beneath the band — the pairs ride', async () => {
+    const { result } = await bootEditor();
+    await act(async () => {
+      result.current.addStat();
+      result.current.addStat();
+      result.current.addStat();
+      result.current.setStat(0, 'figure', 'One');
+      result.current.setStat(1, 'figure', 'Two');
+      result.current.setStat(2, 'figure', 'Three');
+      result.current.setStat(2, 'caption', 'the third');
+    });
+    await act(async () => {
+      result.current.moveStat(2, 0);
+    });
+    expect(result.current.doc?.stats?.map((s) => s.figure)).toEqual(['Three', 'One', 'Two']);
+    // The caption rode with its pair.
+    expect(result.current.doc?.stats?.[0].caption).toBe('the third');
+  });
+});

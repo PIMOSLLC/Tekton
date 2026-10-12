@@ -465,6 +465,33 @@ export function useBlueprintDocument(initialYaml: string, options?: UseBlueprint
     [updateDoc],
   );
 
+  /**
+   * Reorder a lane (row). INVARIANT: a lane's position is its row; its cards'
+   * positions are its columns — the whole lane object (cards, tint, kind,
+   * interpretation, divider) moves as one, so a row move CANNOT re-cross the
+   * lane×stage matrix: no card changes its stage column, only who sits above
+   * whom changes. (Stage reorder is the distinct phase: it remaps the matrix.)
+   */
+  const moveLane = useCallback(
+    (from: number, to: number) =>
+      updateDoc((d) => {
+        const [moving] = d.lanes.splice(from, 1);
+        d.lanes.splice(to, 0, moving);
+      }),
+    [updateDoc],
+  );
+
+  /** Reorder a stat card (reading order under the band). Order only. */
+  const moveStat = useCallback(
+    (from: number, to: number) =>
+      updateDoc((d) => {
+        if (!d.stats) return;
+        const [moving] = d.stats.splice(from, 1);
+        d.stats.splice(to, 0, moving);
+      }),
+    [updateDoc],
+  );
+
   const setCard = useCallback(
     (lane: number, stage: number, field: 'title' | 'blurb', value: string) =>
       updateDoc((d) => {
@@ -520,6 +547,8 @@ export function useBlueprintDocument(initialYaml: string, options?: UseBlueprint
     setLane,
     addLane,
     removeLane,
+    moveLane,
+    moveStat,
     setCard,
     setInterpretation,
     setTheme,

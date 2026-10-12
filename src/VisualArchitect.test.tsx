@@ -22,6 +22,8 @@ function renderPanel(lanes: BlueprintLane[] = baseLanes, stats: BlueprintStat[] 
     onLaneChange: vi.fn(),
     onLaneAdd: vi.fn(),
     onLaneRemove: vi.fn(),
+    onLaneMove: vi.fn(),
+    onStatMove: vi.fn(),
   };
   const view = render(
     <VisualArchitect
@@ -49,6 +51,8 @@ function renderPanel(lanes: BlueprintLane[] = baseLanes, stats: BlueprintStat[] 
       onLaneChange={handlers.onLaneChange}
       onLaneAdd={handlers.onLaneAdd}
       onLaneRemove={handlers.onLaneRemove}
+      onLaneMove={handlers.onLaneMove}
+      onStatMove={handlers.onStatMove}
     />,
   );
   return { ...view, handlers };
@@ -135,6 +139,16 @@ describe('VisualArchitect — grouped workflow panel with the lane accordion', (
     expect(summary.querySelector('.tk-lane-chevron')).not.toBeNull();
   });
 
+  it('the grab handle is a real sortable activator: a focusable button carrying the sortable role', () => {
+    renderPanel();
+    const handles = screen.getAllByTestId('lane-row-handle');
+    expect(handles.length).toBe(3);
+    expect(handles[0].tagName).toBe('BUTTON');
+    expect(handles[0].getAttribute('tabindex')).toBe('0');
+    expect(handles[0].getAttribute('aria-roledescription')).toBe('sortable');
+    expect(screen.getAllByTestId('stat-row-handle').length).toBe(1);
+  });
+
   it('stat rows edit figure and caption; add/remove go through the document ops', () => {
     const { handlers } = renderPanel();
     const figure = screen.getByLabelText('Stat 1 figure') as HTMLInputElement;
@@ -197,6 +211,7 @@ describe('VisualArchitect — grouped workflow panel with the lane accordion', (
         onStatRemove={handlers.onStatRemove}
         onLaneChange={handlers.onLaneChange} onLaneAdd={handlers.onLaneAdd}
         onLaneRemove={handlers.onLaneRemove}
+        onLaneMove={handlers.onLaneMove} onStatMove={handlers.onStatMove}
       />,
     );
     await waitFor(() => expect(screen.getByLabelText('Lane 4 kind')).toBeDefined());

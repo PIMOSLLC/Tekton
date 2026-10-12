@@ -1,5 +1,21 @@
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import { ChevronDown } from 'lucide-react';
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import type { BlueprintLane, BlueprintStage, BlueprintStat, BlueprintTheme } from './types';
 import { LANE_TINT_SWATCHES, LANE_KINDS, laneKindLabel } from './types';
 import { InfoHint } from './InfoHint';
@@ -12,6 +28,51 @@ export interface TintWarning {
 
 /** Swatch verdicts keyed by hex (pass + ratio), computed via the engine. */
 export type SwatchVerdicts = Record<string, { pass: boolean; ratio: number }>;
+
+/**
+ * SortableRow — one dnd-kit list item: the ROW is the sortable node, but ONLY
+ * the grab handle activates the drag (inputs keep their hit zones), and the
+ * handle is a real button — focusable, keyboard-liftable (Space/arrows/Space),
+ * with dnd-kit's screen-reader announcements. Live reflow: the row's transform
+ * follows the pointer and the list reflows under it; the drop commits.
+ */
+function SortableRow({
+  id,
+  className,
+  handleLabel,
+  testId,
+  children,
+}: {
+  id: string;
+  className: string;
+  handleLabel: string;
+  testId: string;
+  children: ReactNode;
+}) {
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } =
+    useSortable({ id });
+  return (
+    <div
+      ref={setNodeRef}
+      className={`${className} ${isDragging ? 'tk-row-dragging' : ''}`}
+      style={{ transform: CSS.Transform.toString(transform), transition }}
+    >
+      <button
+        type="button"
+        className="tk-grab"
+        ref={setActivatorNodeRef}
+        {...attributes}
+        {...listeners}
+        aria-label={handleLabel}
+        data-testid={`${testId}-handle`}
+        title={`Drag to reorder${attributes?.['aria-roledescription'] ? ' — or Space, then arrows, then Space' : ''}`}
+      >
+        ⋮⋮
+      </button>
+      {children}
+    </div>
+  );
+}
 
 export interface VisualArchitectProps {
   eyebrow: string;
@@ -42,6 +103,9 @@ export interface VisualArchitectProps {
   ): void;
   onLaneAdd(): void;
   onLaneRemove(index: number): void;
+  /** Reorder: a lane/row move — the row travels whole (cards stay in their stage columns). */
+  onLaneMove(from: number, to: number): void;
+  onStatMove(from: number, to: number): void;
 }
 
 /**
@@ -60,6 +124,29 @@ export function VisualArchitect(props: VisualArchitectProps) {
     if (props.lanes.length > laneCount) setOpenLane(props.lanes.length - 1);
     setLaneCount(props.lanes.length);
   }, [props.lanes.length, laneCount]);
+
+  // dnd sensors: pointer needs 6px travel (a click never becomes a drag);
+  // keyboard = the grip idiom (Space lifts, arrows step, Space drops).
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  /** Reorder commit + index remaps: the accordion's open lane and the
+   * inspector's selected card follow the lane to its new row. */
+  const commitLaneMove = (from: number, to: number) => {
+    const remap = (idx: number) =>
+      idx === from ? to : idx > from && idx <= to ? idx - 1 : idx < from && idx >= to ? idx + 1 : idx;
+    if (openLane !== null) setOpenLane(remap(openLane));
+    props.onLaneMove(from, to);
+  };
+
+  const onLaneDragEnd = ({ active, over }: DragEndEvent) => {
+    if (!over || active.id === over.id) return;
+    const from = props.lanes.findIndex((l) => l.id === active.id);
+    const to = props.lanes.findIndex((l) => l.id === over.id);
+    if (from >= 0 && to >= 0 && from !== to) commitLaneMove(from, to);
+  };
 
   return (
     <div className="tk-architect">
@@ -111,10 +198,20 @@ export function VisualArchitect(props: VisualArchitectProps) {
           />
           <span className="tk-count-pill">{props.stats.length} stats</span>
         </div>
-        {props.stats.map((stat, i) => (
-          <div className="tk-row-card" key={`stat-${i}`}>
-            <span className="tk-grab" aria-hidden="true">⋮⋮</span>
-            <div className="tk-row-card-main">
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={({ active, over }: DragEndEvent) => {
+            if (!over) return;
+            const from = Number(active.id);
+            const to = Number(over.id);
+            if (Number.isInteger(from) && Number.isInteger(to) && from !== to) props.onStatMove(from, to);
+          }}
+        >
+          <SortableContext items={props.stats.map((_, i) => String(i))} strategy={verticalListSortingStrategy}>
+            {props.stats.map((stat, i) => (
+              <SortableRow id={String(i)} className="tk-row-card" handleLabel={`Move stat ${i + 1}`} testId="stat-row" key={`stat-${i}`}>
+                <div className="tk-row-card-main">
               <label className="tk-row-field">
                 <span className="tk-row-label">Figure — the bold stat</span>
                 <input
@@ -152,17 +249,19 @@ export function VisualArchitect(props: VisualArchitectProps) {
                   <span>{stat.caption || 'Caption'}</span>
                 </div>
               )}
-            </div>
-            <button
-              type="button"
-              className="tk-remove"
-              aria-label={`Remove stat ${stat.figure || i + 1}`}
-              onClick={() => props.onStatRemove(i)}
-            >
-              ×
-            </button>
-          </div>
-        ))}
+                </div>
+                <button
+                  type="button"
+                  className="tk-remove"
+                  aria-label={`Remove stat ${stat.figure || i + 1}`}
+                  onClick={() => props.onStatRemove(i)}
+                >
+                  ×
+                </button>
+              </SortableRow>
+            ))}
+          </SortableContext>
+        </DndContext>
         <button type="button" className="tk-add" onClick={props.onStatAdd}>
           + Add stat
         </button>
@@ -179,7 +278,10 @@ export function VisualArchitect(props: VisualArchitectProps) {
         </div>
         {props.stages.map((stage, i) => (
           <div className="tk-row-card" key={`stage-${i}`}>
-            <span className="tk-grab" aria-hidden="true">⋮⋮</span>
+            {/* Stage reorder = its own guarded phase (a stage move remaps every
+                lane's card columns — the blueprint's story). The handle stays
+                inert until that op lands with its confirm + announcements. */}
+            <span className="tk-grab" aria-hidden="true" title="Reorder arrives with the stage phase">⋮⋮</span>
             <div className="tk-row-card-main">
               <label className="tk-row-field">
                 <span className="tk-row-label">Stage name</span>
@@ -226,13 +328,20 @@ export function VisualArchitect(props: VisualArchitectProps) {
           />
           <span className="tk-count-pill">{props.lanes.length} lanes</span>
         </div>
-        {props.lanes.map((lane, i) =>
-          openLane === i ? (
-            /* THE OPEN LANE — the full editing card: shared compact head +
-               all controls; the fold button collapses it */
-            <div className="tk-row-card tk-lane-open" key={`lane-${i}`}>
-              <span className="tk-grab" aria-hidden="true">⋮⋮</span>
-              <div className="tk-row-card-main">
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onLaneDragEnd}>
+          <SortableContext items={props.lanes.map((l) => l.id)} strategy={verticalListSortingStrategy}>
+            {props.lanes.map((lane, i) =>
+              openLane === i ? (
+                /* THE OPEN LANE — the full editing card; the ⋮⋮ handle (the
+                   wrapper's activator) drags the whole row */
+                <SortableRow
+                  id={lane.id}
+                  className="tk-row-card tk-lane-open"
+                  handleLabel={`Move lane: ${lane.name || 'Untitled lane'}`}
+                  testId="lane-row"
+                  key={`lane-${lane.id}`}
+                >
+                  <div className="tk-row-card-main">
                 <div className="tk-lane-head">
                   {/* The disclosure caret LEADS, like the Contrast terminal's
                       toggle — and the NAME rides the head itself as an
@@ -384,42 +493,49 @@ export function VisualArchitect(props: VisualArchitectProps) {
               >
                 ×
               </button>
-            </div>
-          ) : (
-            /* THE COLLAPSED LANE — a one-line summary; the click expands it
-               (exactly one open at a time) */
-            <div className="tk-row-card tk-lane-collapsed" key={`lane-${i}`}>
-              <span className="tk-grab" aria-hidden="true">⋮⋮</span>
-              <button
-                type="button"
-                className="tk-lane-summary"
-                aria-expanded="false"
-                aria-label={`Expand lane ${i + 1}: ${lane.name}`}
-                onClick={() => setOpenLane(i)}
-              >
-                {/* The caret leads the label, rotated to the closed state —
-                    the same one-chevron accordion the contrast terminal uses. */}
-                <ChevronDown className="tk-lane-chevron w-3.5 h-3.5" aria-hidden="true" />
-                <span className="tk-lane-name">{lane.name || 'Untitled lane'}</span>
-                {lane.kind && (
-                  <span className="tk-lane-chip">{laneKindLabel(lane.kind)}</span>
-                )}
-                {lane.tint && (
-                  <span className="tk-lane-tint-dot" style={{ background: lane.tint }} aria-hidden="true" />
-                )}
-              </button>
-              <button
-                type="button"
-                className="tk-remove"
-                aria-label={`Remove lane ${lane.name}`}
-                disabled={props.lanes.length <= 1}
-                onClick={() => props.onLaneRemove(i)}
-              >
-                ×
-              </button>
-            </div>
-          ),
-        )}
+                </SortableRow>
+              ) : (
+                /* THE COLLAPSED LANE — a one-line summary; the click expands it
+                   (exactly one open at a time) */
+                <SortableRow
+                  id={lane.id}
+                  className="tk-row-card tk-lane-collapsed"
+                  handleLabel={`Move lane: ${lane.name || 'Untitled lane'}`}
+                  testId="lane-row"
+                  key={`lane-${lane.id}`}
+                >
+                  <button
+                    type="button"
+                    className="tk-lane-summary"
+                    aria-expanded="false"
+                    aria-label={`Expand lane ${i + 1}: ${lane.name}`}
+                    onClick={() => setOpenLane(i)}
+                  >
+                    {/* The caret leads the label, rotated to the closed state —
+                        the same one-chevron accordion the contrast terminal uses. */}
+                    <ChevronDown className="tk-lane-chevron w-3.5 h-3.5" aria-hidden="true" />
+                    <span className="tk-lane-name">{lane.name || 'Untitled lane'}</span>
+                    {lane.kind && (
+                      <span className="tk-lane-chip">{laneKindLabel(lane.kind)}</span>
+                    )}
+                    {lane.tint && (
+                      <span className="tk-lane-tint-dot" style={{ background: lane.tint }} aria-hidden="true" />
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className="tk-remove"
+                    aria-label={`Remove lane ${lane.name}`}
+                    disabled={props.lanes.length <= 1}
+                    onClick={() => props.onLaneRemove(i)}
+                  >
+                    ×
+                  </button>
+                </SortableRow>
+              ),
+            )}
+          </SortableContext>
+        </DndContext>
         <button type="button" className="tk-add" onClick={props.onLaneAdd}>
           + Add swimlane
         </button>
