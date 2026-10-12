@@ -85,7 +85,7 @@ export function ExpandablePanel({
   return (
     <div
       ref={panelRef}
-      className={`h-full bg-gray-800 border-r border-gray-700 shrink-0 overflow-hidden relative flex flex-row ${
+      className={`h-full shrink-0 overflow-hidden relative flex flex-row ${
         isResizing
           ? 'transition-none'
           : 'transition-[width] duration-300 ease-out motion-reduce:transition-none'
@@ -96,10 +96,14 @@ export function ExpandablePanel({
       aria-hidden={!open}
       {...(!open ? { inert: 'true' } : {})}
     >
-      {/* Inner content: flex-1 of the panel (the grip is its own flex child to
-          the right) — content → scrollbar → grip, each a real layer */}
+      {/* Content: the VISIBLE panel — it carries the paint (bg + border) and
+          its own scrollbar, and stops `grip-width` short of the declared
+          width. The resize separator then floats in the remaining air — a
+          real gap between the panel and the workspace (the opencode model:
+          the sash lives in positive space, never sharing pixels with the
+          scrollbar), and the drag width the shell animates is unchanged. */}
       <div
-        className={`flex flex-col h-full min-w-0 flex-1 transition-opacity duration-300 ease-out motion-reduce:transition-none ${
+        className={`h-full bg-gray-800 border-r border-gray-700 min-w-0 flex-1 flex flex-col transition-opacity duration-300 ease-out motion-reduce:transition-none ${
           open ? 'opacity-100' : 'opacity-0'
         }`}
         aria-hidden={!open}
