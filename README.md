@@ -40,4 +40,11 @@ file downloads/uploads, and app preferences live in that browser's storage.
 The desktop installers (AppImage/rpm/exe) remain the native track; this
 container never runs the Tauri GUI.
 
+## Desktop builds (AppImage / rpm / exe)
+
+The Windows exe is cross-compiled on Minerva — it **must** embed the frontend
+(the `custom-protocol` feature). A dev-mode shell boots to
+"localhost refused to connect" on any machine without the dev server.
+Full procedure + verify gate: [`docs/DESKTOP_RELEASES.md`](docs/DESKTOP_RELEASES.md).
+
 Copyright © 2026 Phoenix Inceptions Media LLC. All rights reserved.

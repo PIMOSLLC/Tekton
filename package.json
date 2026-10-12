@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "wasm": "cargo build -p blueprint-wasm --target wasm32-unknown-unknown --release && wasm-bindgen ~/.cache/cargo-target/phoenix-Tekton/wasm32-unknown-unknown/release/blueprint_wasm.wasm --target web --out-dir src/engine",
+    "desktop:win": "tauri build --runner cargo-xwin --target x86_64-pc-windows-msvc --config '{\"bundle\":{\"active\":false}}' && bash scripts/verify-windows-exe.sh",
+    "verify:win-exe": "bash scripts/verify-windows-exe.sh",
     "tauri": "tauri"
   },
   "dependencies": {
