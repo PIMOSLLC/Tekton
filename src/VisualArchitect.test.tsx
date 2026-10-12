@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { VisualArchitect, type SwatchVerdicts } from './VisualArchitect';
-import type { BlueprintLane, BlueprintStage, BlueprintStat } from './types';
+import type { BlueprintLane, BlueprintStage, BlueprintStat, BlueprintTheme } from './types';
 
 const stages: BlueprintStage[] = [
   { id: 's1', name: 'Signal' },
@@ -10,7 +10,7 @@ const stages: BlueprintStage[] = [
 const baseStats: BlueprintStat[] = [
   { figure: '4 layers', caption: 'Design system · analytics · site operations · human command' },
 ];
-function renderPanel(lanes: BlueprintLane[] = baseLanes, stats: BlueprintStat[] = baseStats) {
+function renderPanel(lanes: BlueprintLane[] = baseLanes, stats: BlueprintStat[] = baseStats, theme?: BlueprintTheme) {
   const handlers = {
     onMetaChange: vi.fn(),
     onStageChange: vi.fn(),
@@ -31,6 +31,7 @@ function renderPanel(lanes: BlueprintLane[] = baseLanes, stats: BlueprintStat[] 
       stages={stages}
       lanes={lanes}
       stats={stats}
+      theme={theme}
       tintWarnings={{}}
       swatchVerdicts={
         {
@@ -93,6 +94,27 @@ describe('VisualArchitect — grouped workflow panel with the lane accordion', (
     ]) {
       expect(screen.getAllByText(text).length).toBeGreaterThan(0);
     }
+  });
+
+  it('each stat row previews the artifact\u2019s stat card live — the pair paints as it exports', () => {
+    renderPanel(baseLanes, baseStats, {
+      accent: '#60A5FA',
+      surface: '#1F2937',
+      stat_caption: '#94A3B8',
+    });
+    const preview = document.querySelector('.tk-stat-preview') as HTMLElement;
+    expect(preview).not.toBeNull();
+    expect((preview.querySelector('strong') as HTMLElement).textContent).toBe('4 layers');
+    expect((preview.querySelector('span') as HTMLElement).textContent).toBe(
+      'Design system · analytics · site operations · human command',
+    );
+    expect(preview.style.background).toBe('#1F2937');
+    expect(preview.style.getPropertyValue('--tk-stat-accent')).toBe('#60A5FA');
+  });
+
+  it('an empty stat row shows no preview chip (it would be noise)', () => {
+    renderPanel(baseLanes, [{ figure: '', caption: '' }]);
+    expect(document.querySelector('.tk-stat-preview')).toBeNull();
   });
 
   it('stat rows edit figure and caption; add/remove go through the document ops', () => {

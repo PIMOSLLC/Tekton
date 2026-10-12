@@ -49,6 +49,15 @@ export function BuildCanvas({ doc, selectedCard, onSelectCard }: BuildCanvasProp
     '--tk-doc-row-ink': doc.theme?.['ink'] ?? '#141b3d',
     '--tk-doc-row-blurb': doc.theme?.['row_blurb'] ?? '#5e6d83',
     '--tk-doc-border': doc.theme?.['border_soft'] ?? '#e3e8f1',
+    // The document FACE: band, stat, and note pairs — the regions above and
+    // below the grid, all engine-linted pairs the canvas now paints too.
+    '--tk-doc-band-bg': doc.theme?.['band_bg'] ?? '#060d2f',
+    '--tk-doc-band-border': doc.theme?.['band_border'] ?? '#27539c',
+    '--tk-doc-band-eyebrow': doc.theme?.['band_eyebrow'] ?? '#9fc4ff',
+    '--tk-doc-band-text': doc.theme?.['band_text'] ?? '#cbd7f1',
+    '--tk-doc-accent': doc.theme?.['accent'] ?? '#1d4ed8',
+    '--tk-doc-stat-caption': doc.theme?.['stat_caption'] ?? '#53647c',
+    '--tk-doc-note-ink': doc.theme?.['note_ink'] ?? '#59677d',
   } as CSSProperties;
 
   return (
@@ -57,6 +66,25 @@ export function BuildCanvas({ doc, selectedCard, onSelectCard }: BuildCanvasProp
       data-phoenix-theme="tekton-light"
       style={docVars as CSSProperties}
     >
+      {/* The document FACE, in the artifact's reading order: band → stats →
+          grid → note. The canvas mirrors what the panel governs and what
+          exports — a first-run reader sees every region form as they type
+          (pure paint; the panel rows stay the edit entries). */}
+      <header className="tk-canvas-band">
+        <span className="tk-canvas-band-eyebrow">{doc.meta.eyebrow}</span>
+        <h2>{doc.meta.title}</h2>
+        {doc.meta.intro && <p>{doc.meta.intro}</p>}
+      </header>
+      {(doc.stats?.length ?? 0) > 0 && (
+        <div className="tk-canvas-stats">
+          {(doc.stats ?? []).map((stat, i) => (
+            <div className="tk-canvas-stat" key={`stat-${i}`}>
+              <strong>{stat.figure}</strong>
+              <span>{stat.caption}</span>
+            </div>
+          ))}
+        </div>
+      )}
       <div className="tk-canvas-grid" style={gridStyle}>
         <div className="tk-canvas-corner">Service layer ↓ <small>Stage →</small></div>
         {doc.stages.map((stage, i) => (
@@ -88,6 +116,11 @@ export function BuildCanvas({ doc, selectedCard, onSelectCard }: BuildCanvasProp
           />
         ))}
       </div>
+      {doc.note && (
+        <p className="tk-canvas-note">
+          <strong>{doc.note.label}</strong> {doc.note.body}
+        </p>
+      )}
     </div>
   );
 }

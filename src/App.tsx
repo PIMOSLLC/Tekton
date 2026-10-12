@@ -736,6 +736,7 @@ export function App() {
                 stages={bp.doc.stages}
                 lanes={bp.doc.lanes}
                 stats={bp.doc.stats ?? []}
+                theme={bp.doc.theme}
                 tintWarnings={tintWarnings}
             swatchVerdicts={tintVerdicts}
                 onMetaChange={bp.setMeta}

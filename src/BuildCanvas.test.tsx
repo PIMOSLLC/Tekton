@@ -123,6 +123,56 @@ describe('BuildCanvas document-theme parity', () => {
     expect(card?.style.background).toBe('#2A2140');
   });
 
+  it('the canvas shows the document face: band, stats, and note in the artifact\u2019s reading order', () => {
+    const face: BlueprintDocument = {
+      ...doc,
+      meta: { eyebrow: 'Portfolio case study', title: 'Agentic Blueprint', intro: 'One pilot, traced.' },
+      stats: [
+        { figure: '4 layers', caption: 'Systems · data · governance · outcomes' },
+        { figure: '1 week', caption: 'Signal to monitored release' },
+      ],
+      note: { label: 'Scope and evidence:', body: 'The pilot includes Shopify CRM.' },
+      theme: {
+        band_bg: '#0b0f1a',
+        band_border: '#1e40af',
+        band_eyebrow: '#93c5fd',
+        band_text: '#e5e7eb',
+        accent: '#60A5FA',
+        stat_caption: '#94A3B8',
+        note_ink: '#94A3B8',
+      },
+    };
+    render(<BuildCanvas doc={face} selectedCard={null} onSelectCard={() => {}} />);
+    // Band: title block paints in the doc's band pair.
+    expect(screen.getByText('Portfolio case study')).toBeDefined();
+    expect(screen.getByText('Agentic Blueprint')).toBeDefined();
+    expect(screen.getByText('One pilot, traced.')).toBeDefined();
+    const band = document.querySelector('.tk-canvas-band') as HTMLElement;
+    expect((band.querySelector('h2') as HTMLElement).textContent).toBe('Agentic Blueprint');
+    // Stats strip: each figure/caption pair renders beneath the band.
+    expect(screen.getAllByText('4 layers').length).toBe(1);
+    expect(screen.getByText('1 week')).toBeDefined(); // the bold figure chip
+    expect(screen.getByText('Signal to monitored release')).toBeDefined();
+    // Note: the closing scope line renders at the sheet's foot.
+    const note = document.querySelector('.tk-canvas-note') as HTMLElement;
+    expect(note.textContent).toContain('Scope and evidence:');
+    expect(note.textContent).toContain('The pilot includes Shopify CRM.');
+    // Doc-driven tokens flow for the new face regions (scoped on the root,
+    // consumed by inheritance).
+    const root = document.querySelector('.tk-canvas') as HTMLElement;
+    expect(root.style.getPropertyValue('--tk-doc-accent')).toBe('#60A5FA');
+    expect(root.style.getPropertyValue('--tk-doc-band-bg')).toBe('#0b0f1a');
+    expect(root.style.getPropertyValue('--tk-doc-note-ink')).toBe('#94A3B8');
+  });
+
+  it('a theme-less document still shows the face (chrome fallbacks) — no crash', () => {
+    renderCanvas();
+    expect(document.querySelector('.tk-canvas-band')).not.toBeNull();
+    expect(screen.getByText('t')).toBeDefined(); // the wizard-less title
+    expect(document.querySelector('.tk-canvas-stats')).toBeNull(); // no stats authored
+    expect(document.querySelector('.tk-canvas-note')).toBeNull();
+  });
+
   it('the page, stage columns, and lane headers wear the document theme — no white sheet survives a dark document', () => {
     const dark: BlueprintDocument = {
       ...doc,

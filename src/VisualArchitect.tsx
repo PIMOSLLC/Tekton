@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { ChevronDown } from 'lucide-react';
-import type { BlueprintLane, BlueprintStage, BlueprintStat } from './types';
+import type { BlueprintLane, BlueprintStage, BlueprintStat, BlueprintTheme } from './types';
 import { LANE_TINT_SWATCHES, LANE_KINDS, laneKindLabel } from './types';
 import { InfoHint } from './InfoHint';
 
@@ -21,6 +21,9 @@ export interface VisualArchitectProps {
   lanes: BlueprintLane[];
   /** The under-title quick figures — edited like stages, rendered below the band. */
   stats: BlueprintStat[];
+  /** The document's theme record — the stat preview mirrors the artifact's
+   * painted pair (bold accent figure + muted caption on the doc surface). */
+  theme?: BlueprintTheme;
   /** AA verdicts for lane tints (live from the engine lint). */
   tintWarnings: Record<string, TintWarning>;
   /** Engine-computed swatch verdicts — only passing swatches are pickable. */
@@ -132,6 +135,23 @@ export function VisualArchitect(props: VisualArchitectProps) {
                   onChange={(e) => props.onStatChange(i, 'caption', e.target.value)}
                 />
               </label>
+              {/* The artifact's stat card, LIVE — the pair paints as it exports
+                  (bold accent figure + muted caption on the doc surface), so
+                  the field names teach by showing instead of telling. */}
+              {(stat.figure || stat.caption) && (
+                <div
+                  className="tk-stat-preview"
+                  aria-hidden="true"
+                  style={{
+                    background: props.theme?.['surface'] ?? '#ffffff',
+                    ['--tk-stat-accent' as string]: props.theme?.['accent'] ?? '#1d4ed8',
+                    ['--tk-stat-cap' as string]: props.theme?.['stat_caption'] ?? '#53647c',
+                  } as CSSProperties}
+                >
+                  <strong>{stat.figure || 'Figure'}</strong>
+                  <span>{stat.caption || 'Caption'}</span>
+                </div>
+              )}
             </div>
             <button
               type="button"
