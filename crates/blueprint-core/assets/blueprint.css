@@ -87,7 +87,13 @@
   position: sticky; left: 0; z-index: 2; color: var(--bp-ink);
 }
 .bp-root .bp-rowlabel small { display: block; font-weight: 400; margin-top: 7px; color: var(--bp-row-blurb); }
-.bp-root .bp-cell { min-height: 142px; background: var(--bp-surface); }
+.bp-root .bp-cell {
+  min-height: 142px; background: var(--bp-surface);
+  /* One row, one card height: cells share the grid track, and the card
+     fills its cell — a wrapped blurb no longer stretches just its own card
+     while its row-mates sit short. */
+  display: flex; flex-direction: column;
+}
 .bp-root .bp-divider {
   grid-column: 1 / -1; background: var(--bp-divider-bg); color: #fff;
   padding: 7px 18px; font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
@@ -103,6 +109,8 @@
   background: var(--bp-surface); cursor: pointer; text-align: left;
   font-size: 13px; line-height: 1.45; color: var(--bp-ink-strong);
   box-shadow: 0 2px 5px rgba(11, 29, 55, .02); font-family: inherit;
+  /* Equal-length cards in a row: grow to the cell (the row's track height). */
+  flex: 1; align-self: stretch;
 }
 .bp-root .bp-item:hover,
 .bp-root .bp-item:focus-visible { outline: 2px solid var(--bp-focus-outline); outline-offset: 1px; }
