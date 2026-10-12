@@ -749,6 +749,29 @@ export function App() {
                 onLaneChange={bp.setLane}
                 onLaneAdd={bp.addLane}
                 onLaneRemove={bp.removeLane}
+                onLaneMove={(from, to) => {
+                  bp.moveLane(from, to);
+                  // The selected card follows its lane to the new row (its
+                  // columns are untouched — a row move can't cross the matrix).
+                  if (selectedCard) {
+                    setSelectedCard((p) =>
+                      p
+                        ? {
+                            lane:
+                              p.lane === from
+                                ? to
+                                : p.lane > from && p.lane <= to
+                                  ? p.lane - 1
+                                  : p.lane < from && p.lane >= to
+                                    ? p.lane + 1
+                                    : p.lane,
+                            stage: p.stage,
+                          }
+                        : p,
+                    );
+                  }
+                }}
+                onStatMove={bp.moveStat}
               />
             )}
             {panelSection === 'new' && (
