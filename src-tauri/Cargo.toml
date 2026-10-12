@@ -6,6 +6,14 @@ description = "Tekton — service blueprint studio (desktop shell)"
 authors = ["Dr. Delminquoe L Cunningham <info@phoenixinceptionsmediallc.com>"]
 license = "All rights reserved"
 
+# Why: without this feature the binary compiles in dev mode — no embedded
+# frontend, and the webview loads the devUrl (localhost:6041), which only
+# answers while `npm run dev` is running. Plain-cargo builds (e.g. cargo-xwin
+# cross-compile to Windows) must pass `--features custom-protocol` exactly as
+# the tauri CLI does for `npm run tauri build`.
+[features]
+custom-protocol = ["tauri/custom-protocol"]
+
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 
