@@ -10,3 +10,4 @@ logs/
 !logs/README.md
 src-tauri/target/
 src-tauri/gen/
+releases/
