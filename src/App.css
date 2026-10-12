@@ -856,7 +856,7 @@
   border: 1px solid var(--color-tekton-dark-border);
   flex-shrink: 0;
 }
-.tk-lane-head { display: flex; align-items: flex-end; gap: 8px; }
+.tk-lane-head { display: flex; align-items: flex-start; gap: 8px; }
 .tk-lane-head .tk-row-field { flex: 1; min-width: 0; }
 .tk-lane-head input { flex: 1; min-width: 0; }
 .tk-lane-fold {
@@ -865,6 +865,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Proximity: the caret rides the field's TITLE line ("Lane name") —
+     28px box keeps the 24px+ target floor; the optical pull raises the
+     chevron's center onto the label's own line. */
+  margin-top: -5px;
   background: transparent;
   border: 1px solid var(--color-tekton-dark-border);
   border-radius: 7px;
