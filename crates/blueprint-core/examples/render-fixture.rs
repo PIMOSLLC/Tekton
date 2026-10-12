@@ -25,13 +25,10 @@ fn main() -> Result<(), blueprint_core::Error> {
     );
 
     let standalone = blueprint_core::render::render(&doc, Format::Standalone)?;
-    let wordpress = blueprint_core::render::render(&doc, Format::WordPress)?;
     std::fs::write("agentic-ai-ecommerce-standalone.html", &standalone)?;
-    std::fs::write("agentic-ai-ecommerce-wordpress.html", &wordpress)?;
     println!(
-        "wrote agentic-ai-ecommerce-standalone.html ({} bytes) + agentic-ai-ecommerce-wordpress.html ({} bytes)",
-        standalone.len(),
-        wordpress.len()
+        "wrote agentic-ai-ecommerce-standalone.html ({} bytes)",
+        standalone.len()
     );
     Ok(())
 }

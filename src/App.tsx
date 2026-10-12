@@ -207,7 +207,7 @@ export function App() {
   const exportBlueprint = useCallback(async () => {
     if (!bp.doc || !bp.html) return;
     const stem = stripExtension(saveName(sourceName, bp.doc.meta.title, dataFormat));
-    const htmlName = `${stem}-${bp.format === 'wordpress' ? 'wordpress' : 'standalone'}.html`;
+    const htmlName = `${stem}-standalone.html`;
     const dataName = `${stem}.${dataFormat}`;
     const dataText = dataFormat === 'yaml' ? await bp.getYaml() : await bp.getJson();
     await files.saveFile(htmlName, bp.html);
@@ -505,19 +505,11 @@ export function App() {
         label: 'Format',
         icon: FileOutput,
         led: 'neutral',
-        value: bp.format === 'standalone' ? 'Standalone' : 'WordPress',
-        tooltip:
-          bp.format === 'wordpress'
-            ? [
-                'wordpress: embed fragment (h2, no shell)',
-                'built for a Custom HTML block — paste where the blueprint belongs',
-                'the fragment self-styles; your site\'s theme supplies the page chrome',
-                'no custom plugin needed',
-              ]
-            : [
-                'standalone: full document (h1)',
-                'fully self-contained — publish or share the file as-is',
-              ],
+        value: 'Standalone',
+        tooltip: [
+          'standalone: full document (h1)',
+          'fully self-contained — publish or share the file as-is',
+        ],
       },
       {
         id: 'validation',
@@ -583,7 +575,7 @@ export function App() {
     >
       {/* Standalone brand bar — PIN hosts replace it with their own chrome */}
       {!isPinModuleHost() && (
-        <AppHeader docName={docStem} dirty={bp.dirty} format={bp.format} lastAutosave={lastAutosave} dotState={dotState} />
+        <AppHeader docName={docStem} dirty={bp.dirty} lastAutosave={lastAutosave} dotState={dotState} />
       )}
 
       <div className="flex-1 flex min-h-0">
@@ -611,26 +603,14 @@ export function App() {
         {/* Toolbar (PIN-style slim header): OUTPUT controls only — document
             identity moved to the app header (standalone) */}
         <div className="h-12 flex items-center gap-3 px-4 border-b border-gray-700 bg-gray-900 shrink-0">
-          <div className="flex bg-gray-800 rounded-md border border-gray-700 overflow-hidden" role="group" aria-label="Output format">
-            <button
-              type="button"
-              className={`px-3 py-1.5 text-[11px] font-semibold transition-colors ${
-                bp.format === 'standalone' ? 'bg-brand-secondary text-white' : 'text-gray-400 hover:text-gray-200'
-              }`}
-              onClick={() => bp.setFormat('standalone')}
-            >
-              Standalone
-            </button>
-            <button
-              type="button"
-              className={`px-3 py-1.5 text-[11px] font-semibold transition-colors border-l border-gray-700 ${
-                bp.format === 'wordpress' ? 'bg-brand-secondary text-white' : 'text-gray-400 hover:text-gray-200'
-              }`}
-              onClick={() => bp.setFormat('wordpress')}
-            >
-              WordPress
-            </button>
-          </div>
+          {/* Output format is no longer a choice — the CMS fragment was removed
+              at the public cut; the chip announces the fixed state. */}
+          <span
+            className="px-3 py-1.5 text-[11px] font-semibold bg-gray-800 border border-gray-700 rounded-md text-gray-300"
+            title="Output format: standalone — the complete self-contained document (h1). Publish or share it as-is."
+          >
+            Standalone
+          </span>
           <div className="flex bg-gray-800 rounded-md border border-gray-700 overflow-hidden" role="group" aria-label="View mode">
             <button
               type="button"

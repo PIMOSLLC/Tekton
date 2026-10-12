@@ -46,23 +46,6 @@ fn render_standalone_smoke() {
 }
 
 #[test]
-fn render_wordpress_is_a_fragment() {
-    let out = temp("wordpress.html");
-    let (ok, _) = run(&[
-        "render",
-        fixture(),
-        "-o",
-        out.to_str().unwrap(),
-        "-f",
-        "wordpress",
-    ]);
-    assert!(ok);
-    let html = std::fs::read_to_string(&out).unwrap();
-    assert!(!html.contains("<!doctype"));
-    assert!(html.contains("<h2>AI Agentic Workflows in E-Commerce</h2>"));
-}
-
-#[test]
 fn default_output_name_derives_from_input() {
     // No -o: expect <fixture-dir>/agentic-ai-ecommerce-standalone.html
     let expected = std::path::Path::new(fixture())

@@ -40,7 +40,8 @@ export function parse_blueprint(yaml: string): string;
  * the future Tauri command): an invalid or AA-failing document refuses to render,
  * returning the actionable error text.
  *
- * `format`: "standalone" (full page) or "wordpress" (embed fragment).
+ * `format`: "standalone" (full page). CMS fragment embedding was removed at
+ * the public cut; the parameter is a positional API slot.
  */
 export function render_blueprint(yaml: string, format: string): string;
 

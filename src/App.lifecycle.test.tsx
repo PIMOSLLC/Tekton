@@ -405,20 +405,10 @@ describe('App blueprint lifecycle', () => {
     await screen.findByTestId('dirty-dot');
     expect(screen.getByTestId('app-header').textContent).toContain('PHOENIX TEKTON');
     expect(screen.getByTestId('doc-name').textContent).toBe('My Plan');
-    // the header's right tag mirrors the LIVE export format + explains it
-    fireEvent.click(screen.getByRole('button', { name: 'WordPress' }));
-    await waitFor(() =>
-      expect(screen.getByTestId('format-tag').textContent).toBe('WordPress'),
-    );
+    // the header's right tag announces the export — its one format explains itself
+    expect(screen.getByTestId('format-tag').textContent).toBe('Standalone');
     expect(screen.getByTestId('format-tag').getAttribute('title')).toContain(
-      'Custom HTML block',
-    );
-    expect(screen.getByTestId('format-tag').getAttribute('title')).toContain(
-      'custom plugin needed',
-    );
-    fireEvent.click(screen.getByRole('button', { name: 'Standalone' }));
-    await waitFor(() =>
-      expect(screen.getByTestId('format-tag').textContent).toBe('Standalone'),
+      'self-contained document',
     );
   });
 

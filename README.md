@@ -16,7 +16,7 @@ A service blueprint in Tekton is a grid: **stages** are the columns (the flow of
 - **Self-contained exports**: one HTML file, zero external requests, print-ready, keyboard-complete, `prefers-reduced-motion` aware.
 - **Three tiers of theme**: the light default, a dark studio preset, and two AAA high-contrast presets (7:1 on normal text) — all audited by dedicated engine tests.
 
-![The Tekton studio](design/mockups/tekton-default.png)
+![The Tekton studio](design/mockups/tekton-default.svg)
 
 ## Quick start
 

@@ -20,9 +20,6 @@ use crate::model::{Document, Lane};
 pub enum Format {
     /// Full HTML document — open it anywhere.
     Standalone,
-    /// Fragment for embedding in a CMS page (the site title there is the page's h1,
-    /// so the blueprint's own headline demotes to h2 and no doctype/head is emitted).
-    WordPress,
 }
 
 pub struct RenderError(pub String);
@@ -40,8 +37,9 @@ impl std::error::Error for RenderError {}
 
 /// Entry point: validate first (errors abort), then lint the theme (AA failures
 /// abort — the product's contract: an inaccessible palette never ships), then
-/// render. Returns the final HTML.
-pub fn render(doc: &Document, format: Format) -> Result<String, crate::Error> {
+/// render. Returns the final HTML. (`format` stays a positional API slot for
+/// future output shapes; today the document is always the standalone HTML shell.)
+pub fn render(doc: &Document, _format: Format) -> Result<String, crate::Error> {
     let validation = crate::validate::validate(doc);
     if !validation.is_ok() {
         return Err(crate::Error::Render(RenderError(format!(
@@ -82,10 +80,7 @@ pub fn render(doc: &Document, format: Format) -> Result<String, crate::Error> {
         ))));
     }
 
-    Ok(match format {
-        Format::Standalone => standalone(doc),
-        Format::WordPress => word_press_fragment(doc),
-    })
+    Ok(standalone(doc))
 }
 
 // ---------------------------------------------------------------------------
@@ -353,12 +348,6 @@ fn standalone(doc: &Document) -> String {
     html
 }
 
-fn word_press_fragment(doc: &Document) -> String {
-    // Why no <head>: the CMS provides the document shell. Why h2: the host page's
-    // title is the h1 (lesson from the DLC embeds).
-    body(doc, 2)
-}
-
 // ---------------------------------------------------------------------------
 // Escaping
 // ---------------------------------------------------------------------------
@@ -402,15 +391,8 @@ mod tests {
     }
 
     #[test]
-    fn wordpress_fragment_has_no_doctype_and_demotes_heading() {
-        let html = render(&doc(), Format::WordPress).unwrap();
-        assert!(!html.contains("<!doctype"));
-        assert!(html.contains("<h2>AI Agentic Workflows in E-Commerce</h2>"));
-    }
-
-    #[test]
     fn grid_is_fully_pre_rendered() {
-        let html = render(&doc(), Format::WordPress).unwrap();
+        let html = render(&doc(), Format::Standalone).unwrap();
         // 8 lanes × 5 stages
         assert_eq!(html.matches("class=\"bp-item\"").count(), 40);
         // Every card is keyboard-ready with state wiring
@@ -542,7 +524,7 @@ mod tests {
     fn lane_kinds_drive_derived_tints_in_css() {
         // The fixture carries lane kinds (no explicit tints) — the renderer must
         // emit the kind-default tint rules (adopted from the Gemini prototype).
-        let html = render(&doc(), Format::WordPress).unwrap();
+        let html = render(&doc(), Format::Standalone).unwrap();
         for (lane, tint) in [
             ("agents", "#f3f0ff"),
             ("systems", "#eff9f8"),

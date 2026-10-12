@@ -1,12 +1,9 @@
 import { Flame } from 'lucide-react';
-import type { OutputFormat } from './engine/engineServiceTypes';
 
 export interface AppHeaderProps {
   /** Document identity: the file stem, or the slugified title while unsaved. */
   docName: string | null;
   dirty: boolean;
-  /** The live export format — mirrored in the header's right tag. */
-  format: OutputFormat;
   /** When the workspace autosave last flushed (null = nothing yet). */
   lastAutosave: Date | null;
   /** covered = the work is protected (a file or the autosave); unprotected = amber. */
@@ -18,11 +15,11 @@ export interface AppHeaderProps {
  * Tekton as a toolkit module under PIN's own header; the standalone web +
  * desktop experiences need a full identity header of their own). It carries
  * ONLY brand + document identity — controls keep their homes (nav = document
- * lifecycle, toolbar = output format, footer = status lights) so no control
+ * lifecycle, toolbar = output format chip, footer = status lights) so no control
  * ever has two canonical locations. The App shell does not render it in
  * PIN-host mode (`__PIN_HOST__`), where PIN's chrome already sits on top.
  */
-export function AppHeader({ docName, dirty, format, lastAutosave, dotState }: AppHeaderProps) {
+export function AppHeader({ docName, dirty, lastAutosave, dotState }: AppHeaderProps) {
   return (
     <header
       className="h-11 flex items-center gap-3 px-4 bg-gray-900 border-b border-gray-700 shrink-0"
@@ -72,13 +69,9 @@ export function AppHeader({ docName, dirty, format, lastAutosave, dotState }: Ap
       <span
         className="ml-auto text-[9px] font-mono text-gray-500 uppercase tracking-widest"
         data-testid="format-tag"
-        title={
-          format === 'wordpress'
-            ? 'WordPress export: an embed fragment (h2, no shell) built for a Custom HTML block — your site\'s theme supplies the page chrome. No custom plugin needed.'
-            : 'Standalone export: the complete self-contained document (h1) — publish or share it as-is.'
-        }
+        title="Standalone export: the complete self-contained document (h1) — publish or share it as-is."
       >
-        {format === 'wordpress' ? 'WordPress' : 'Standalone'}
+        Standalone
       </span>
     </header>
   );

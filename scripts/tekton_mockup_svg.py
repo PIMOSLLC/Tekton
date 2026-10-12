@@ -226,7 +226,7 @@ def board_default(panel_open=True, rail_expanded=False):
             cx += w
         return frag
     cx = mx + 16
-    for segs, ai in [(["Standalone", "WordPress"], 0), (["Data: YAML", "JSON"], 0), (["Build", "Preview"], 0)]:
+    for segs, ai in [(["Standalone"], 0), (["Data: YAML", "JSON"], 0), (["Build", "Preview"], 0)]:
         out.extend(pill(cx, 55, segs, ai))
         cx += sum(len(s) * 6.8 + 22 for s in segs) + 28
     out.append(T(1440 - 16, 74, "click a card to edit · Esc closes", 10, 400, "#6B7280", MONO, anchor="end"))

@@ -34,4 +34,6 @@ export interface EngineReport {
   findings: EngineFinding[];
 }
 
-export type OutputFormat = 'standalone' | 'wordpress';
+/** The export shape. CMS fragment embedding was removed at the public cut;
+ * the lone variant keeps the axis open for future output shapes. */
+export type OutputFormat = 'standalone';

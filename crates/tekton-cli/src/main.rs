@@ -35,7 +35,7 @@ enum Commands {
         /// Output file (default: <input-stem>-<format>.html next to the input)
         #[arg(short, long)]
         output: Option<PathBuf>,
-        /// Output format: standalone (full page) or wordpress (embed fragment)
+        /// Output format: standalone (full page) — the format axis stays open for future output shapes
         #[arg(short = 'f', long, default_value = "standalone")]
         format: String,
     },
@@ -76,9 +76,8 @@ fn load(input: &Path) -> Result<Document, String> {
 fn parse_format(s: &str) -> Result<Format, String> {
     match s {
         "standalone" => Ok(Format::Standalone),
-        "wordpress" => Ok(Format::WordPress),
         other => Err(format!(
-            "unknown format {other:?} — expected standalone or wordpress"
+            "unknown format {other:?} — expected standalone (CMS fragment embedding was removed at the public cut)"
         )),
     }
 }
@@ -203,7 +202,6 @@ fn default_output(input: &Path, fmt: Format) -> PathBuf {
         .unwrap_or_default();
     let suffix = match fmt {
         Format::Standalone => "standalone",
-        Format::WordPress => "wordpress",
     };
     dir.join(format!("{stem}-{suffix}.html"))
 }

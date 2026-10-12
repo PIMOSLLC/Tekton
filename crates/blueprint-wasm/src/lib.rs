@@ -17,16 +17,22 @@ use wasm_bindgen::prelude::*;
 /// the future Tauri command): an invalid or AA-failing document refuses to render,
 /// returning the actionable error text.
 ///
-/// `format`: "standalone" (full page) or "wordpress" (embed fragment).
+/// `format`: "standalone" (full page). CMS fragment embedding was removed at
+/// the public cut; the parameter is a positional API slot.
 #[wasm_bindgen]
 pub fn render_blueprint(yaml: &str, format: &str) -> Result<String, JsValue> {
     let doc =
         blueprint_core::Document::from_yaml(yaml).map_err(|e| JsValue::from_str(&e.to_string()))?;
-    let fmt = match format {
-        "wordpress" => blueprint_core::Format::WordPress,
-        _ => blueprint_core::Format::Standalone,
-    };
-    blueprint_core::render::render(&doc, fmt).map_err(|e| JsValue::from_str(&e.to_string()))
+    match format {
+        "standalone" => {}
+        other => {
+            return Err(JsValue::from_str(&format!(
+                "unknown format {other:?} — expected \"standalone\""
+            )))
+        }
+    }
+    blueprint_core::render::render(&doc, blueprint_core::Format::Standalone)
+        .map_err(|e| JsValue::from_str(&e.to_string()))
 }
 
 /// Lint the document's theme. Returns the full report as a JSON string
