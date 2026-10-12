@@ -360,6 +360,9 @@ describe('App blueprint lifecycle', () => {
       ],
     };
     render(<App />);
+    // The terminal boots closed (a choice, not a default view) — the fix
+    // rows live in its body, so open it the way a user does: its own toggle.
+    fireEvent.click(screen.getByRole('button', { name: /aisthehkne contrast lint/i }));
     await waitFor(() => expect(screen.getAllByTestId('validation-fix')).toHaveLength(1));
     fireEvent.click(screen.getByTestId('validation-fix'));
     // The inspector opens on exactly that card, focused on its first field.

@@ -108,7 +108,9 @@ export function App() {
   const [view, setView] = useState<ViewMode>('build');
   const [panelSection, setPanelSection] = useState<PanelSection>('architect');
   const [selectedCard, setSelectedCard] = useState<CardPosition | null>(null);
-  const [terminalOpen, setTerminalOpen] = useState(true);
+  // The lint terminal stays DOCKED but closed on boot — the footer's WCAG
+  // light is the always-visible verdict; opening the terminal is a choice.
+  const [terminalOpen, setTerminalOpen] = useState(false);
   /** The file behind the current work (null = never saved/opened). */
   const [sourceName, setSourceName] = useState<string | null>(boot.sourceName);
   const [dialog, setDialog] = useState<PendingDialog | null>(null);
