@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "wasm": "cargo build -p blueprint-wasm --target wasm32-unknown-unknown --release && wasm-bindgen ~/.cache/cargo-target/phoenix-Tekton/wasm32-unknown-unknown/release/blueprint_wasm.wasm --target web --out-dir src/engine"
+    "wasm": "cargo build -p blueprint-wasm --target wasm32-unknown-unknown --release && wasm-bindgen ~/.cache/cargo-target/phoenix-Tekton/wasm32-unknown-unknown/release/blueprint_wasm.wasm --target web --out-dir src/engine",
+    "tauri": "tauri"
   },
   "dependencies": {
     "lucide-react": "^0.323.0",
@@ -19,6 +20,8 @@
     "react-zoom-pan-pinch": "^4.2.0"
   },
   "devDependencies": {
+    "@tauri-apps/api": "^2.12.3",
+    "@tauri-apps/cli": "^2.12.2",
     "@testing-library/react": "^16.3.3",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",

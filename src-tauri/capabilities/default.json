@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "The shell's window defaults — no app capabilities are granted yet; the editor runs on the wasm engine inside the webview.",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}

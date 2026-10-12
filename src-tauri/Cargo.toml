@@ -1,0 +1,17 @@
+[package]
+name = "phoenix-tekton"
+version = "0.1.0"
+edition = "2021"
+description = "Tekton — service blueprint studio (desktop shell)"
+authors = ["Dr. Delminquoe L Cunningham <info@phoenixinceptionsmediallc.com>"]
+license = "All rights reserved"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# The stock shell: one webview wrapping the editor's static build. The wasm
+# engine runs IN the webview — no invoke commands exist yet; the platform
+# persistence adapter lands in its own phase (src/platform/persistence.ts
+# stays the only seam).
+tauri = { version = "2", features = [] }

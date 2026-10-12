@@ -8,3 +8,5 @@ dist/
 src/engine/blueprint_wasm*
 logs/
 !logs/README.md
+src-tauri/target/
+src-tauri/gen/
