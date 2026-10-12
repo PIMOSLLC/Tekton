@@ -85,7 +85,6 @@ describe('VisualArchitect — grouped workflow panel with the lane accordion', (
       'Caption — one line beneath it',
       'Stage name',
       'Stage description',
-      'Lane name',
       'Lane description',
       'Lane kind',
       'Separation line',
@@ -94,6 +93,17 @@ describe('VisualArchitect — grouped workflow panel with the lane accordion', (
     ]) {
       expect(screen.getAllByText(text).length).toBeGreaterThan(0);
     }
+  });
+
+  it('the lane\u2019s NAME rides the head as an edit-in-place title (no descriptor row) — the same line the closed row shows', () => {
+    renderPanel();
+    const head = document.querySelector('.tk-lane-head') as HTMLElement;
+    const nameInput = head.querySelector('.tk-lane-name-input') as HTMLInputElement;
+    expect(nameInput).not.toBeNull();
+    expect(nameInput.tagName).toBe('INPUT');
+    expect(nameInput.getAttribute('aria-label')).toBe('Lane 1 name');
+    expect(nameInput.value).toBe('Customer actions');
+    expect(head.querySelector('.tk-row-label')).toBeNull();
   });
 
   it('each stat row previews the artifact\u2019s stat card live — the pair paints as it exports', () => {

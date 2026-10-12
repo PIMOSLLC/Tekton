@@ -235,7 +235,10 @@ export function VisualArchitect(props: VisualArchitectProps) {
               <div className="tk-row-card-main">
                 <div className="tk-lane-head">
                   {/* The disclosure caret LEADS, like the Contrast terminal's
-                      toggle — the lane panel's caret is where the eye starts. */}
+                      toggle — and the NAME rides the head itself as an
+                      edit-in-place title: the head IS the accordion's line,
+                      in both the open and the collapsed state (the hook seeds
+                      "Lane N"; it stays a plain name until the author types). */}
                   <button
                     type="button"
                     className="tk-lane-fold"
@@ -246,15 +249,13 @@ export function VisualArchitect(props: VisualArchitectProps) {
                   >
                     <ChevronDown className="w-4 h-4" aria-hidden="true" />
                   </button>
-                  <label className="tk-row-field">
-                    <span className="tk-row-label">Lane name</span>
-                    <input
-                      type="text"
-                      value={lane.name}
-                      aria-label={`Lane ${i + 1} name`}
-                      onChange={(e) => props.onLaneChange(i, 'name', e.target.value)}
-                    />
-                  </label>
+                  <input
+                    type="text"
+                    className="tk-lane-name-input"
+                    value={lane.name}
+                    aria-label={`Lane ${i + 1} name`}
+                    onChange={(e) => props.onLaneChange(i, 'name', e.target.value)}
+                  />
                 </div>
                 <label className="tk-row-field">
                   <span className="tk-row-label">Lane description</span>
