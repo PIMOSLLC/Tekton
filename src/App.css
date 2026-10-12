@@ -867,29 +867,33 @@
 
 /* Panel resize grip — a REAL flex child right of the content column:
    content → scrollbar → grip, three clean layers (no absolute overlay
-   fighting the scrollbar for the same pixels) */
+   fighting the scrollbar for the same pixels). 18px wide = a comfortable
+   grab band; the visual sliver sits centered inside it. */
 .tk-panel-grip {
-  width: 10px;
+  width: 18px;
   flex: none;
   cursor: col-resize;
   touch-action: none;
   position: relative;
+  z-index: 30;
 }
 .tk-panel-grip::after {
   content: '';
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 3.5px;
+  left: 7.5px;
   width: 3px;
   border-radius: 99px;
   background: rgba(255, 255, 255, 0.09);
-  transition: background 0.15s ease;
+  transition: background 0.15s ease, width 0.15s ease, left 0.15s ease;
 }
 .tk-panel-grip:hover::after,
 .tk-panel-grip:focus-within::after {
+  left: 6.5px;
+  width: 5px;
   background: var(--color-tekton-dark-accent-interactive);
-  opacity: 0.65;
+  opacity: 0.75;
 }
 .tk-panel-grip:focus-visible {
   outline: 2px solid var(--color-tekton-dark-accent-interactive);
