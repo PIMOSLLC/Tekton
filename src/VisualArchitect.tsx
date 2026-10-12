@@ -1,5 +1,5 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Trash2 } from 'lucide-react';
 import {
   DndContext,
   KeyboardSensor,
@@ -254,9 +254,10 @@ export function VisualArchitect(props: VisualArchitectProps) {
                   type="button"
                   className="tk-remove"
                   aria-label={`Remove stat ${stat.figure || i + 1}`}
+                  title={`Remove stat ${stat.figure || i + 1}`}
                   onClick={() => props.onStatRemove(i)}
                 >
-                  ×
+                  <Trash2 aria-hidden="true" />
                 </button>
               </SortableRow>
             ))}
@@ -307,10 +308,11 @@ export function VisualArchitect(props: VisualArchitectProps) {
               type="button"
               className="tk-remove"
               aria-label={`Remove stage ${stage.name}`}
+              title={`Remove stage ${stage.name}`}
               disabled={props.stages.length <= 1}
               onClick={() => props.onStageRemove(i)}
             >
-              ×
+              <Trash2 aria-hidden="true" />
             </button>
           </div>
         ))}
@@ -488,10 +490,11 @@ export function VisualArchitect(props: VisualArchitectProps) {
                 type="button"
                 className="tk-remove"
                 aria-label={`Remove lane ${lane.name}`}
+                title={`Remove lane ${lane.name}`}
                 disabled={props.lanes.length <= 1}
                 onClick={() => props.onLaneRemove(i)}
               >
-                ×
+                <Trash2 aria-hidden="true" />
               </button>
                 </SortableRow>
               ) : (
@@ -526,10 +529,11 @@ export function VisualArchitect(props: VisualArchitectProps) {
                     type="button"
                     className="tk-remove"
                     aria-label={`Remove lane ${lane.name}`}
+                    title={`Remove lane ${lane.name}`}
                     disabled={props.lanes.length <= 1}
                     onClick={() => props.onLaneRemove(i)}
                   >
-                    ×
+                    <Trash2 aria-hidden="true" />
                   </button>
                 </SortableRow>
               ),

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Flame, X } from 'lucide-react';
+import { Flame, Trash2, X } from 'lucide-react';
 import type { BlueprintSetup } from './core/useBlueprintDocument';
 import { ModalCard } from './ModalCard';
 import { ConfirmationModal } from './ConfirmationModal';
@@ -226,13 +226,14 @@ export function SetupWizardModal({ isOpen, onCreate, onCancel }: SetupWizardModa
                       type="button"
                       className="tk-remove"
                       aria-label={`Remove wizard stage ${i + 1}`}
+                      title={`Remove wizard stage ${i + 1}`}
                       disabled={stages.length <= 1}
                       onClick={() => {
                         setTouched(true);
                         setStages((prev) => prev.filter((_, j) => j !== i));
                       }}
                     >
-                      ×
+                      <Trash2 aria-hidden="true" />
                     </button>
                   </div>
                 ))}
@@ -299,13 +300,14 @@ export function SetupWizardModal({ isOpen, onCreate, onCancel }: SetupWizardModa
                       type="button"
                       className="tk-remove"
                       aria-label={`Remove wizard lane ${lane.name}`}
+                      title={`Remove wizard lane ${lane.name}`}
                       disabled={lanes.length <= 1}
                       onClick={() => {
                         setTouched(true);
                         setLanes((prev) => prev.filter((_, j) => j !== i));
                       }}
                     >
-                      ×
+                      <Trash2 aria-hidden="true" />
                     </button>
                   </div>
                 ))}

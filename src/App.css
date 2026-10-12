@@ -237,9 +237,13 @@ button.tk-grab:active { cursor: grabbing; }
   .tk-row-dragging,
   .tk-row-card { transition: none !important; }
 }
-/* Reveal on hover AND focus-within — keyboard visible (prototype's hover-only rejected) */
+/* Reveal on hover AND focus-within — keyboard visible (prototype's hover-only rejected).
+   Carries an svg icon (Trash2 for the delete set; the clear-tint twin keeps a text ×). */
 .tk-remove {
   align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: transparent;
   border: none;
   color: var(--color-tekton-dark-text-muted);
@@ -248,6 +252,7 @@ button.tk-grab:active { cursor: grabbing; }
   opacity: 0.35;
   padding: 2px 6px;
 }
+.tk-remove svg { width: 16px; height: 16px; }
 .tk-row-card:hover .tk-remove, .tk-row-card:focus-within .tk-remove { opacity: 1; }
 .tk-remove:hover { color: #fca5a5; }
 .tk-remove:focus-visible { outline: 2px solid var(--color-tekton-dark-accent-interactive); }
