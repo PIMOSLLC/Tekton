@@ -112,20 +112,26 @@ export function VisualArchitect(props: VisualArchitectProps) {
           <div className="tk-row-card" key={`stat-${i}`}>
             <span className="tk-grab" aria-hidden="true">⋮⋮</span>
             <div className="tk-row-card-main">
-              <input
-                type="text"
-                value={stat.figure}
-                aria-label={`Stat ${i + 1} figure`}
-                placeholder="Figure (e.g. 1 week)…"
-                onChange={(e) => props.onStatChange(i, 'figure', e.target.value)}
-              />
-              <input
-                type="text"
-                value={stat.caption}
-                aria-label={`Stat ${i + 1} caption`}
-                placeholder="Caption (e.g. From customer signal to monitored release)…"
-                onChange={(e) => props.onStatChange(i, 'caption', e.target.value)}
-              />
+              <label className="tk-row-field">
+                <span className="tk-row-label">Figure</span>
+                <input
+                  type="text"
+                  value={stat.figure}
+                  aria-label={`Stat ${i + 1} figure`}
+                  placeholder="Figure (e.g. 1 week)…"
+                  onChange={(e) => props.onStatChange(i, 'figure', e.target.value)}
+                />
+              </label>
+              <label className="tk-row-field">
+                <span className="tk-row-label">Caption</span>
+                <input
+                  type="text"
+                  value={stat.caption}
+                  aria-label={`Stat ${i + 1} caption`}
+                  placeholder="Caption (e.g. From customer signal to monitored release)…"
+                  onChange={(e) => props.onStatChange(i, 'caption', e.target.value)}
+                />
+              </label>
             </div>
             <button
               type="button"
@@ -155,19 +161,25 @@ export function VisualArchitect(props: VisualArchitectProps) {
           <div className="tk-row-card" key={`stage-${i}`}>
             <span className="tk-grab" aria-hidden="true">⋮⋮</span>
             <div className="tk-row-card-main">
-              <input
-                type="text"
-                value={stage.name}
-                aria-label={`Stage ${i + 1} name`}
-                onChange={(e) => props.onStageChange(i, 'name', e.target.value)}
-              />
-              <input
-                type="text"
-                value={stage.blurb ?? ''}
-                aria-label={`Stage ${i + 1} description`}
-                placeholder="Stage description…"
-                onChange={(e) => props.onStageChange(i, 'blurb', e.target.value)}
-              />
+              <label className="tk-row-field">
+                <span className="tk-row-label">Stage name</span>
+                <input
+                  type="text"
+                  value={stage.name}
+                  aria-label={`Stage ${i + 1} name`}
+                  onChange={(e) => props.onStageChange(i, 'name', e.target.value)}
+                />
+              </label>
+              <label className="tk-row-field">
+                <span className="tk-row-label">Stage description</span>
+                <input
+                  type="text"
+                  value={stage.blurb ?? ''}
+                  aria-label={`Stage ${i + 1} description`}
+                  placeholder="Stage description…"
+                  onChange={(e) => props.onStageChange(i, 'blurb', e.target.value)}
+                />
+              </label>
             </div>
             <button
               type="button"
@@ -202,12 +214,15 @@ export function VisualArchitect(props: VisualArchitectProps) {
               <span className="tk-grab" aria-hidden="true">⋮⋮</span>
               <div className="tk-row-card-main">
                 <div className="tk-lane-head">
-                  <input
-                    type="text"
-                    value={lane.name}
-                    aria-label={`Lane ${i + 1} name`}
-                    onChange={(e) => props.onLaneChange(i, 'name', e.target.value)}
-                  />
+                  <label className="tk-row-field">
+                    <span className="tk-row-label">Lane name</span>
+                    <input
+                      type="text"
+                      value={lane.name}
+                      aria-label={`Lane ${i + 1} name`}
+                      onChange={(e) => props.onLaneChange(i, 'name', e.target.value)}
+                    />
+                  </label>
                   <button
                     type="button"
                     className="tk-lane-fold"
@@ -219,30 +234,39 @@ export function VisualArchitect(props: VisualArchitectProps) {
                     <ChevronDown className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
-                <input
-                  type="text"
-                  value={lane.blurb ?? ''}
-                  aria-label={`Lane ${i + 1} description`}
-                  placeholder="Lane description…"
-                  onChange={(e) => props.onLaneChange(i, 'blurb', e.target.value)}
-                />
-                <select
-                  value={lane.kind ?? ''}
-                  aria-label={`Lane ${i + 1} kind`}
-                  onChange={(e) => props.onLaneChange(i, 'kind', e.target.value)}
-                >
-                  <option value="">— no kind —</option>
-                  {LANE_KINDS.map((k) => (
-                    <option key={k} value={k}>{laneKindLabel(k)}</option>
-                  ))}
-                </select>
-                <input
-                  type="text"
-                  value={lane.divider ?? ''}
-                  aria-label={`Lane ${i + 1} separation line`}
-                  placeholder="Separation line label (e.g. — Line of visibility —)…"
-                  onChange={(e) => props.onLaneChange(i, 'divider', e.target.value)}
-                />
+                <label className="tk-row-field">
+                  <span className="tk-row-label">Lane description</span>
+                  <input
+                    type="text"
+                    value={lane.blurb ?? ''}
+                    aria-label={`Lane ${i + 1} description`}
+                    placeholder="Lane description…"
+                    onChange={(e) => props.onLaneChange(i, 'blurb', e.target.value)}
+                  />
+                </label>
+                <label className="tk-row-field">
+                  <span className="tk-row-label">Lane kind</span>
+                  <select
+                    value={lane.kind ?? ''}
+                    aria-label={`Lane ${i + 1} kind`}
+                    onChange={(e) => props.onLaneChange(i, 'kind', e.target.value)}
+                  >
+                    <option value="">— no kind —</option>
+                    {LANE_KINDS.map((k) => (
+                      <option key={k} value={k}>{laneKindLabel(k)}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="tk-row-field">
+                  <span className="tk-row-label">Separation line</span>
+                  <input
+                    type="text"
+                    value={lane.divider ?? ''}
+                    aria-label={`Lane ${i + 1} separation line`}
+                    placeholder="Separation line label (e.g. — Line of visibility —)…"
+                    onChange={(e) => props.onLaneChange(i, 'divider', e.target.value)}
+                  />
+                </label>
                 {/* Row color — a curated, engine-validated swatch palette instead
                     of a free color picker: only tints that pass AA with the
                     card text are offered, so a failing pair cannot be picked. */}
@@ -251,6 +275,8 @@ export function VisualArchitect(props: VisualArchitectProps) {
                   role="group"
                   aria-label={`Lane ${i + 1}: card colors that pass AA`}
                 >
+                  <span className="tk-row-label">Card colors</span>
+                  <div className="tk-tint-row">
                   {LANE_TINT_SWATCHES.map((s) => {
                     const verdict = props.swatchVerdicts[s.hex];
                     const pass = verdict?.pass ?? false;
@@ -278,6 +304,7 @@ export function VisualArchitect(props: VisualArchitectProps) {
                   >
                     ×
                   </button>
+                  </div>
                 </div>
                 {/* Live AA verdict for this row's color — a warn + fix path, never
                     a dead end: apply the engine's suggested background, or reset
@@ -314,13 +341,16 @@ export function VisualArchitect(props: VisualArchitectProps) {
                     )}
                   </div>
                 )}
-                <textarea
-                  rows={2}
-                  value={lane.interpretation ?? ''}
-                  aria-label={`Lane ${i + 1} interpretation`}
-                  placeholder="What a reader must understand about this lane (shows in the card drawer)…"
-                  onChange={(e) => props.onLaneChange(i, 'interpretation', e.target.value)}
-                />
+                <label className="tk-row-field">
+                  <span className="tk-row-label">Lane interpretation</span>
+                  <textarea
+                    rows={2}
+                    value={lane.interpretation ?? ''}
+                    aria-label={`Lane ${i + 1} interpretation`}
+                    placeholder="What a reader must understand about this lane (shows in the card drawer)…"
+                    onChange={(e) => props.onLaneChange(i, 'interpretation', e.target.value)}
+                  />
+                </label>
               </div>
               <button
                 type="button"

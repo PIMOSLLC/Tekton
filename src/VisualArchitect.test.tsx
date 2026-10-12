@@ -77,6 +77,24 @@ describe('VisualArchitect — grouped workflow panel with the lane accordion', (
     expect(screen.getByRole('group', { name: 'Lanes' })).toBeDefined();
   });
 
+  it('every row-card field carries a visible label (discoverability — not aria-only naming)', () => {
+    renderPanel();
+    for (const text of [
+      'Figure',
+      'Caption',
+      'Stage name',
+      'Stage description',
+      'Lane name',
+      'Lane description',
+      'Lane kind',
+      'Separation line',
+      'Card colors',
+      'Lane interpretation',
+    ]) {
+      expect(screen.getAllByText(text).length).toBeGreaterThan(0);
+    }
+  });
+
   it('stat rows edit figure and caption; add/remove go through the document ops', () => {
     const { handlers } = renderPanel();
     const figure = screen.getByLabelText('Stat 1 figure') as HTMLInputElement;

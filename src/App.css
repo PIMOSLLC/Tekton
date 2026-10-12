@@ -195,6 +195,20 @@
   margin-bottom: 6px;
 }
 .tk-row-card-main { flex: 1; min-width: 0; display: grid; gap: 6px; }
+/* Row-card field labels — the visible name for each control (the aria names
+   keep speaking for SRs; this text is the discoverability layer: a first-run
+   reader can tell what every box does without guessing). One step below the
+   group-label rhythm: 9px, tracking, muted. */
+.tk-row-field { display: block; }
+.tk-row-field .tk-row-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-tekton-dark-text-muted);
+  margin: 0 0 3px;
+}
 .tk-grab { color: var(--color-tekton-dark-text-muted); cursor: grab; user-select: none; }
 /* Reveal on hover AND focus-within — keyboard visible (prototype's hover-only rejected) */
 .tk-remove {
@@ -586,8 +600,14 @@
   outline-offset: 1px;
 }
 
-/* Lane tint field (Visual Architect lane list) */
+/* Lane tint field (Visual Architect lane list) — labeled group: the label
+   names the row's color zone; the swatch strip sits in its own lane beneath */
 .tk-tint-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tk-tint-row {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -824,7 +844,8 @@
   border: 1px solid var(--color-tekton-dark-border);
   flex-shrink: 0;
 }
-.tk-lane-head { display: flex; align-items: center; gap: 8px; }
+.tk-lane-head { display: flex; align-items: flex-end; gap: 8px; }
+.tk-lane-head .tk-row-field { flex: 1; min-width: 0; }
 .tk-lane-head input { flex: 1; min-width: 0; }
 .tk-lane-fold {
   width: 28px;
