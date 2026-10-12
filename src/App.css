@@ -968,16 +968,12 @@
 .tk-canvas-card.is-untitled { border: 2px dashed color-mix(in srgb, #f59e0b 65%, transparent); }
 .tk-canvas-card.is-untitled strong { color: var(--color-tekton-light-text-muted); }
 
-/* Panel resize grip — a REAL flex child right of the content column:
-   content → scrollbar → grip, three clean layers (no absolute overlay
-   fighting the scrollbar for the same pixels). 18px wide = a comfortable
-   grab band; the handle sits centered inside it.
-
-   The handle is deliberately NOT a full-height pill: on the same rail as
-   the content scrollbar that read as a second scrollbar (the "double bar"
-   report) — thumbs have rounded caps, so the pill borrowed the wrong
-   identity (Gestalt SIMILARITY). A short, squared-off handle centered on
-   the rail reads as "grip" instead. */
+/* Panel resize grip — the sash band living in the gap right of the panel
+   (content → scrollbar → gap-with-sash: three clean zones, the scrollbar
+   and the resize affordance never share pixels). The gap ITSELF is the
+   affordance now: no painted marker — the col-resize cursor and the
+   keyboard focus outline do the talking (the pinned sliver was a leftover
+   scrollbar-impersonator once the gap landed). */
 .tk-panel-grip {
   width: 18px;
   flex: none;
@@ -985,37 +981,6 @@
   touch-action: none;
   position: relative;
   z-index: 30;
-}
-.tk-panel-grip::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 7px;
-  width: 4px;
-  height: 40px;
-  border-radius: 2px;
-  /* At rest the handle must read as an affordance, not noise — 9% white
-     vanished against gray-800 (the "no indication of a drag bar" report). */
-  background: rgba(255, 255, 255, 0.16);
-  transition: background 0.15s ease, height 0.15s ease, width 0.15s ease, left 0.15s ease;
-}
-.tk-panel-grip:hover::after,
-.tk-panel-grip:focus-within::after {
-  left: 6px;
-  width: 6px;
-  height: 56px;
-  background: var(--color-tekton-dark-accent-interactive);
-  opacity: 0.85;
-}
-body.is-panel-resizing .tk-panel-grip::after {
-  /* Mid-drag the handle holds full accent even if the pointer drifts —
-     the active state must never flicker while the width follows. */
-  left: 6px;
-  width: 6px;
-  height: 56px;
-  background: var(--color-tekton-dark-accent-interactive);
-  opacity: 1;
 }
 .tk-panel-grip:focus-visible {
   outline: 2px solid var(--color-tekton-dark-accent-interactive);
