@@ -32,7 +32,7 @@ export function AppHeader({ docName, dirty, format, lastAutosave, dotState }: Ap
         {/* Brand icon: flame until the PIN-branded application icon lands —
             the blueprint mark has its home in the rail only for now */}
         <Flame className="w-5 h-5 text-brand-secondary" aria-hidden="true" />
-        <span className="text-xs font-bold tracking-widest text-white">TEKTON</span>
+        <span className="text-xs font-bold tracking-widest text-white">PHOENIX TEKTON</span>
         <span className="hidden sm:block text-[9px] uppercase tracking-widest text-gray-500">
           Service Blueprint Studio
         </span>

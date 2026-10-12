@@ -39,7 +39,7 @@ export function WelcomeModal(props: WelcomeModalProps) {
           aria-hidden="true"
         />
         <h2 id="tk-welcome-title" className="mt-3 text-4xl font-bold text-white">
-          Welcome to Phoenix-Tekton
+          Welcome to Phoenix Tekton
         </h2>
         <p className="mt-2 text-sm text-gray-200 text-balance">
           Map your service architecture: stages, lanes, and every critical

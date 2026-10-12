@@ -1,4 +1,4 @@
-//! `tekton` — the phoenix-Tekton blueprint engine on the command line.
+//! `tekton` — the Phoenix Tekton blueprint engine on the command line.
 //!
 //! Headless by design (Minerva is a CLI-only host): everything testable without
 //! a GUI lives here. Exit codes are CI-friendly — lint and validate return 1 on
@@ -19,7 +19,7 @@ use std::process::ExitCode;
 #[command(
     name = "tekton",
     version,
-    about = "phoenix-Tekton blueprint engine CLI — render, lint, and validate interactive service blueprints"
+    about = "Phoenix Tekton blueprint engine CLI — render, lint, and validate interactive service blueprints"
 )]
 struct Cli {
     #[command(subcommand)]

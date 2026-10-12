@@ -2,7 +2,7 @@
 name = "phoenix-tekton"
 version = "0.1.0"
 edition = "2021"
-description = "Tekton — service blueprint studio (desktop shell)"
+description = "Phoenix Tekton — service blueprint studio (desktop shell)"
 authors = ["Dr. Delminquoe L Cunningham <info@phoenixinceptionsmediallc.com>"]
 license = "MIT OR Apache-2.0"
 

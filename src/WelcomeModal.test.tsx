@@ -24,7 +24,7 @@ describe('WelcomeModal — the boot-time setup invitation', () => {
 
   it('invites with the two starting paths', () => {
     harness();
-    expect(screen.getByText('Welcome to Phoenix-Tekton')).toBeDefined();
+    expect(screen.getByText('Welcome to Phoenix Tekton')).toBeDefined();
     expect(screen.getByText(/setup wizard/)).toBeDefined();
     expect(screen.getByText(/finished example/)).toBeDefined();
   });

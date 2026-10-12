@@ -403,7 +403,7 @@ describe('App blueprint lifecycle', () => {
     harness.recalled = { sourceName: 'My Plan.yaml', yaml: 'x' };
     render(<App />);
     await screen.findByTestId('dirty-dot');
-    expect(screen.getByTestId('app-header').textContent).toContain('TEKTON');
+    expect(screen.getByTestId('app-header').textContent).toContain('PHOENIX TEKTON');
     expect(screen.getByTestId('doc-name').textContent).toBe('My Plan');
     // the header's right tag mirrors the LIVE export format + explains it
     fireEvent.click(screen.getByRole('button', { name: 'WordPress' }));
@@ -484,7 +484,7 @@ describe('App blueprint lifecycle', () => {
   it('a first profile opens the boot invitation; the wizard card replaces it', async () => {
     harness.profile.showSetupOnStart = true;
     render(<App />);
-    await screen.findByText('Welcome to Phoenix-Tekton');
+    await screen.findByText('Welcome to Phoenix Tekton');
     // Opting into the wizard REPLACES the invitation, keeps the preference.
     fireEvent.click(screen.getByText(/Design it with the setup wizard/));
     await waitFor(() =>
@@ -492,14 +492,14 @@ describe('App blueprint lifecycle', () => {
         document.querySelector('[aria-labelledby="tk-wizard-title"]'),
       ).not.toBeNull(),
     );
-    expect(screen.queryByText('Welcome to Phoenix-Tekton')).toBeNull();
+    expect(screen.queryByText('Welcome to Phoenix Tekton')).toBeNull();
     expect(harness.profile.showSetupOnStart).toBe(true);
   });
 
   it('the invitation opts out through the checkbox + Not now', async () => {
     harness.profile.showSetupOnStart = true;
     render(<App />);
-    await screen.findByText('Welcome to Phoenix-Tekton');
+    await screen.findByText('Welcome to Phoenix Tekton');
     fireEvent.click(screen.getByLabelText("Don't show this again"));
     fireEvent.click(screen.getByRole('button', { name: 'Not now' }));
     await waitFor(() => expect(harness.profile.showSetupOnStart).toBe(false));
@@ -510,7 +510,7 @@ describe('App blueprint lifecycle', () => {
     harness.profile.showSetupOnStart = false;
     render(<App />);
     await screen.findByTestId('doc-name');
-    expect(screen.queryByText('Welcome to Phoenix-Tekton')).toBeNull();
+    expect(screen.queryByText('Welcome to Phoenix Tekton')).toBeNull();
   });
 
   it('a just-created blueprint announces ready-to-fill — never a red error wall', async () => {

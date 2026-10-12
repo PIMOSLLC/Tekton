@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phoenix Tekton — Service Blueprint Studio</title>
+    <script>
+      // Self-diagnostic loader (alpha build, owner direction): runtime errors
+      // surface in-page (headless Minerva has no console to read) AND beacon to
+      // the dev server's collector middleware, which appends to logs/runtime.log.
+      function reportTektonError(msg) {
+        try {
+          fetch('/__tekton-error', {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: msg,
+            keepalive: true,
+          }).catch(function () {});
+        } catch (e) {}
+      }
+      window.addEventListener('error', function (e) {
+        var msg = e.message + (e.filename ? ' (' + e.filename + ':' + e.lineno + ')' : '');
+        if (e.error && e.error.stack) msg += '\n' + e.error.stack;
+        showTektonError(msg);
+        reportTektonError(msg);
+      });
+      window.addEventListener('unhandledrejection', function (e) {
+        var reason = e.reason && e.reason.message ? e.reason.message : String(e.reason);
+        showTektonError('unhandled promise rejection: ' + reason);
+        reportTektonError('unhandled rejection: ' + reason);
+      });
+      function showTektonError(msg) {
+        var el = document.getElementById('tekton-error');
+        if (!el) {
+          el = document.createElement('div');
+          el.id = 'tekton-error';
+          el.style.cssText =
+            'position:fixed;inset:auto 12px 12px 12px;z-index:9999;background:#7f1d1d;color:#fff;' +
+            'font:12px ui-monospace,monospace;padding:10px 14px;border-radius:8px;' +
+            'max-height:40vh;overflow:auto;white-space:pre-wrap;';
+          document.body.appendChild(el);
+        }
+        el.textContent += (el.textContent ? '\n' : '') + msg;
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -4,6 +4,7 @@ dist/
 *.log
 .DS_Store
 /*.html
+!index.html
 /fixtures/*.html
 src/engine/blueprint_wasm*
 logs/

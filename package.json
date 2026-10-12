@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "phoenix-Tekton — Service Blueprint Studio (browser-mode editor; Tauri shell lands with the desktop pass)",
+  "description": "Phoenix Tekton — Service Blueprint Studio (browser-mode editor; Tauri shell lands with the desktop pass)",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
