@@ -7,7 +7,7 @@
  *     the tab order and the accessibility tree — WCAG remediation for reading order)
  *   - print button
  *   - --bp-header-h: measures a host page's sticky header so the drawer and toolbar
- *     dock below it (embeds like WordPress have their own fixed chrome)
+ *     dock below it (embedded contexts bring their own fixed chrome)
  */
 (function () {
   'use strict';
