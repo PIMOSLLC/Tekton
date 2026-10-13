@@ -1,0 +1,25 @@
+Build of 2026-10-13 @ 11d38eb (release 0.1.0) — scripts/release.sh pass: the verify-gated
+exe rebuilt from the CURRENT tree; the version-tagged runtime container (0.1.0)
++ latest, CLI/editor smokes ok; the release-page container archive
+(phoenix-tekton_0.1.0_oci.tar — the durable artifact: podman/docker load)
+re-generated; the devtool door image rebuilt. Tag v0.1.0 anchored on both
+remotes. Full publication history: docs/PUBLICATION_LOG.md.
+
+Build of 2026-10-13 @ b9d9675 (v0.1.0 release pass) — scripts/release.sh: the
+verify-gated exe REBUILT with the print-background fix (the artifact prints
+as it reads); the version-tagged runtime container (0.1.0 + latest, CLI and
+editor smokes ok) and the devtool door image rebuilt; SHA256SUMS regenerated.
+Full publication history: docs/PUBLICATION_LOG.md.
+
+Build of 2026-10-12 @ c7b3435 (security-desktop-hardening) — REBUILT exe: the
+first 0.1.0 x64.exe shipped as a dev-mode Tauri shell (cross-compiled without
+the custom-protocol feature, so no frontend was embedded and the webview loaded
+http://localhost:6041) — the exact 'localhost refused to connect' (connection
+refused) every Windows machine showed. This exe embeds the frontend; verified by
+scripts/verify-windows-exe.sh (every dist/ asset name present in the binary).
+Linux artifacts are unchanged — their inner binaries were already prod builds.
+
+Win11: the exe uses the OS WebView2 runtime (inbox on Windows 11) — double-click to run.
+RPM = Fedora install via dnf; AppImage = portable Linux (FUSE2, or --appimage-extract).
+
+Rebuild procedure: docs/DESKTOP_RELEASES.md

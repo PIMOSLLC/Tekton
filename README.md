@@ -94,6 +94,10 @@ Themes may be omitted entirely (you get the default palette — still linted), t
 | [**CONTRIBUTING.md**](CONTRIBUTING.md) | Dev setup, QA gates, conventions |
 | [**CHANGELOG.md**](CHANGELOG.md) | Release history |
 
+## Getting it
+
+The releases: the staged, checksummed set in [`releases/`](releases/README.md) — the Windows exe, the Fedora rpm, the container usage, and `SHA256SUMS` to verify any download — with the portable AppImage + the load-anywhere container archive attached to the [GitHub Release page](https://github.com/PIMOSLLC/Tekton/releases) per tag.
+
 ## Accessibility
 
 Tekton exists because the accessible artifact is the artifact: exported blueprints are keyboard-complete (focusable cards, `aria-expanded`/`aria-controls` drawer wiring, live-region announcements), honor `prefers-reduced-motion`, and print correctly. The engine's WCAG 2.2 contrast linter (relative-luminance per the spec, large-text thresholds per SC 1.4.3) runs at authoring time and refuses to render an inaccessible palette — see [docs/AUTHORING.md](docs/AUTHORING.md) and the lint terminal in [docs/EDITOR.md](docs/EDITOR.md).

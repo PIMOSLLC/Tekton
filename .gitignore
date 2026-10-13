@@ -12,4 +12,12 @@ logs/
 !logs/README.md
 src-tauri/target/
 src-tauri/gen/
-releases/
+# The release folder PUBLISHES its small set (exe/rpm/manifests/README) —
+# the >100MB git-blob limit keeps the big binaries (AppImage, container tar)
+# on the GitHub Release page; nothing in releases/ is hand-edited.
+/releases/*
+!/releases/SHA256SUMS
+!/releases/RELEASES.txt
+!/releases/README.md
+!/releases/*.exe
+!/releases/*.rpm

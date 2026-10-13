@@ -13,6 +13,17 @@ and this log tracks everything that moves to either remote. The split mirror:
 Entries are listed newest first and appended over time — never rewritten.
 This log publishes with the repository, so entries stay host-neutral.
 
+## 2026-10-13 — the release folder ships in-repo
+
+- `releases/` now publishes its small set through the gate: the verify-gated
+  exe, the rpm, `SHA256SUMS`, and the `RELEASES.txt` running narrative, with
+  `releases/README.md` documenting the whole distribution (verification, the
+  container load-and-run, the build paths). The two big binaries — the
+  AppImage (113 MB) and the OCI container archive (93 MB) — ride the GitHub
+  Release page per tag: GitHub's git-blob hard limit is 100 MB, and the
+  release page is the versioned, checksum-pointed home for exactly that
+  weight. The main README gained the Getting-it door.
+
 ## 2026-10-13 — the full distribution set: the Linux bundles + the container archive
 
 - The staged distribution completed: the AppImage (113 MB) and the rpm rebuilt
