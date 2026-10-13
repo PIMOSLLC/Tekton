@@ -1,4 +1,11 @@
 # Why: on NFS-mounted workspaces, cargo target dirs on the mount are slow to
 # link and bloat the mount. Build artifacts live in the local home cache.
+# Shipped binaries (the wasm bindings land in git) must not carry the builder's
+# home paths inside dependency panic strings — remap the prefixes.
 [build]
 target-dir = "/home/adminphx/.cache/cargo-target/phoenix-Tekton"
+rustflags = [
+  "--remap-path-prefix=/home/adminphx/.cargo/registry=crates-io-registry",
+  "--remap-path-prefix=/home/adminphx/.rustup=rust-toolchain",
+  "--remap-path-prefix=/home/adminphx/.cache/cargo-target=build-cache",
+]
