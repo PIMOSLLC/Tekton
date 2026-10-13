@@ -16,6 +16,10 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
+# The toolchain installs to the home cache on this family of hosts (rustup default).
+PATH="$HOME/.cargo/bin:$PATH"
+command -v cargo >/dev/null || { echo "cargo not found — is rustup installed?" >&2; exit 1; }
+
 REMOTE="${1:-public}"
 BRANCH="${2:-main}"
 
