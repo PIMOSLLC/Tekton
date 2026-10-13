@@ -103,10 +103,21 @@ sha256sum -- $(ls -x phoenix-tekton_*_x64.exe phoenix-tekton_*.AppImage phoenix-
 cd "$ROOT"
 
 # ── 4. The anchor — tag both remotes ─────────────────────────────────────────
-say "tag ${TAG} + push"
-git tag -f "$TAG"
-git push origin "$TAG"
-git push public "$TAG"
+say "tag ${TAG}"
+# The tag is the IMMUTABLE anchor. If it already exists anchored elsewhere,
+# the pass never re-anchors it (published tags are contract, not convenience):
+# the pass simply reports the gap and its newer commits ship in the NEXT version.
+if git rev-parse -q --verify "${TAG}^{commit}" >/dev/null; then
+  OLD_ANCHOR=$(git rev-parse "${TAG}^{commit}")
+  if [[ "$OLD_ANCHOR" != "$(git rev-parse HEAD)" ]]; then
+    DELTA=$(git rev-list --count "${TAG}..HEAD")
+    say "tag ${TAG} stays anchored at ${OLD_ANCHOR:0:7} — this pass's ${DELTA} newer commit(s) ship in the next version"
+  fi
+else
+  git tag "$TAG"
+  git push origin "$TAG"
+  git push public "$TAG"
+fi
 
 # ── 5. The report ────────────────────────────────────────────────────────────
 say "release ${VER} complete"

@@ -13,6 +13,24 @@ and this log tracks everything that moves to either remote. The split mirror:
 Entries are listed newest first and appended over time — never rewritten.
 This log publishes with the repository, so entries stay host-neutral.
 
+## 2026-10-13 — the full distribution set: the Linux bundles + the container archive
+
+- The staged distribution completed: the AppImage (113 MB) and the rpm rebuilt
+  natively with the print fix (the Oct-12 pair retired), the container's
+  release-page archive saved (`phoenix-tekton_0.1.0_oci.tar` — OCI archive,
+  loads with podman/docker) and hashed beside the exe in `SHA256SUMS`; the
+  `RELEASES.txt` running narrative carried the pass row via `release.sh`.
+- Incidents worth remembering: a box-wide `podman image prune -a` retired the
+  freshly-tagged release images (unreferenced = gone) — the release-page
+  archive became the durable artifact so box-local tags are only a
+  convenience; and `release.sh` learned tag immutability — a pass past an
+  existing tag reports the gap instead of re-anchoring a published tag
+  (v0.1.0 stays anchored where it was cut; this pass's tooling deltas ship in
+  the next version).
+- The owner's GitHub Release page distributes the whole set: the
+  verify-gated exe, the fresh AppImage + rpm, the container archive, and the
+  checksum manifest.
+
 ## 2026-10-13 — authorship documentation + the version policy
 
 - The README gained the Authorship section (Dr. Delminquoe L Cunningham,

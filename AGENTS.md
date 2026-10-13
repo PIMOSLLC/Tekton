@@ -104,11 +104,16 @@ the top chrome; one brand bar, never two.
   newest first, appended forever, never rewritten. It publishes with the
   repository: entries stay host-neutral.
 - **The release surfaces.** The verify-gated Windows exe, the version-tagged
-  runtime container (+ `latest`), the devtool door image, and the git tag — one
-  command: `scripts/release.sh <version>`. Nothing stages unless every gate
-  passes; the containers' smoke tests (CLI through mounts, the editor
-  page/assets) are their verify gate, the same role `verify:win-exe` plays for
-  the exe.
+  runtime container (+ `latest`) and its **release-page OCI archive** (the
+  durable artifact — `podman image prune -a` retires box-local tags no
+  container references; the archive loads with `podman load` / `docker load`
+  anywhere and is what the GitHub Release page distributes), the devtool door
+  image, and the git tag — one command: `scripts/release.sh <version>`. Nothing
+  stages unless every gate passes; the containers' smoke tests (CLI through
+  mounts, the editor page/assets) are their verify gate, the same role
+  `verify:win-exe` plays for the exe. **Tags are immutable once pushed** — a
+  pass whose tip moved past an existing tag reports it and ships the delta in
+  the next version; it never re-anchors a published tag.
 - **Split-mirror rule.** The internal Gitea origin = the source of truth (every
   commit/branch); the public GitHub mirror = `main` only via
   `scripts/publish-public.sh`. Retired exports and build-host internals are
