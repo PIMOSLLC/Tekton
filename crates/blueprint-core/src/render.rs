@@ -391,6 +391,19 @@ mod tests {
     }
 
     #[test]
+    fn the_printed_artifact_prints_as_it_reads_print_background_rule_ships() {
+        // The browser suppresses print backgrounds by default; the shipped
+        // stylesheet forces exact colors so the themed artifact PRINTS as it
+        // READS in the app — the band/divider/stage inks sit ON their fills
+        // (the same AA-audited pairs), never floating on bare white paper.
+        let html = render(&doc(), Format::Standalone).unwrap();
+        assert!(
+            html.contains("print-color-adjust: exact"),
+            "the print background rule must ship in every artifact"
+        );
+    }
+
+    #[test]
     fn grid_is_fully_pre_rendered() {
         let html = render(&doc(), Format::Standalone).unwrap();
         // 8 lanes × 5 stages

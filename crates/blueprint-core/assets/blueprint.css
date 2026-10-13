@@ -161,6 +161,17 @@
 
 /* Print */
 @media print {
+  /* Print = the artifact, not a worksheet: the browser suppresses print
+     backgrounds by default, which washes the themed artifact onto white
+     paper — the band/divider/stage inks are designed ON those fills (the
+     same AA-audited pairs the linter audits). Force exact colors so the
+     artifact prints exactly as it reads in the app; the print dialog's
+     "Background graphics" checkbox becomes irrelevant. */
+  .bp-root,
+  .bp-root * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
   .bp-root .bp-toolbar { display: none; }
   .bp-root .bp-band { padding: 15px; }
   .bp-root .bp-main { padding: 10px; }
