@@ -82,6 +82,18 @@ podman rm -f tekton-release-smoke >/dev/null
 [[ "$CODE" == "200" ]] || { echo "editor smoke FAILED: $CODE $TITLE" >&2; exit 1; }
 echo "  CLI + editor smokes: ok ($CODE $TITLE)"
 
+# ── 3b. The staging manifest — regenerated every pass, never hand-edited ─────
+say "staging manifest"
+cd "$ROOT/releases"
+sha256sum -- $(ls -x phoenix-tekton_*_x64.exe phoenix-tekton_*.AppImage phoenix-tekton-*.rpm 2>/dev/null) > SHA256SUMS
+# RELEASES.txt = the staged set's running narrative: each pass PREPENDS its row.
+{
+  printf 'Build of %s @ %s (release %s) — scripts/release.sh pass: the verify-gated\nexe rebuilt from the CURRENT tree; the version-tagged runtime container (%s)\n+ latest, CLI/editor smokes ok; the devtool door image rebuilt. Tag v%s\nanchored on both remotes. Full publication history: docs/PUBLICATION_LOG.md.\n\n' \
+    "$(date +%F)" "$(git rev-parse --short HEAD)" "$VER" "$VER" "$VER"
+  cat RELEASES.txt
+} > RELEASES.txt.new && mv RELEASES.txt.new RELEASES.txt
+cd "$ROOT"
+
 # ── 4. The anchor — tag both remotes ─────────────────────────────────────────
 say "tag ${TAG} + push"
 git tag -f "$TAG"

@@ -19,6 +19,12 @@ the desktop shell — one document format, one engine, three surfaces.
   large-text thresholds, engine-computed replacement suggestions
 - Rendering (full standalone HTML, the self-contained artifact) with the
   refusal gate — an inaccessible or malformed document never ships as HTML
+- Print fidelity: the artifact prints AS it reads — the shipped `@media
+  print` rules force exact print colors, so the navy band, the line-of-
+  interaction bands, and the lane tints land on paper (a golden render test
+  guards the rule against regression)
+- The CMS fragment export retired at the public cut — one render target
+  remains, with the format axis kept as a positional API slot
 - 34-token theme system with audited presets: light default, dark studio,
   and two AAA high-contrast themes
 - 46 tests: unit, structural golden assertions, preset audits,
@@ -43,6 +49,12 @@ the desktop shell — one document format, one engine, three surfaces.
   fit-to-view (with fit-on-init), bottom-center controls
 - Export as the pair: the self-contained standalone HTML + the data layer
   (.yaml/.json)
+- Row-card delete controls carry the trashcan with matching hover tooltips
+  (accessible names word-for-word); the toolbar's output-format group became
+  a fixed announcement chip
+- Contributor-ready story comments on the entry modules (the composition
+  root's ownership map, the host-bootstrap rule, the push-layout primitive,
+  the rail contract, the feedback floor)
 
 ### Desktop and distribution
 
@@ -52,8 +64,25 @@ the desktop shell — one document format, one engine, three surfaces.
   silently ship a dev-mode exe (`scripts/verify-windows-exe.sh` refuses it:
   every built asset must be present in the binary)
 - The container image (Podman/Docker): the studio + CLI, wasm built fresh
+- The container builds again end-to-end: the Tauri shell crate joining the
+  workspace had broken the toolchain stage's manifest load; the stage ships
+  the manifest and never builds the GUI (the browser boundary stands)
+
+### Release tooling
+
+- `scripts/publish-public.sh` — the QA-gated only door to the public mirror:
+  content gates (the retired export and the build-host internals refuse),
+  the full battery, fast-forward-only pushes (public history is append-only)
+- `scripts/release.sh` — the gated release pass: preflight (branch, clean
+  tree, four-surface version coherence) → QA → the verify-gated exe (staged
+  + re-gated) → version-tagged containers + smokes → the staging manifest
+  (SHA256SUMS + the RELEASES.txt running narrative) → the v-tag on both
+  remotes → the owner-step report
 
 ### Documentation
 
 - The public docs set: AUTHORING, EDITOR, CLI, ARCHITECTURE,
   DESKTOP_RELEASES, CONTRIBUTING, SECURITY, this changelog
+- docs/PUBLICATION_LOG.md — the running record of everything that moves to
+  either remote (the split mirror: internal Gitea origin = the source of
+  truth; the public GitHub mirror = main only)
