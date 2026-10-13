@@ -6,6 +6,7 @@ dist/
 /*.html
 !index.html
 /fixtures/*.html
+/Resources/*.html
 src/engine/blueprint_wasm*
 logs/
 !logs/README.md
