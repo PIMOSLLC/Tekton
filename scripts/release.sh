@@ -82,14 +82,22 @@ podman rm -f tekton-release-smoke >/dev/null
 [[ "$CODE" == "200" ]] || { echo "editor smoke FAILED: $CODE $TITLE" >&2; exit 1; }
 echo "  CLI + editor smokes: ok ($CODE $TITLE)"
 
+# ── 3c. The release-page archive — the container's durable distribution ──────
+say "container archive (the release-page tar)"
+# The tar is the DURABLE artifact: images tagged on this box die to any
+# `podman image prune -a` (unreferenced = gone), but the page archive loads
+# with `podman load` / `docker load` anywhere, forever.
+podman save --format oci-archive -o "releases/phoenix-tekton_${VER}_oci.tar" "phoenix-tekton:${VER}"
+TAR_SIZE=$(du -h "releases/phoenix-tekton_${VER}_oci.tar" | cut -f1)
+
 # ── 3b. The staging manifest — regenerated every pass, never hand-edited ─────
 say "staging manifest"
 cd "$ROOT/releases"
-sha256sum -- $(ls -x phoenix-tekton_*_x64.exe phoenix-tekton_*.AppImage phoenix-tekton-*.rpm 2>/dev/null) > SHA256SUMS
+sha256sum -- $(ls -x phoenix-tekton_*_x64.exe phoenix-tekton_*.AppImage phoenix-tekton-*.rpm phoenix-tekton_*_oci.tar 2>/dev/null) > SHA256SUMS
 # RELEASES.txt = the staged set's running narrative: each pass PREPENDS its row.
 {
-  printf 'Build of %s @ %s (release %s) — scripts/release.sh pass: the verify-gated\nexe rebuilt from the CURRENT tree; the version-tagged runtime container (%s)\n+ latest, CLI/editor smokes ok; the devtool door image rebuilt. Tag v%s\nanchored on both remotes. Full publication history: docs/PUBLICATION_LOG.md.\n\n' \
-    "$(date +%F)" "$(git rev-parse --short HEAD)" "$VER" "$VER" "$VER"
+  printf 'Build of %s @ %s (release %s) — scripts/release.sh pass: the verify-gated\nexe rebuilt from the CURRENT tree; the version-tagged runtime container (%s)\n+ latest, CLI/editor smokes ok; the release-page container archive\n(phoenix-tekton_%s_oci.tar — the durable artifact: podman/docker load)\nre-generated; the devtool door image rebuilt. Tag v%s anchored on both\nremotes. Full publication history: docs/PUBLICATION_LOG.md.\n\n' \
+    "$(date +%F)" "$(git rev-parse --short HEAD)" "$VER" "$VER" "$VER" "$VER"
   cat RELEASES.txt
 } > RELEASES.txt.new && mv RELEASES.txt.new RELEASES.txt
 cd "$ROOT"
@@ -103,6 +111,7 @@ git push public "$TAG"
 # ── 5. The report ────────────────────────────────────────────────────────────
 say "release ${VER} complete"
 echo "  exe:      $EXE ($SIZE)"
+echo "  archive:  releases/phoenix-tekton_${VER}_oci.tar ($TAR_SIZE) — podman/docker load"
 echo "  images:   phoenix-tekton:${VER} + :latest  ·  phoenix-tekton-dev:latest"
 echo "  tag:      ${TAG} pushed to origin (Gitea) + public (GitHub)"
 echo "  owner steps (no gh on this host):"
