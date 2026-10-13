@@ -30,11 +30,14 @@ fi
 # 1. Public-content gates. The retired export must be gone; internal host
 # specifics must never reappear. (CHANGELOG is excluded: release history may
 # narrate the removal itself.)
-if git grep -qi 'wordpress' -- crates/ src/ docs/ templates/ README.md AGENTS.md; then
-  echo "refusing: 'wordpress' still referenced in the tracked tree" >&2
+if git grep -qi 'word''press' -- crates/ src/ docs/ templates/ README.md AGENTS.md; then
+  echo "refusing: retired CMS-fragment export still referenced in the tracked tree" >&2
   exit 1
 fi
-if git grep -qE '192\.168\.|Minerva|minerva|adminphx' -- crates/ src/ scripts/ docs/ index.html vite.config.ts; then
+# (the pattern is split in source so this gate cannot match itself — its own
+# regex literals live under scripts/, which it must still be able to search)
+SCRUB_PAT='192\.168\.|Min''erva|[Mm]in''erva|admin''phx'
+if git grep -qE "$SCRUB_PAT" -- crates/ src/ scripts/ docs/ index.html vite.config.ts; then
   echo "refusing: build-host internals still referenced" >&2
   exit 1
 fi
