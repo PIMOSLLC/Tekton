@@ -4,6 +4,7 @@ dist
 logs
 .git
 Resources
-src-tauri
+src-tauri/target
+src-tauri/gen
 *.log
 fixtures/*.html

@@ -25,6 +25,12 @@ WORKDIR /work
 # Build cache layers first (manifests only), then the workspace.
 COPY Cargo.toml Cargo.lock .cargo/ ./
 COPY crates ./crates
+# src-tauri is a workspace MEMBER, so its manifest must exist for any cargo
+# build to load (the Tauri shell crate joined the workspace after this image
+# was last verified — the container broke on workspace completeness). It is
+# COPIED but never BUILT: no -p targets it, the GUI stays a native desktop
+# target — the container boundary in the header comment stands.
+COPY src-tauri ./src-tauri
 RUN cargo build -p tekton-cli --release
 RUN cargo build -p blueprint-wasm --target wasm32-unknown-unknown --release \
     && wasm-bindgen /work/target/wasm32-unknown-unknown/release/blueprint_wasm.wasm \
