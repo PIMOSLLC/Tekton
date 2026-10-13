@@ -1,4 +1,4 @@
-# phoenix-Tekton
+# Phoenix Tekton
 
 **Service blueprint studio** — a desktop application and headless engine that authors, WCAG-lints, and exports interactive service blueprints.
 
@@ -101,6 +101,15 @@ Tekton exists because the accessible artifact is the artifact: exported blueprin
 ## Contributing and security
 
 Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md); the QA gate is **typecheck → test** (plus `cargo test` for the engine). Security concerns: [SECURITY.md](SECURITY.md). This project follows the [Contributor Covenant](CODE_OF_CONDUCT.md).
+
+## Authorship
+
+Phoenix Tekton was created by **Dr. Delminquoe L Cunningham** — UX/UI Architect
+& Technical Lead Developer of Phoenix Inceptions Media LLC — with the
+assistance of **Sophia™**, Phoenix Inceptions Media's trademarked internal
+LLM assistant.
+
+*Sophia is a trademark of Phoenix Inceptions Media LLC.*
 
 ## License
 

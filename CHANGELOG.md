@@ -4,6 +4,13 @@ All notable changes to Phoenix Tekton are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows
 [SemVer](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] — the tracker (impact decides the bump, not count)
+
+The queued phase-3 arcs accumulate here; a release pass stamps the section
+with its version and date. Docs/tests/tooling-only moves = patch; every
+user-visible arc = minor; breaking document/export contracts = minor-major
+until 1.0.0 (document-format + PIN-integration stability).
+
 ## [0.1.0] — 2026-10-12
 
 First public release: the blueprint engine, the visual editor, the CLI, and

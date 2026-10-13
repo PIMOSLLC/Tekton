@@ -12,6 +12,7 @@
 **Role:** UX/UI Architect & Technical Lead Developer
 **Email:** info@phoenixinceptionsmediallc.com
 **Company:** Phoenix Inceptions Media LLC
+**AI Assistant:** Sophia™ — Phoenix Inceptions Media LLC's trademarked internal LLM assistant, co-creation assistance
 
 ### Coding Standards
 
@@ -112,6 +113,12 @@ the top chrome; one brand bar, never two.
   commit/branch); the public GitHub mirror = `main` only via
   `scripts/publish-public.sh`. Retired exports and build-host internals are
   gate-enforced content, never a manual memory exercise.
+- **Impact decides the bump, not count.** `[Unreleased]` in the CHANGELOG is the
+  tracker — every change lands its bullet the moment it merges; the version is
+  the seal stamped at the release pass. Docs/tests/tooling-only passes = patch
+  (0.1.z, batched freely); any user-visible arc = minor (0.x.z → 0.(x+1).0);
+  breaking saved-document/export/CLI contracts = minor-major (0.x.0) until
+  1.0.0 (document-format + PIN-integration stability).
 
 ## Conventions (Phoenix Inceptions Media ecosystem)
 

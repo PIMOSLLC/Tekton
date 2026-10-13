@@ -13,6 +13,18 @@ and this log tracks everything that moves to either remote. The split mirror:
 Entries are listed newest first and appended over time — never rewritten.
 This log publishes with the repository, so entries stay host-neutral.
 
+## 2026-10-13 — authorship documentation + the version policy
+
+- The README gained the Authorship section (Dr. Delminquoe L Cunningham,
+  UX/UI Architect & Technical Lead Developer, with Sophia™ — PIM's
+  trademarked internal LLM assistant) and the H1 carries the standardized
+  Phoenix Tekton brand; the agent guide's protected attribution block gained
+  the AI-assistant author line.
+- The version policy became standing doctrine: `[Unreleased]` = the tracker,
+  impact decides the bump (patch/minor/minor-major until 1.0.0); the
+  CHANGELOG now carries the `[Unreleased]` section from the v0.1.0 tag
+  forward.
+
 ## 2026-10-13 — the v0.1.0 release pass
 
 - `scripts/release.sh 0.1.0` completed green end-to-end (exit 0): preflight
