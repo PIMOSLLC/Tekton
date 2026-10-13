@@ -1,3 +1,11 @@
+/**
+ * StudioNav — the collapsible navigation rail of the shell model: a 56px icon
+ * strip when collapsed, a 240px labeled menu when expanded — a panel MENU, not
+ * a thin rail; it never pushes content off-canvas (no horizontal overflow by
+ * construction). Sections open ONE ExpandablePanel at a time; document
+ * lifecycle controls (New/Open/Save) live here, persisted by the shell's
+ * adapters — the nav carries the verbs, the shell owns the how.
+ */
 import type { ReactNode } from 'react';
 import {
   LayoutGrid,

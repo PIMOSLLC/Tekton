@@ -1,3 +1,9 @@
+/**
+ * StatusFooter — the status line EVERY visible state ends in (the app's
+ * feedback floor): status lights with LED colors, tooltips reachable by hover
+ * or keyboard focus (never hover-only), and the right-hand brand/context tag.
+ * Components report upward; the shell decides the light.
+ */
 import type { LucideIcon } from 'lucide-react';
 
 export type StatusColor = 'success' | 'warning' | 'error' | 'info' | 'neutral';

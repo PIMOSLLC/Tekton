@@ -1,3 +1,22 @@
+/**
+ * App — the web shell, and (beside `main.tsx`) one of the only two places that
+ * may know how the editor is hosted: a desktop browser today; the Phoenix
+ * Insight Nexus toolkit host later sets the `__PIN_HOST__` global and
+ * suppresses the standalone chrome instead of using this shell's own header.
+ *
+ * The newcomer's ownership map — what lives where:
+ *   document state + edit ops + the engine pipeline → `core/useBlueprintDocument`
+ *     (returned here as `bp`; the Rust engine via wasm is the single truth)
+ *   rendered artifact → the engine (Preview mode = the engine's self-contained HTML)
+ *   persistence + user prefs → `platform/persistence` and `platform/appProfile`
+ *     adapters (browser = download/upload + localStorage autosave)
+ *   everything visible → presentational components (props-in, components-out)
+ *
+ * This file holds ONLY glue: the three-zone workspace layout, the panel/section
+ * state machine, the modal-dialog state machine (the PIN-family pattern — never
+ * window.confirm), document flows with unsaved-work guards (New/Open/Save),
+ * and the status lights that mirror the engine pipeline.
+ */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Cpu, FileOutput, CheckSquare, ShieldCheck, Clock } from 'lucide-react';
 import fixtureYaml from '../fixtures/agentic-ai-ecommerce.yaml?raw';

@@ -1,3 +1,10 @@
+/**
+ * ExpandablePanel — the pushed side panel, the shell model's core primitive.
+ * The panel does NOT overlay: it PUSHES the workspace column, so nothing is
+ * ever covered and the canvas relayouts as the sash (drag/keyboard resize)
+ * moves. One layer at a time (the shell opens at most a panel + the terminal);
+ * Esc closes; the width persists per section in the app profile.
+ */
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { X } from 'lucide-react';
 
