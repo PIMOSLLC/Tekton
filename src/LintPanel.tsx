@@ -1,6 +1,6 @@
 import type { EngineFinding, EngineIssue } from './engine/engineService';
 
-/** AA/AAA verdict table — the editor's flagship panel. Named exports only (PIMOS). */
+/** AA/AAA verdict table — the editor's flagship panel. Named exports only (the ecosystem convention). */
 export interface LintPanelProps {
   findings: EngineFinding[];
 }

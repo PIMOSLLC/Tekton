@@ -4,13 +4,14 @@ import react from '@vitejs/plugin-react';
 import { appendFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-// Host + port follow the PIMOS ecosystem pattern: Minerva binds 0.0.0.0 and the
-// editor is consumed from a desktop browser at http://192.168.10.138:6041.
+// Host + port: the dev server binds 0.0.0.0 so a desktop browser on the same
+// network reaches it at http://<this-host>:6041 — 6041 is the editor's fixed
+// dev port.
 
 // ALPHA logging contract (owner direction): runtime errors from editor sessions
 // land in logs/runtime.log. index.html's beacon posts here; Vite's dev log is
-// mirrored to logs/dev-server.log by scripts/dev-server.sh. Headless Minerva
-// has no console to read — these files are how agent sessions "see" the browser.
+// mirrored to logs/dev-server.log by scripts/dev-server.sh. Headless build
+// hosts have no console to read — these files are how agent sessions "see" the browser.
 function runtimeErrorCollector(): { name: string; configureServer(server: ViteDevServer): void } {
   const logDir = join(__dirname, 'logs');
   const logFile = join(logDir, 'runtime.log');

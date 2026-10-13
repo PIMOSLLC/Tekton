@@ -1,5 +1,5 @@
 //! CLI integration tests — run the built `tekton` binary end-to-end, exactly the
-//! way a CI pipeline or a Minerva shell session would.
+//! way a CI pipeline or a headless shell session would.
 
 use std::process::Command;
 

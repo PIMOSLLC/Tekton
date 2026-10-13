@@ -1,6 +1,6 @@
 //! `tekton` — the Phoenix Tekton blueprint engine on the command line.
 //!
-//! Headless by design (Minerva is a CLI-only host): everything testable without
+//! Headless by design (a build host may have no GUI): everything testable without
 //! a GUI lives here. Exit codes are CI-friendly — lint and validate return 1 on
 //! failures, render returns 1 on validation/lint errors (an inaccessible theme
 //! refuses to render, mirroring the library contract).
@@ -8,7 +8,7 @@
 //! Visual testing path (documented in the repo AGENTS.md):
 //!   tekton render fixtures/agentic-ai-ecommerce.yaml
 //!   cd <output-dir> && python3 -m http.server 6041
-//!   -> open http://<minerva-lan-ip>:6041/agentic-ai-ecommerce-standalone.html in any browser
+//!   -> open http://<this-host>:6041/agentic-ai-ecommerce-standalone.html in any browser
 
 use blueprint_core::{Document, Format};
 use clap::{Parser, Subcommand};

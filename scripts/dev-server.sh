@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# phoenix-Tekton dev server — Vite editor on the LAN (PIMOS port 6041).
+# phoenix-Tekton dev server — Vite editor on the studio's fixed dev port (6041).
 #
 # Why the odd launch shape: agent/tool shell sessions group-kill background
 # children on call exit unless the process fully detaches (setsid) AND has all
@@ -24,8 +24,8 @@ stop() {
 }
 
 status() {
-  if curl -s -o /dev/null --max-time 3 "http://192.168.10.138:6041/"; then
-    echo "editor: UP at http://192.168.10.138:6041/"
+  if curl -s -o /dev/null --max-time 3 "http://localhost:6041/"; then
+    echo "editor: UP at http://localhost:6041/ (on the network: http://<this-host>:6041/)"
   else
     echo "editor: DOWN"
   fi

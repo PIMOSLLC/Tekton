@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to phoenix-Tekton are recorded here. The format follows
+All notable changes to Phoenix Tekton are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows
 [SemVer](https://semver.org/spec/v2.0.0.html).
 
@@ -17,11 +17,11 @@ the desktop shell — one document format, one engine, three surfaces.
 - The WCAG 2.2 contrast linter: every card-text and stage-tag pair against
   every lane tint, AA + AAA verdicts, spec-accurate relative luminance and
   large-text thresholds, engine-computed replacement suggestions
-- Dual-format rendering with the refusal gate — an inaccessible or malformed
-  document never ships as HTML
+- Rendering (full standalone HTML, the self-contained artifact) with the
+  refusal gate — an inaccessible or malformed document never ships as HTML
 - 34-token theme system with audited presets: light default, dark studio,
   and two AAA high-contrast themes
-- 48 tests: unit, structural golden assertions, preset audits,
+- 46 tests: unit, structural golden assertions, preset audits,
   starter-seed parity, CLI integration
 
 ### Editor (React 18 + Vite + TypeScript strict)
