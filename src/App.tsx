@@ -37,6 +37,7 @@ import {
 import { loadAppProfile, saveAppProfile, type AppProfile } from './platform/appProfile';
 import { BuildCanvas } from './BuildCanvas';
 import { SetupWizardModal } from './SetupWizardModal';
+import { SaveAsDialog } from './SaveAsDialog';
 import { WelcomeModal } from './WelcomeModal';
 import { AppHeader } from './AppHeader';
 import { CanvasViewport } from './CanvasViewport';
@@ -69,10 +70,6 @@ interface CardPosition {
 const files = browserFileStore();
 const workspace = localStorageAutosave();
 
-const stripExtension = (name: string) => name.replace(/\.(ya?ml|json)$/i, '');
-const matchesFormat = (name: string, format: 'yaml' | 'json') =>
-  format === 'json' ? /\.json$/i.test(name) : /\.ya?ml$/i.test(name);
-
 /** Per-section panel defaults (the profile stores user-resized overrides). */
 type NonNullSection = Exclude<PanelSection, null>;
 const PANEL_DEFAULTS: Record<NonNullSection, number> = {
@@ -82,17 +79,14 @@ const PANEL_DEFAULTS: Record<NonNullSection, number> = {
   theme: 400,
 };
 
-/** File name for a Save: keep the open/save file's name (same format), else
- * re-derive from the title — the name IS the title, slugified. ALWAYS lands
- * with the format's extension: an extensionless text/plain download makes
- * the browser append .txt (the bug the owner caught). */
-function saveName(sourceName: string | null, metaTitle: string, format: 'yaml' | 'json'): string {
-  const ext = format === 'json' ? '.json' : '.yaml';
-  if (sourceName) {
-    if (matchesFormat(sourceName, format)) return sourceName;
-    return `${stripExtension(sourceName) || slugifyTitle(metaTitle)}${ext}`;
-  }
-  return `${slugifyTitle(metaTitle) || 'blueprint'}${ext}`;
+/** File naming — THE CONTRACT: the blueprint's name IS its title, slugified.
+ * Every save derives the file name from the live title (a retitle renames on
+ * the next save; the header chip follows the title live). The deliberate
+ * one-off override is Save As. The format decides the extension — ALWAYS
+ * lands with it: an extensionless download once made the browser append
+ * .txt (the bug the owner caught). */
+function saveName(metaTitle: string, format: 'yaml' | 'json'): string {
+  return `${slugifyTitle(metaTitle) || 'blueprint'}${format === 'json' ? '.json' : '.yaml'}`;
 }
 
 const isTyping = (target: EventTarget | null): boolean =>
@@ -157,6 +151,15 @@ export function App() {
   const [inviteOpen, setInviteOpen] = useState(() => profile.showSetupOnStart);
   /** New-panel flow: template picker first, or the guided wizard. */
   const [wizardOpen, setWizardOpen] = useState(false);
+  /** Save As — the deliberate-copy dialog (a nav verb; the dialog owns the draft). */
+  const [saveAsOpen, setSaveAsOpen] = useState(false);
+  /** The rename door's token: bumping it focuses the Architect's Title field. */
+  const [focusTitleToken, setFocusTitleToken] = useState(0);
+  /** The name edit door: one click from the header's name chip to its field. */
+  const renameFromHeader = useCallback(() => {
+    setPanelSection('architect');
+    setFocusTitleToken((t) => t + 1);
+  }, []);
 
   /** Desktop preview route (blueprint-preview:// — a response the app CSP
    * cannot reach): the artifact's per-document inline script is refused in an
@@ -251,13 +254,13 @@ export function App() {
    * and re-export — the layer is the same file Save writes. */
   const exportBlueprint = useCallback(async () => {
     if (!bp.doc || !bp.html) return;
-    const stem = stripExtension(saveName(sourceName, bp.doc.meta.title, dataFormat));
+    const stem = saveName(bp.doc.meta.title, dataFormat).replace(/\.ya?ml$|\.json$/i, '');
     const htmlName = `${stem}-standalone.html`;
     const dataName = `${stem}.${dataFormat}`;
     const dataText = dataFormat === 'yaml' ? await bp.getYaml() : await bp.getJson();
     await files.saveFile(htmlName, bp.html);
     await files.saveFile(dataName, dataText);
-  }, [bp, sourceName, dataFormat]);
+  }, [bp, dataFormat]);
 
   // ── Blueprint lifecycle ────────────────────────────────────────────────
   // New opens the template picker (a pushed panel); the pick (or wizard
@@ -363,16 +366,33 @@ export function App() {
     async (format: 'yaml' | 'json') => {
       if (!bp.doc) return;
       const text = format === 'yaml' ? await bp.getYaml() : await bp.getJson();
-      const name = saveName(sourceName, bp.doc.meta.title, format);
+      const name = saveName(bp.doc.meta.title, format);
       await files.saveFile(name, text);
+      // The source bookkeeping follows the save (recall identity); the
+      // NAME the surfaces show is always the title's slug.
       setSourceName(name);
       bp.markSaved();
     },
-    [bp, sourceName],
+    [bp],
   );
 
   const flowSave = useCallback(() => void saveBlueprint('yaml'), [saveBlueprint]);
   const flowSaveJson = useCallback(() => void saveBlueprint('json'), [saveBlueprint]);
+
+  /** Save As — the deliberate copy: a name + format of the author's choice,
+   * once. It does not rename the blueprint (its name is its title) and it
+   * does not change what later saves follow — the document just writes a
+   * copy, and the work reads saved. */
+  const saveCopy = useCallback(
+    async (name: string, format: 'yaml' | 'json') => {
+      if (!bp.doc) return;
+      const text = format === 'yaml' ? await bp.getYaml() : await bp.getJson();
+      await files.saveFile(name, text);
+      setSaveAsOpen(false);
+      bp.markSaved();
+    },
+    [bp],
+  );
 
   // Workspace autosave: the document, debounced; + FLUSHED IMMEDIATELY when
   // the tab is hidden/closing (the debounce's unflushed tail would otherwise
@@ -607,11 +627,10 @@ export function App() {
   // wears the dot.
   const dotState: 'covered' | 'unprotected' = !bp.dirty ? 'covered' : lastAutosave ? 'covered' : 'unprotected';
 
-  const docStem = sourceName
-    ? stripExtension(sourceName)
-    : bp.doc
-      ? slugifyTitle(bp.doc.meta.title)
-      : null;
+  // The header chip's name: ALWAYS the blueprint's slug — the name IS its
+  // title (the source file's name is bookkeeping, never the shown identity).
+  const docStem = bp.doc ? slugifyTitle(bp.doc.meta.title) : null;
+  const currentSlug = docStem ?? 'blueprint';
 
   return (
     <div
@@ -620,7 +639,7 @@ export function App() {
     >
       {/* Standalone brand bar — PIN hosts replace it with their own chrome */}
       {!isPinModuleHost() && (
-        <AppHeader docName={docStem} dirty={bp.dirty} lastAutosave={lastAutosave} dotState={dotState} />
+        <AppHeader docName={docStem} dirty={bp.dirty} lastAutosave={lastAutosave} dotState={dotState} onNameClick={renameFromHeader} />
       )}
 
       <div className="flex-1 flex min-h-0">
@@ -638,6 +657,7 @@ export function App() {
         onOpen={flowOpen}
         onSave={flowSave}
         onSaveJson={flowSaveJson}
+        onSaveAs={() => setSaveAsOpen(true)}
         canSave={bp.dirty && bp.doc !== null}
         onExport={() => void exportBlueprint()}
         canExport={bp.html !== null}
@@ -758,6 +778,7 @@ export function App() {
                 eyebrow={bp.doc.meta.eyebrow}
                 title={bp.doc.meta.title}
                 intro={bp.doc.meta.intro}
+                focusTitleToken={focusTitleToken}
                 stages={bp.doc.stages}
                 lanes={bp.doc.lanes}
                 stats={bp.doc.stats ?? []}
@@ -961,6 +982,14 @@ export function App() {
         isOpen={wizardOpen}
         onCreate={createFromWizard}
         onCancel={() => setWizardOpen(false)}
+      />
+      {/* Save As — the deliberate copy; the dialog resets its draft on open */}
+      <SaveAsDialog
+        open={saveAsOpen}
+        initialName={currentSlug}
+        initialFormat={dataFormat}
+        onSave={(name, format) => void saveCopy(name, format)}
+        onCancel={() => setSaveAsOpen(false)}
       />
       <ConfirmationModal
         isOpen={dialog !== null}

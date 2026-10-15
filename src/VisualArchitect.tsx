@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { ChevronDown, Trash2 } from 'lucide-react';
 import {
   DndContext,
@@ -106,6 +106,9 @@ export interface VisualArchitectProps {
   /** Reorder: a lane/row move — the row travels whole (cards stay in their stage columns). */
   onLaneMove(from: number, to: number): void;
   onStatMove(from: number, to: number): void;
+  /** The rename door's token: each increment focuses the Title field
+   * (the header chip's click lands here — the name is one field away). */
+  focusTitleToken?: number;
 }
 
 /**
@@ -115,6 +118,14 @@ export interface VisualArchitectProps {
  * the prototype's hover-only pattern fails WCAG 2.2 and stays rejected).
  */
 export function VisualArchitect(props: VisualArchitectProps) {
+  // The rename door: a token bump (never 0 — the initial render must not
+  // steal focus) walks focus to the Title field, exactly like the inspector
+  // drawer's pattern (preventScroll: no zoom-pan world-slide).
+  const titleInput = useRef<HTMLInputElement | null>(null);
+  useEffect(() => {
+    if (props.focusTitleToken) titleInput.current?.focus({ preventScroll: true });
+  }, [props.focusTitleToken]);
+
   // The accordion: ONE lane open at a time (the app's one-layer doctrine).
   // Lane 0 starts open so the full editing pattern is visible on boot; a
   // freshly added lane opens itself, ready for typing.
@@ -168,11 +179,13 @@ export function VisualArchitect(props: VisualArchitectProps) {
         <label className="tk-field">
           <span>Title</span>
           <span className="tk-field-help">
-            What this blueprint is called — it also becomes the saved file&apos;s name.
+            What this blueprint is called — the header&apos;s name and the saved file&apos;s name follow it.
           </span>
           <input
+            ref={titleInput}
             type="text"
             value={props.title}
+            data-testid="blueprint-title"
             onChange={(e) => props.onMetaChange('title', e.target.value)}
           />
         </label>

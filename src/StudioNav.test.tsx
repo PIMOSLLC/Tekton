@@ -18,6 +18,7 @@ function renderNav(expanded: boolean, onToggle: () => void) {
       onOpen={() => {}}
       onSave={() => {}}
       onSaveJson={() => {}}
+      onSaveAs={() => {}}
       canSave
       onExport={() => {}}
       canExport

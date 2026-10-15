@@ -17,6 +17,7 @@ import {
   FilePlus2,
   FolderOpen,
   Save,
+  FileDown,
   Braces,
 } from 'lucide-react';
 // The Tekton mark (a blueprint sheet — navy on paper): mirrored from
@@ -38,7 +39,9 @@ export interface StudioNavProps {
   onOpen(): void;
   onSave(): void;
   onSaveJson(): void;
-  /** Save is meaningful only when something is unsaved. */
+  /** Save As — the deliberate copy (name + format of the author's choice). */
+  onSaveAs(): void;
+  /** Save/SaveAs are meaningful only when something is unsaved or copyable. */
   canSave: boolean;
   onExport(): void;
   canExport: boolean;
@@ -116,6 +119,15 @@ export function StudioNav(props: StudioNavProps) {
             active={false}
             disabled={!props.canSave}
             onClick={props.onSaveJson}
+          />
+          <NavItem
+            expanded={expanded}
+            icon={<FileDown className="w-5 h-5 shrink-0" />}
+            label="Save As…"
+            hint="A copy under a chosen name"
+            active={false}
+            disabled={!props.canSave}
+            onClick={props.onSaveAs}
           />
         </NavGroup>
         <NavGroup label="Author" expanded={expanded}>

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import type { WorkspaceSnapshot } from './platform/persistence';
 import { SAMPLE_JSON, engineControls } from './test-support/fakeEngine';
 
@@ -67,10 +67,12 @@ describe('App blueprint lifecycle', () => {
     expect(screen.queryByTestId('dirty-dot')).toBeNull();
   });
 
-  it('a recalled autosave session boots dirty under its remembered file name', async () => {
+  it('a recalled autosave session boots dirty under the blueprint\'s own name (its title)', async () => {
+    // The remembered FILE name is bookkeeping; the surfaces show the
+    // blueprint's NAME — its title, slugified (the naming contract).
     harness.recalled = { sourceName: 'My Plan.yaml', yaml: 'whatever the engine parses' };
     render(<App />);
-    await waitFor(() => expect(screen.getByTestId('doc-name').textContent).toBe('My Plan'));
+    await waitFor(() => expect(screen.getByTestId('doc-name').textContent).toBe('sample-blueprint'));
     expect(screen.getByTestId('dirty-dot')).not.toBeNull();
   });
 
@@ -103,7 +105,9 @@ describe('App blueprint lifecycle', () => {
     await screen.findByRole('dialog');
     fireEvent.click(screen.getByRole('button', { name: 'Keep editing' }));
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
-    expect(screen.getByTestId('doc-name').textContent).toBe('My Plan');
+    // The cancelled load changed nothing — the blueprint keeps its name
+    // (the title's slug) and its unsaved-work dot.
+    expect(screen.getByTestId('doc-name').textContent).toBe('sample-blueprint');
     expect(screen.getByTestId('dirty-dot')).not.toBeNull();
     expect(
       document
@@ -121,7 +125,9 @@ describe('App blueprint lifecycle', () => {
     await screen.findByRole('dialog');
     fireEvent.keyDown(document, { key: 'Escape' });
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
-    expect(screen.getByTestId('doc-name').textContent).toBe('My Plan');
+    // The cancelled New changed nothing: the blueprint keeps ITS name and
+    // the unsaved-work dot.
+    expect(screen.getByTestId('doc-name').textContent).toBe('sample-blueprint');
     expect(screen.getByTestId('dirty-dot')).not.toBeNull();
   });
 
@@ -153,13 +159,16 @@ describe('App blueprint lifecycle', () => {
     expect(screen.queryByTestId('dirty-dot')).toBeNull();
   });
 
-  it('Save downloads the document under the file name and relines the baseline', async () => {
+  it('Save follows the TITLE — the name IS the blueprint, the file renames with it', async () => {
+    // The recalled file's own name ('My Plan.yaml') is bookkeeping; the
+    // content titles the doc 'Sample Blueprint' — the next save writes the
+    // file its blueprint's name (the rename-on-save contract).
     harness.recalled = { sourceName: 'My Plan.yaml', yaml: 'x' };
     render(<App />);
     await screen.findByTestId('dirty-dot');
     fireEvent.click(screen.getByTitle('Save'));
     await waitFor(() =>
-      expect(harness.saved).toEqual([{ name: 'My Plan.yaml', text: 'canonical yaml' }]),
+      expect(harness.saved).toEqual([{ name: 'sample-blueprint.yaml', text: 'canonical yaml' }]),
     );
     await waitFor(() => expect(screen.queryByTestId('dirty-dot')).toBeNull());
   });
@@ -185,14 +194,16 @@ describe('App blueprint lifecycle', () => {
     expect(harness.saved[1]?.name).toBe('sample-blueprint.json');
   });
 
-  it('Open loads a JSON blueprint and adopts its file name', async () => {
+  it('Open loads a JSON blueprint cleanly — the chip keeps the blueprint\'s NAME (its title)', async () => {
     harness.opened = { name: 'Plan.json', text: SAMPLE_JSON, format: 'json' };
     render(<App />);
     await waitFor(() =>
       expect(screen.getByTestId('doc-name').textContent).toBe('sample-blueprint'),
     );
     fireEvent.click(screen.getByTitle('Open Blueprint'));
-    await waitFor(() => expect(screen.getByTestId('doc-name').textContent).toBe('Plan'));
+    // The doc parsed clean; the chip shows ITS name (the title slug) —
+    // 'Plan.json' stays only the file's own name, never the shown identity.
+    await waitFor(() => expect(screen.getByTestId('doc-name').textContent).toBe('sample-blueprint'));
     expect(screen.queryByTestId('dirty-dot')).toBeNull();
   });
 
@@ -217,8 +228,73 @@ describe('App blueprint lifecycle', () => {
     await screen.findByTestId('dirty-dot');
     fireEvent.keyDown(window, { key: 's', ctrlKey: true });
     await waitFor(() =>
-      expect(harness.saved).toEqual([{ name: 'My Plan.yaml', text: 'canonical yaml' }]),
+      expect(harness.saved).toEqual([{ name: 'sample-blueprint.yaml', text: 'canonical yaml' }]),
     );
+  });
+
+  describe('the naming contract — the name IS the title', () => {
+    async function bootRecalled(): Promise<HTMLInputElement> {
+      // A recalled doc whose FILE name doesn't match its title: the exact
+      // mismatch the contract must fix (the file renames with the blueprint).
+      harness.recalled = { sourceName: 'ai-old-export.yaml', yaml: 'x' };
+      render(<App />);
+      await screen.findByTestId('dirty-dot');
+      return screen.getByTestId('blueprint-title') as HTMLInputElement;
+    }
+
+    it('the header chip follows the Title field live', async () => {
+      const title = await bootRecalled();
+      fireEvent.change(title, { target: { value: 'Fresh Flow Analysis' } });
+      await waitFor(() =>
+        expect(screen.getByTestId('doc-name').textContent).toBe('fresh-flow-analysis'),
+      );
+    });
+
+    it('a retitled document saves under its NEW slug', async () => {
+      const title = await bootRecalled();
+      fireEvent.change(title, { target: { value: 'Fresh Flow Analysis' } });
+      fireEvent.click(screen.getByTitle('Save'));
+      await waitFor(() =>
+        expect(harness.saved).toEqual([
+          { name: 'fresh-flow-analysis.yaml', text: 'canonical yaml' },
+        ]),
+      );
+    });
+
+    it('Save As writes the deliberate copy — and later saves keep following the title', async () => {
+      await bootRecalled();
+      fireEvent.click(screen.getByTitle('Save As…'));
+      const dialog = await screen.findByRole('dialog');
+      const nameInput = within(dialog).getByTestId('save-as-name') as HTMLInputElement;
+      expect(nameInput.value).toBe('sample-blueprint'); // the slug offered
+      fireEvent.change(nameInput, { target: { value: 'Final Report' } });
+      fireEvent.click(within(dialog).getByRole('button', { name: 'JSON' }));
+      expect(
+        (within(dialog).getByRole('button', { name: 'Save the copy' }) as HTMLButtonElement)
+          .disabled,
+      ).toBe(false);
+      fireEvent.click(within(dialog).getByRole('button', { name: 'Save the copy' }));
+      await waitFor(() => expect(harness.saved.length).toBe(1));
+      expect(harness.saved[0]?.name).toBe('Final Report.json');
+
+      // the one-shot copy never renamed the blueprint…
+      expect(screen.getByTestId('doc-name').textContent).toBe('sample-blueprint');
+
+      // …and the next save still carries the blueprint's own name.
+      fireEvent.click(screen.getByTitle(/Paper — .+:1, passes AA/));
+      await waitFor(() =>
+        expect((screen.getByTitle('Save') as HTMLButtonElement).disabled).toBe(false),
+      );
+      fireEvent.click(screen.getByTitle('Save'));
+      await waitFor(() => expect(harness.saved.length).toBe(2));
+      expect(harness.saved[1]?.name).toBe('sample-blueprint.yaml');
+    });
+
+    it('the header chip is the rename door — one click focuses the Title field', async () => {
+      await bootRecalled();
+      fireEvent.click(screen.getByRole('button', { name: 'Edit the blueprint name' }));
+      await waitFor(() => expect(document.activeElement).toBe(screen.getByTestId('blueprint-title')));
+    });
   });
 
   it('the Theme Colors panel opens from the nav and shows the grouped palette', async () => {
@@ -404,7 +480,7 @@ describe('App blueprint lifecycle', () => {
     render(<App />);
     await screen.findByTestId('dirty-dot');
     expect(screen.getByTestId('app-header').textContent).toContain('PHOENIX TEKTON');
-    expect(screen.getByTestId('doc-name').textContent).toBe('My Plan');
+    expect(screen.getByTestId('doc-name').textContent).toBe('sample-blueprint');
     // the header's right tag announces the export — its one format explains itself
     expect(screen.getByTestId('format-tag').textContent).toBe('Standalone');
     expect(screen.getByTestId('format-tag').getAttribute('title')).toContain(

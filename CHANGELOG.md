@@ -26,6 +26,20 @@ Nothing queued yet.
   starts with its own rail and never strands a hanging "|" at a row's end
   (the wrap-boundary blemish the screenshots exposed).
 
+### Editor — the blueprint's name is editable, and it IS its title
+
+- The naming contract finally matches the words: the header's name chip now
+  follows the Title field LIVE (it used to stick to a saved/remembered file
+  name forever — the owner's exact question: "how do I change the current
+  blueprint name?"), every Save/Save-JSON/Export derives the file name from
+  the live title (a retitle renames at the next save), and the header chip
+  is the rename door — one click opens the Visual Architect focused on the
+  Title field. **Save As…** lands in the nav's Document group: the
+  deliberate copy (a name + YAML/JSON of your choice, saved once — the
+  blueprint's own name stays its title), on the shared ModalCard frame with
+  the resolved file name announced. Specs pin all four behaviors; the docs
+  state the contract.
+
 ## [0.2.0] — 2026-10-15
 
 The canvas-feel and card-ownership pass: the wheel zoom becomes deliberate

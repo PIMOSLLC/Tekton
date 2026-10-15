@@ -43,9 +43,13 @@ real blueprint you can inspect before authoring anything. To start fresh:
    terminal's **fix →** jumps to a flagged slot or lane tint.
 5. **Export the pair** — Export writes `slug-standalone.html` (the
    interactive artifact) plus the data layer (`slug.yaml` or `.json`).
-6. **Save** — `Ctrl/Cmd+S` (`.yaml`; add Shift for `.json`). Autosave
-   flushes to the browser between Saves — the header's chip shows the last
-   flush; restored work boots as unsaved.
+6. **Name it — and rename it** — the blueprint's name is its **Title** (the
+   header's name chip follows it live; one click on the chip jumps you to
+   that field). Save — `Ctrl/Cmd+S` (`.yaml`; add Shift for `.json`) — and
+   the file carries the name; a retitle renames at the next save. For a
+   deliberate copy under another name, **Save As…**; autosave flushes to
+   the browser between Saves — the header's chip shows the last flush, and
+   restored work boots as unsaved.
 
 ## 4 · Zoom and pan on the canvas
 

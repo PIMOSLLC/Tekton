@@ -18,8 +18,10 @@ canvas is always visible while you shape the document.
 - **StudioNav** — collapsible: a 56px icon rail or a 240px labeled menu. The
   menu groups: **Document** (New · Open · Save · Save JSON), **Author**
   (Visual Architect · YAML · Theme), and **Ship** (Export).
-- **AppHeader** — brand + the document's identity: the name derived from
-  `meta.title`, plus the save-state chip (a green tag timestamps the last
+- **AppHeader** — brand + the document's identity: the blueprint's NAME — its
+  title, slugified, updated live while you type. The chip is the **rename
+  door**: one click opens the Visual Architect focused on the Title field.
+  The sticky save-state chip rides with it (a green tag timestamps the last
   autosave flush; an amber dot means genuinely unprotected work — the file
   hasn't been Saved since the last change).
 - **Panels** — pushed panes with user-resizable widths (280–760px, drag the
@@ -35,7 +37,8 @@ canvas is always visible while you shape the document.
 | **New** | Opens the starter picker: **Starter** (the commented teaching document) or the **agentic-AI e-commerce example** — or **from scratch** via the setup wizard |
 | **Setup wizard** | Four steps — basics (eyebrow/title/intro), stages, lanes (the five classic defaults pre-filled), cards land intentionally empty: the dashed amber slots *are* your work list — click one to create its card |
 | **Open** | `.yaml` (canonical) or `.json` — auto-detected; confirmed when the document is dirty |
-| **Save / Save JSON** | Writes `slug.yaml` or `slug.json` (the slug derived from `meta.title`) |
+| **Save / Save JSON** | The naming contract: the blueprint's name IS its title, slugified — `slug.yaml` or `slug.json` re-derived from the live title (a retitle renames at the next save; the header chip follows the title live) |
+| **Save As…** | The deliberate copy — a name + format of your choice (YAML/JSON), saved once; the blueprint's own name stays its title, and later saves keep following the title |
 | **Dirty tracking** | Confirm-on-New/Open, `beforeunload` guard, and localStorage autosave; a restore boots **dirty** — restored work is unsaved work, kept honest by the chip |
 
 ## Authoring surfaces
