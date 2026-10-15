@@ -195,4 +195,4 @@ The `tekton` binary builds via `cargo run -p tekton-cli -- <args>` in the worksp
 ---
 
 **Last Updated:** 2026-10-15
-**Project:** Phoenix Tekton v0.1.1
+**Project:** Phoenix Tekton v0.2.0

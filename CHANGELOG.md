@@ -11,18 +11,13 @@ with its version and date. Docs/tests/tooling-only moves = patch; every
 user-visible arc = minor; breaking document/export contracts = minor-major
 until 1.0.0 (document-format + PIN-integration stability).
 
-### Editor — documentation + discoverability
+Nothing queued yet.
 
-- The card model is now stated end to end in the user guide: a new
-  "Cards — born from slots" section in `docs/EDITOR.md` closes the gap
-  (a card is born by clicking the dashed Untitled slot at its lane × stage
-  intersection and giving it a title — there are no add/remove-card
-  controls; stages and lanes make slots; empty slots are the work list and
-  the preview/export gate), with `docs/AUTHORING.md` cross-linking the
-  format-level rule. The Build canvas's always-visible toolbar hint names
-  the creation affordance directly ("dashed slots create") instead of
-  leaving the only hint to the gate banner that shows while slots remain
-  unfilled.
+## [0.2.0] — 2026-10-15
+
+The canvas-feel and card-ownership pass: the wheel zoom becomes deliberate
+(the owner tested it live), the quick start guide lands, the Card Inspector
+carries only card-level edits, and every retired release binary now archives.
 
 ### Editor — canvas behavior
 
@@ -39,16 +34,35 @@ until 1.0.0 (document-format + PIN-integration stability).
   double-click ±0.2 (was 0.4) — and the % readout now tracks the library's
   per-frame `onTransform` callbacks, so the live number never drifts from
   the canvas.
+
+### Editor — the Card Inspector is card-only
+
+- The lane-interpretation field that rode in the Card Inspector is removed —
+  a lane-level edit does not belong in a card-level drawer (the owner's
+  catch). The interpretation's single editable home is the Architect panel's
+  lane editor, where it already lived; the hook's one-purpose
+  `setInterpretation` op leaves the surface with it. The exported artifact's
+  reader drawer keeps showing the lane interpretation as before.
+- A regression spec pins the contract: no lane-level control ever rides in
+  the card drawer.
+
+### Documentation
+
 - The quick start guide (`docs/QUICK_START.md`) is the short path from
   install to a first export — three boot doors, the two-minute recipe
   (shape stages → shape lanes → fill dashed slots → preview → export),
   the born-from-slots model, and the preview gate; linked from the README's
   docs table and the top of the user guide.
-- The Card Inspector is card-only: the lane-interpretation field that rode
-  in it was removed — a lane-level edit does not belong in a card-level
-  drawer (the owner's catch). The interpretation's single editable home is
-  the Architect panel's lane editor, where it already lived; the exported
-  artifact's reader drawer keeps showing the lane interpretation as before.
+- The card model is stated end to end in the user guide: a new
+  "Cards — born from slots" section in `docs/EDITOR.md` closes the gap
+  (a card is born by clicking the dashed Untitled slot at its lane × stage
+  intersection and giving it a title — there are no add/remove-card
+  controls; stages and lanes make slots; empty slots are the work list and
+  the preview/export gate), with `docs/AUTHORING.md` cross-linking the
+  format-level rule. The Build canvas's always-visible toolbar hint names
+  the creation affordance directly ("dashed slots create") instead of
+  leaving the only hint to the gate banner that shows while slots remain
+  unfilled.
 
 ### Release discipline — tooling + docs
 
@@ -58,9 +72,10 @@ until 1.0.0 (document-format + PIN-integration stability).
   the move (tracked exe/rpm leave the index with it); the checksum manifest
   stays archive-free by construction; the retrieval-and-verification
   playbook lives in `releases/README.md`. The 0.1.0 retired set landed there
-  today: the exe and rpm recovered byte-exact from git history, the
-  container archive re-saved from the surviving `phoenix-tekton:0.1.0`
-  image (the 0.1.0 AppImage predates the policy — see the README note).
+  when the policy landed: the exe and rpm recovered byte-exact from git
+  history, the container archive re-saved from the surviving
+  `phoenix-tekton:0.1.0` image (the 0.1.0 AppImage predates the policy — see
+  the README note).
 
 ## [0.1.1] — 2026-10-15
 

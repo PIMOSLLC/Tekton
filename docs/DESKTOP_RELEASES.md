@@ -64,7 +64,7 @@ harmless noise from the msvcrt static libs).
 
 ```sh
 npm run verify:win-exe                              # the target-dir exe
-npm run verify:win-exe releases/phoenix-tekton_0.1.1_x64.exe   # any staged/downloaded copy
+npm run verify:win-exe releases/phoenix-tekton_0.2.0_x64.exe   # any staged/downloaded copy
 ```
 
 `scripts/verify-windows-exe.sh [exe-path] [dist-dir]` asserts that **every
@@ -78,7 +78,7 @@ already embed the frontend; the gate exists for the cross-compiled exe.
 
 ```sh
 cp -f <target-dir>/x86_64-pc-windows-msvc/release/phoenix-tekton.exe \
-      releases/phoenix-tekton_0.1.1_x64.exe
+      releases/phoenix-tekton_0.2.0_x64.exe
 (cd releases && sha256sum *.exe *.AppImage *.rpm > SHA256SUMS)
 ```
 
