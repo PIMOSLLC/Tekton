@@ -200,7 +200,7 @@ dependencies = [
 
 [[package]]
 name = "blueprint-core"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -209,7 +209,7 @@ dependencies = [
 
 [[package]]
 name = "blueprint-wasm"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "blueprint-core",
  "serde_json",
@@ -2325,7 +2325,7 @@ dependencies = [
 
 [[package]]
 name = "phoenix-tekton"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "tauri",
  "tauri-build",
@@ -3395,7 +3395,7 @@ dependencies = [
 
 [[package]]
 name = "tekton-cli"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "blueprint-core",
  "clap",

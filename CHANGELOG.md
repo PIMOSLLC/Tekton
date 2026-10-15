@@ -13,7 +13,13 @@ until 1.0.0 (document-format + PIN-integration stability).
 
 Nothing queued yet.
 
-### Editor — the authored handoff (document-model arc → next pass: 0.3.0)
+## [0.3.0] — 2026-10-15
+
+The card-accountability pass: the handoff becomes authorable (a document-
+format change — hence the minor-major), the blueprint's name follows its
+title, and the status footer reads calm at every width.
+
+### Engine + editor — the authored handoff (document-model arc)
 
 - The drawer's HANDOFF is authorable now — the accountability line was a
   hardcoded template (the only drawer text nothing could write). Each card
@@ -29,7 +35,7 @@ Nothing queued yet.
   longer renders its "Service design interpretation" heading with an empty
   paragraph (the headed nothing in the owner's screenshot); the starter
   teaching template gains one authored-handoff example (YAML + JSON
-  parity).
+  parity). The wasm bindings rebuilt with the engine.
 
 ### Editor — the status footer stacks, never jumbles
 
