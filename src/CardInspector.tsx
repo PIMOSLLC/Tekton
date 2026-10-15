@@ -8,7 +8,7 @@ export interface CardInspectorProps {
   lane: BlueprintLane | null;
   stageName: string;
   card: BlueprintCard | null;
-  onCardChange(field: 'title' | 'blurb', value: string): void;
+  onCardChange(field: 'title' | 'blurb' | 'handoff', value: string): void;
   onClose(): void;
 }
 
@@ -83,6 +83,21 @@ export function CardInspector(props: CardInspectorProps) {
               value={card.blurb}
               aria-label="Card blurb"
               onChange={(e) => props.onCardChange('blurb', e.target.value)}
+            />
+          </label>
+          <label className="tk-field">
+            <span>Handoff</span>
+            <span className="tk-field-help">
+              The card&apos;s accountability line into the next stage, in your voice. Empty = the
+              engine&apos;s generated line.
+            </span>
+            <textarea
+              rows={2}
+              value={card.handoff ?? ''}
+              placeholder="Moves to prepare with accountable evidence and status."
+              data-testid="card-handoff"
+              aria-label="Card handoff"
+              onChange={(e) => props.onCardChange('handoff', e.target.value)}
             />
           </label>
         </div>

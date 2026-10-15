@@ -493,9 +493,16 @@ export function useBlueprintDocument(initialYaml: string, options?: UseBlueprint
   );
 
   const setCard = useCallback(
-    (lane: number, stage: number, field: 'title' | 'blurb', value: string) =>
+    (lane: number, stage: number, field: 'title' | 'blurb' | 'handoff', value: string) =>
       updateDoc((d) => {
-        d.lanes[lane].cards[stage][field] = value;
+        const card = d.lanes[lane].cards[stage];
+        if (field === 'handoff') {
+          // Empty → absent: the artifact's generated handoff template takes
+          // over (the authored override only exists when it has a voice).
+          card.handoff = value.trim() ? value : undefined;
+        } else {
+          card[field] = value;
+        }
       }),
     [updateDoc],
   );

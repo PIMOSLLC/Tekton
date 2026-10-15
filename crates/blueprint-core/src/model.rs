@@ -134,6 +134,12 @@ impl Lane {
 pub struct Card {
     pub title: String,
     pub blurb: String,
+    /// The authored HANDOFF — the card's accountability line into the next
+    /// stage, in the author's voice. Optional: the artifact's drawer falls
+    /// back to the engine's generated line ("Moves to {next stage} …")
+    /// when absent, so a half-authored blueprint never ships without one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub handoff: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

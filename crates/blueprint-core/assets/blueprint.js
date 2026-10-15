@@ -44,17 +44,27 @@
       var lane = (data.lanes || {})[b.dataset.lane] || {};
       var stageIndex = parseInt(b.dataset.stage, 10);
       var stage = (data.stages || [])[stageIndex] || {};
-      var handoff = stageIndex < (data.stages || []).length - 1
-        ? 'Moves to ' + String((data.stages[stageIndex + 1] || {}).name || '').toLowerCase() +
-          ' with accountable evidence and status.'
-        : 'Feeds the next observation and prioritization cycle.';
+      // Handoff: the author's line when the card carries one; otherwise the
+      // generated template — every card in every half-authored blueprint
+      // always reads an accountability line into the next stage.
+      var handoff = b.dataset.handoff
+        ? b.dataset.handoff
+        : stageIndex < (data.stages || []).length - 1
+          ? 'Moves to ' + String((data.stages[stageIndex + 1] || {}).name || '').toLowerCase() +
+            ' with accountable evidence and status.'
+          : 'Feeds the next observation and prioritization cycle.';
+
+      var interpretationHtml =
+        lane.interpretation
+          ? '<h4>Service design interpretation</h4>' +
+            '<p>' + esc(lane.interpretation) + '</p>'
+          : ''; // a lane with no authored interpretation gets NO empty headed section
 
       drawerBody.innerHTML =
         '<span class="bp-pill">' + esc(lane.name) + ' \u00B7 ' + esc(stage.name) + '</span>' +
         '<h3>' + esc(b.dataset.title) + '</h3>' +
         '<p>' + esc(b.dataset.blurb) + '</p>' +
-        '<h4>Service design interpretation</h4>' +
-        '<p>' + esc(lane.interpretation) + '</p>' +
+        interpretationHtml +
         '<h4>Handoff</h4>' +
         '<p>' + esc(handoff) + '</p>';
 

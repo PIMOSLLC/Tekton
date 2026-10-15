@@ -27,11 +27,15 @@ describe('CardInspector', () => {
     // so the accessible read is the label's whole content)…
     expect(screen.getByLabelText(/^Card title/)).toBeDefined();
     expect(screen.getByLabelText(/^Card blurb/)).toBeDefined();
+    // The handoff rides the LEVEL IT BELONGS to (the card) — the author's
+    // accountability line, with the engine's generated line as fallback.
+    expect(screen.getByLabelText(/^Card handoff/)).toBeDefined();
+    expect(String((screen.getByTestId('card-handoff') as HTMLTextAreaElement).rows)).toBe('2');
     // …and nothing lane-level: the interpretation edits in the Architect's
     // lane editor, never duplicated inside a card-level drawer (the owner's
     // catch: the field made the drawer claim lane scope it does not have).
     expect(screen.queryByLabelText(/Lane interpretation/)).toBeNull();
-    expect(document.querySelectorAll('.tk-inspector-body textarea')).toHaveLength(1);
+    expect(document.querySelectorAll('.tk-inspector-body textarea')).toHaveLength(2);
     expect(screen.getByText('Edit this card — the title and its supporting line.')).toBeDefined();
   });
 });

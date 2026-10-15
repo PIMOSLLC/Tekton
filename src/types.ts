@@ -58,6 +58,10 @@ export interface BlueprintStage {
 export interface BlueprintCard {
   title: string;
   blurb: string;
+  /** The authored handoff line — the card's move into the next stage, in
+   * the author's voice. Empty/absent = the artifact's generated template
+   * (every card always reads an accountability line in the drawer). */
+  handoff?: string;
 }
 
 export interface BlueprintLane {

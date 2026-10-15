@@ -44,6 +44,22 @@ describe('useBlueprintDocument lifecycle', () => {
     expect(result.current.dirty).toBe(false);
   });
 
+  it('the handoff edits AT CARD LEVEL — an authored voice overrides; empty clears to the template', async () => {
+    const { result } = await bootEditor();
+    expect(result.current.doc?.lanes[0]?.cards[0]?.handoff).toBeUndefined();
+    await act(async () => {
+      result.current.setCard(0, 0, 'handoff', 'Definition only lands with discovery attached');
+    });
+    expect(result.current.doc?.lanes[0]?.cards[0]?.handoff).toBe('Definition only lands with discovery attached');
+    expect(result.current.dirty).toBe(true);
+    await act(async () => {
+      result.current.setCard(0, 0, 'handoff', '   ');
+    });
+    // Empty = ABSENT: the artifact's generated handoff (the template) takes
+    // over — the override exists only while it has a voice.
+    expect(result.current.doc?.lanes[0]?.cards[0]?.handoff).toBeUndefined();
+  });
+
   it('newDocument swaps in the starter document as a clean slate', async () => {
     const { result } = await bootEditor({ bootClean: false });
     expect(result.current.dirty).toBe(true);

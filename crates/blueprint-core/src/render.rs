@@ -315,13 +315,23 @@ fn card_markup(
     stage_name: &str,
     card: &crate::model::Card,
 ) -> String {
+    // The authored handoff rides the card's own dataset: the drawer prefers
+    // the author's line and falls back to the generated template when absent
+    // (the attribute ships only when authored — an unauthored card renders
+    // byte-identical to the pre-handoff renderer).
+    let handoff = card
+        .handoff
+        .as_deref()
+        .map(|h| format!(" data-handoff=\"{}\"", escape_attr(h)))
+        .unwrap_or_default();
     format!(
-        "<div class=\"bp-cell\" data-lane=\"{}\"><button class=\"bp-item\" type=\"button\" aria-expanded=\"false\" aria-controls=\"bp-drawer\" data-lane=\"{}\" data-stage=\"{}\" data-title=\"{}\" data-blurb=\"{}\"><span class=\"bp-type\">{}</span><strong>{}</strong>{}</button></div>",
+        "<div class=\"bp-cell\" data-lane=\"{}\"><button class=\"bp-item\" type=\"button\" aria-expanded=\"false\" aria-controls=\"bp-drawer\" data-lane=\"{}\" data-stage=\"{}\" data-title=\"{}\" data-blurb=\"{}\"{}><span class=\"bp-type\">{}</span><strong>{}</strong>{}</button></div>",
         escape_attr(&lane.id),
         escape_attr(&lane.id),
         stage_index,
         escape_attr(&card.title),
         escape_attr(&card.blurb),
+        handoff,
         escape_html(stage_name),
         escape_html(&card.title),
         escape_html(&card.blurb),
@@ -484,6 +494,39 @@ mod tests {
         d.theme.band_bg = "#123456".into();
         let html = render(&d, Format::Standalone).unwrap();
         assert!(html.contains("--bp-band-bg:#123456;"));
+    }
+
+    #[test]
+    fn the_authored_handoff_rides_its_card_dataset() {
+        // The owner's contract: the handoff is the CARD's accountability line
+        // in the author's voice — the artifact's drawer prefers it, the
+        // generated template stays the fallback for unauthored cards.
+        let mut d = doc();
+        d.lanes[0].cards[0].handoff = Some("Hands off to the agent queue".into());
+        let html = render(&d, Format::Standalone).unwrap();
+        assert!(
+            html.contains("data-handoff=\"Hands off to the agent queue\""),
+            "the authored handoff must ride the card's dataset: {html}"
+        );
+        // Exactly one authored line: the other 39 cards stay on the template.
+        assert_eq!(html.matches("data-handoff").count(), 1);
+    }
+
+    #[test]
+    fn a_handoff_less_document_renders_without_the_attribute() {
+        // The template fallback lives in the drawer's JS — the renderer emits
+        // no data-handoff for unauthored cards (byte-identical to before).
+        let html = render(&doc(), Format::Standalone).unwrap();
+        assert!(!html.contains("data-handoff"));
+    }
+
+    #[test]
+    fn handoff_text_is_escaped_like_every_card_field() {
+        let mut d = doc();
+        d.lanes[0].cards[0].handoff = Some("<script>grab(1)</script>".into());
+        let html = render(&d, Format::Standalone).unwrap();
+        assert!(!html.contains("<script>grab"), "handoff must be escaped");
+        assert!(html.contains("data-handoff=\"&lt;script&gt;grab(1)&lt;/script&gt;\""));
     }
 
     #[test]

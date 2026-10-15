@@ -312,6 +312,7 @@ mod tests {
                 cards: vec![Card {
                     title: "Browse".into(),
                     blurb: "Looks around".into(),
+                    handoff: None,
                 }],
             }],
             note: Some(Note {

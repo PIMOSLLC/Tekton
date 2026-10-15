@@ -18,6 +18,11 @@
 # Lane `kind` is one of: customer | frontstage | agents | backstage | systems |
 # data | governance | outcome. Kind drives the lane's default card tint; an
 # explicit `tint: "#rrggbb"` overrides it.
+#
+# Each card may carry an optional `handoff:` line in your own voice — the
+# card's accountability move into the next stage. Leave it off and the
+# artifact's drawer writes the engine's generated line for that card;
+# author it when the move needs the real accountability named.
 # ─────────────────────────────────────────────────────────────────────────────
 meta:
   eyebrow: "Service blueprint · my first draft"
@@ -79,7 +84,7 @@ lanes:
       lane — intent, authority, and hand-offs.
     cards:
       - { title: "Backstage work at discovery", blurb: "Who acts and why" }
-      - { title: "Backstage work at definition", blurb: "Who acts and why" }
+      - { title: "Backstage work at definition", blurb: "Who acts and why", handoff: "Definition lands only with discovery's evidence attached" }
       - { title: "Backstage work at delivery", blurb: "Who acts and why" }
 
   - id: systems

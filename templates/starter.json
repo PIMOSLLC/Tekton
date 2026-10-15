@@ -45,7 +45,7 @@
       "interpretation": "Replace this: what a reader must understand about the human work in this lane — intent, authority, and hand-offs.",
       "cards": [
         { "title": "Backstage work at discovery", "blurb": "Who acts and why" },
-        { "title": "Backstage work at definition", "blurb": "Who acts and why" },
+        { "title": "Backstage work at definition", "blurb": "Who acts and why", "handoff": "Definition lands only with discovery's evidence attached" },
         { "title": "Backstage work at delivery", "blurb": "Who acts and why" }
       ]
     },

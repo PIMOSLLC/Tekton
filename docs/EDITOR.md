@@ -70,14 +70,24 @@ controls — cards are not entries in a list; they are born by filling a slot.
 - **To create a card:** on the Build canvas, click the dashed cell at the
   lane row × stage column you want — it reads **"Untitled card"**. The
   Card Inspector opens; type the title (required — `blurb` is optional) and
-  the slot *becomes* the card.
+  the slot *becomes* the card. The inspector is card-level: title, blurb,
+  and the optional **Handoff** — the card's accountability line into the
+  next stage, in your voice. Empty handoff = the artifact's *generated*
+  line ("Moves to {next stage} with accountable evidence and status.");
+  the generated template always covers an unauthored blueprint.
+- **The live view's drawer texts:** "Service design interpretation" is the
+  **lane's** (the Architect's lane editor — it never rides a card-level
+  drawer); "Handoff" is **the card's** optional authored line (empty = the
+  generated template). A lane with no interpretation shows no
+  interpretation section in the artifact's drawer at all.
 - **Empty slots are the work list, not breakage.** The Structure light
   counts them ("N to fill"); the preview and Export unlock only when every
   slot has a title. The gate banner is the to-do list — and "fix →" in the
   lint terminal navigates straight to the flagged slot.
 - **The same rule in the YAML panel:** each lane's `cards` array, one entry
-  per stage, in stage order — [docs/AUTHORING.md](AUTHORING.md) is the
-  format-level spec (card = the lane×stage intersection).
+  per stage, in stage order (each card may carry `handoff:`) —
+  [docs/AUTHORING.md](AUTHORING.md) is the format-level spec (card = the
+  lane×stage intersection).
 
 ## Theming
 

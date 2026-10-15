@@ -33,9 +33,10 @@ real blueprint you can inspect before authoring anything. To start fresh:
    tint; see [AUTHORING.md](AUTHORING.md)).
 2. **Create the cards** — switch to **Build**: every lane row × stage column
    shows a cell. Click a dashed **"Untitled card"** where the lane meets the
-   stage you mean; the Card Inspector opens; type the **title** (+ blurb).
-   There is no add-card control — cards are born from slots (the full
-   model: *Cards — born from slots* in [EDITOR.md](EDITOR.md)).
+   stage you mean; the Card Inspector opens; type the **title** (+ blurb,
+   and optionally the card's **Handoff** line — in your voice; empty = the
+   engine's generated line). There is no add-card control — cards are born
+   from slots (the full model: *Cards — born from slots* in [EDITOR.md](EDITOR.md)).
 3. **Preview** — the toolbar's Preview renders the real engine output; the
    focus-layer dropdown, "Show all stages", and the card drawer work there.
 4. **Mind the gate** — the Preview unlocks only when every slot has a

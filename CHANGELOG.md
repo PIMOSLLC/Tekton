@@ -13,6 +13,24 @@ until 1.0.0 (document-format + PIN-integration stability).
 
 Nothing queued yet.
 
+### Editor — the authored handoff (document-model arc → next pass: 0.3.0)
+
+- The drawer's HANDOFF is authorable now — the accountability line was a
+  hardcoded template (the only drawer text nothing could write). Each card
+  carries an optional `handoff:` (the author's voice, entered in the Card
+  Inspector beside title and blurb — the level it belongs to); the
+  artifact's drawer uses the authored line when present and the generated
+  template when not, so even a half-authored blueprint always reads an
+  accountability line into the next stage. The document format gains the
+  optional field (existing documents load byte-identical; the strict model
+  means older builds refuse a handoff document — hence a minor-major
+  release: 0.3.0).
+- Two artifact defects fixed with it: an empty lane interpretation no
+  longer renders its "Service design interpretation" heading with an empty
+  paragraph (the headed nothing in the owner's screenshot); the starter
+  teaching template gains one authored-handoff example (YAML + JSON
+  parity).
+
 ### Editor — the status footer stacks, never jumbles
 
 - The footer's identity holds at width: the brand reads ONE line (nowrap +
