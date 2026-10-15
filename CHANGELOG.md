@@ -24,6 +24,27 @@ until 1.0.0 (document-format + PIN-integration stability).
   leaving the only hint to the gate banner that shows while slots remain
   unfilled.
 
+### Editor — canvas behavior
+
+- Wheel zoom is deterministic (owner-reported: the wheel jumped to the
+  zoom ceiling in one flick). The library's wheel channel couples the step
+  to the raw delta magnitude — a Chrome notch's ≈±100px delta × the 0.15
+  step asked for +15 per tick — and it is replaced by a quantized wheel
+  channel that owns the canvas: micro-ripples bank into a residue; each
+  ~100px crossing fires exactly one multiplicative step (×1.07,
+  cursor-anchored, clamped 15%–300%, 100ms easeOut / 0ms under
+  `prefers-reduced-motion`; Firefox line-mode deltas convert at the line
+  height; horizontal-dominant wheel swipes never masquerade as zoom). The
+  zoom family aligns — buttons ±0.15 (was the library's +0.5 default),
+  double-click ±0.2 (was 0.4) — and the % readout now tracks the library's
+  per-frame `onTransform` callbacks, so the live number never drifts from
+  the canvas.
+- The quick start guide (`docs/QUICK_START.md`) is the short path from
+  install to a first export — three boot doors, the two-minute recipe
+  (shape stages → shape lanes → fill dashed slots → preview → export),
+  the born-from-slots model, and the preview gate; linked from the README's
+  docs table and the top of the user guide.
+
 ### Release discipline — tooling + docs
 
 - Retired release binaries archive instead of dying: every pass MOVES the

@@ -1,5 +1,8 @@
 # The Tekton editor — user guide
 
+New here? **[QUICK_START.md](QUICK_START.md)** is the ten-minute path from
+install to a first export; this guide is the full reference.
+
 The studio shell (from a browser at the dev server's address, or a desktop
 installer) is organized as one persistent workspace:
 
@@ -104,6 +107,10 @@ lane tint are **navigable**: "fix →" opens that lane's tint editor.
   content-fit) with a fit-on-init option; zoom controls live bottom-center in
   the workspace, the % readout on a tabular-numeric rhythm so live zoom
   changes don't shake the layout.
+- **Deterministic zoom** — one wheel notch ≈ **7%** (cursor-anchored; scroll
+  ripples bank until a notch's worth accrues, so trackpads stay precise),
+  button presses 15%, double-click 20% — one family of deliberate amounts,
+  clamped 15%–300%, never momentum-tossed by the raw delta.
 - **Toolbar** — the Ship zone in three grouped clusters (view state, canvas
   tools, export pair). Export writes the **pair**: `slug-standalone.html`
   (the self-contained interactive artifact) + the data layer

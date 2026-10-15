@@ -86,6 +86,7 @@ Themes may be omitted entirely (you get the default palette — still linted), t
 
 | Document | Contents |
 |---|---|
+| [**docs/QUICK_START.md**](docs/QUICK_START.md) | The short path: boot the studio, shape stages and lanes, fill card slots, preview, export — the first blueprint in ten minutes |
 | [**docs/AUTHORING.md**](docs/AUTHORING.md) | The complete YAML authoring format — every field, the lane kinds, the theme token inventory, the engine's structural rules |
 | [**docs/EDITOR.md**](docs/EDITOR.md) | The studio user guide — document lifecycle, panels, theme editor, contrast-lint workflows, canvas controls |
 | [**docs/CLI.md**](docs/CLI.md) | The `tekton` CLI — commands, flags, output naming, exit behavior, container usage |
