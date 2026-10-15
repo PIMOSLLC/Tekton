@@ -68,6 +68,12 @@ note:
 `blurb` may be empty. That's the whole card: the depth lives in lanes,
 dividers, and interpretive text, not in card bloat.
 
+A card exists at every lane×stage intersection as an **empty slot**; in the
+editor the same rule reads as a gesture — click the dashed *Untitled* slot at
+the lane row × stage column and give it a title (cards are born from slots,
+never added to a list: see the "Cards — born from slots" section in
+[docs/EDITOR.md](EDITOR.md)).
+
 ### Lane
 
 | Field | Meaning |

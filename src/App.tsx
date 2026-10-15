@@ -697,7 +697,7 @@ export function App() {
             </button>
           </div>
           <span className="ml-auto text-[10px] text-gray-500 font-mono">
-            {view === 'build' ? 'click a card to edit · Esc closes' : 'live engine render'}
+            {view === 'build' ? 'click a card to edit · dashed slots create · Esc closes' : 'live engine render'}
           </span>
         </div>
 

@@ -30,7 +30,7 @@ canvas is always visible while you shape the document.
 | Action | Behavior |
 |---|---|
 | **New** | Opens the starter picker: **Starter** (the commented teaching document) or the **agentic-AI e-commerce example** — or **from scratch** via the setup wizard |
-| **Setup wizard** | Four steps — basics (eyebrow/title/intro), stages, lanes (the five classic defaults pre-filled), cards land intentionally empty: the dashed amber slots *are* your work list |
+| **Setup wizard** | Four steps — basics (eyebrow/title/intro), stages, lanes (the five classic defaults pre-filled), cards land intentionally empty: the dashed amber slots *are* your work list — click one to create its card |
 | **Open** | `.yaml` (canonical) or `.json` — auto-detected; confirmed when the document is dirty |
 | **Save / Save JSON** | Writes `slug.yaml` or `slug.json` (the slug derived from `meta.title`) |
 | **Dirty tracking** | Confirm-on-New/Open, `beforeunload` guard, and localStorage autosave; a restore boots **dirty** — restored work is unsaved work, kept honest by the chip |
@@ -51,6 +51,27 @@ canvas is always visible while you shape the document.
 wide pane, not a peek). The YAML is live truth: edit, and the whole studio
 reflects it. Hand-authored documents from `templates/starter.yaml` land here
 verbatim.
+
+## Cards — born from slots
+
+The document is a closed **lane × stage matrix**: each lane carries exactly
+one card slot per stage column. There are no "add card" or "delete card"
+controls — cards are not entries in a list; they are born by filling a slot.
+
+- **Slots come from the shape.** Adding a stage gives *every* lane a new
+  slot; adding a lane gives a full row of slots; the setup wizard pre-shapes
+  the whole matrix from your stage/lane answers and leaves it empty.
+- **To create a card:** on the Build canvas, click the dashed cell at the
+  lane row × stage column you want — it reads **"Untitled card"**. The
+  Card Inspector opens; type the title (required — `blurb` is optional) and
+  the slot *becomes* the card.
+- **Empty slots are the work list, not breakage.** The Structure light
+  counts them ("N to fill"); the preview and Export unlock only when every
+  slot has a title. The gate banner is the to-do list — and "fix →" in the
+  lint terminal navigates straight to the flagged slot.
+- **The same rule in the YAML panel:** each lane's `cards` array, one entry
+  per stage, in stage order — [docs/AUTHORING.md](AUTHORING.md) is the
+  format-level spec (card = the lane×stage intersection).
 
 ## Theming
 

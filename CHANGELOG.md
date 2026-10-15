@@ -11,6 +11,19 @@ with its version and date. Docs/tests/tooling-only moves = patch; every
 user-visible arc = minor; breaking document/export contracts = minor-major
 until 1.0.0 (document-format + PIN-integration stability).
 
+### Editor — documentation + discoverability
+
+- The card model is now stated end to end in the user guide: a new
+  "Cards — born from slots" section in `docs/EDITOR.md` closes the gap
+  (a card is born by clicking the dashed Untitled slot at its lane × stage
+  intersection and giving it a title — there are no add/remove-card
+  controls; stages and lanes make slots; empty slots are the work list and
+  the preview/export gate), with `docs/AUTHORING.md` cross-linking the
+  format-level rule. The Build canvas's always-visible toolbar hint names
+  the creation affordance directly ("dashed slots create") instead of
+  leaving the only hint to the gate banner that shows while slots remain
+  unfilled.
+
 ### Release discipline — tooling + docs
 
 - Retired release binaries archive instead of dying: every pass MOVES the
