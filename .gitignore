@@ -21,3 +21,7 @@ src-tauri/gen/
 !/releases/README.md
 !/releases/*.exe
 !/releases/*.rpm
+# The archive: retired release binaries stay ON THIS BOX as resources (owner
+# direction 2026-10-15) — release.sh moves superseded artifacts here and
+# never deletes them; the folder stays local (no remote push, for now).
+/releases/archive/

@@ -11,6 +11,18 @@ with its version and date. Docs/tests/tooling-only moves = patch; every
 user-visible arc = minor; breaking document/export contracts = minor-major
 until 1.0.0 (document-format + PIN-integration stability).
 
+### Release discipline — tooling + docs
+
+- Retired release binaries archive instead of dying: every pass MOVES the
+  superseded staged set into `releases/archive/` (a local-only, gitignored
+  resources folder for now — owner direction). `scripts/release.sh` performs
+  the move (tracked exe/rpm leave the index with it); the checksum manifest
+  stays archive-free by construction; the retrieval-and-verification
+  playbook lives in `releases/README.md`. The 0.1.0 retired set landed there
+  today: the exe and rpm recovered byte-exact from git history, the
+  container archive re-saved from the surviving `phoenix-tekton:0.1.0`
+  image (the 0.1.0 AppImage predates the policy — see the README note).
+
 ## [0.1.1] — 2026-10-15
 
 The packaged preview pass — one bug, every desktop surface.

@@ -42,6 +42,30 @@ check_version src-tauri/Cargo.toml 'version = '
 check_version src-tauri/tauri.conf.json '"version"'
 check_version package.json '"version"'
 
+# ── 0b. Retirement — superseded binaries ARCHIVE here, they never vanish ─────
+# Owner direction (2026-10-15): a new pass retires the previous staged set by
+# MOVING it into releases/archive/ (a local-only, gitignored folder — kept as
+# resources, not pushed for now). Tracked binaries (exe/rpm) leave the index
+# with the move; the big untracked ones (AppImage/oci.tar) just travel.
+# The archive never enters SHA256SUMS — the manifest globs run one level up.
+say "retiring previous staged binaries into releases/archive/"
+for f in \
+  releases/phoenix-tekton_*_x64.exe \
+  releases/phoenix-tekton_*.AppImage \
+  releases/phoenix-tekton-*.x86_64.rpm \
+  releases/phoenix-tekton_*_oci.tar
+do
+  [[ -e "$f" ]] || continue
+  case "$f" in
+    *phoenix-tekton_${VER}_*|*phoenix-tekton-${VER}-*) continue ;;
+  esac
+  mv "$f" releases/archive/
+  if git ls-files --error-unmatch "$f" >/dev/null 2>&1; then
+    git rm -q --cached "$f"
+  fi
+  echo "  archived: $(basename "$f")"
+done
+
 # ── 1. The QA battery — a failing gate aborts everything ─────────────────────
 say "engine QA"
 cargo fmt --check

@@ -30,6 +30,23 @@ podman run --rm -v ./out:/out -v .:/fixtures:Z phoenix-tekton:0.1.1 \
 #   → a self-contained interactive blueprint HTML in ./out
 ```
 
+- **The archive** — `releases/archive/` (local-only, gitignored for now): every
+  release pass moves its superseded predecessor here — retired binaries stay as
+  resources, they are never simply renamed or deleted (`scripts/release.sh`
+  does the move, tracked exe/rpm leave the repository index with it). The
+  archive folder does not ride the GitHub repository; the manifest excludes it
+  by construction. Provenance for the current contents:
+
+  | File | Origin |
+  |---|---|
+  | `phoenix-tekton_0.1.0_x64.exe` | recovered byte-exact from git history (`8a11e703…`, matches the shipped `SHA256SUMS`) |
+  | `phoenix-tekton-0.1.0-1.x86_64.rpm` | recovered byte-exact from git history (`47250697…`, matches the shipped `SHA256SUMS`) |
+  | `phoenix-tekton_0.1.0_oci.tar` | re-saved from the surviving `phoenix-tekton:0.1.0` image (same container; the tar bytes differ from the shipped archive) |
+  | `phoenix-tekton_0.1.0_amd64.AppImage` | **not preserved** — the copy was deleted before this policy existed (the build dir is overwritten per pass); rebuild from the tree of `df8cbab` if a copy is ever needed |
+
+  Any archived exe re-verifies with the same gate:
+  `npm run verify:win-exe releases/archive/phoenix-tekton_0.1.0_x64.exe`.
+
 ## Building any of it yourself
 
 - The studio + CLI + wasm: `podman build -t phoenix-tekton .` (the repo's own `Dockerfile`)

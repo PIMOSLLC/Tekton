@@ -13,6 +13,21 @@ and this log tracks everything that moves to either remote. The split mirror:
 Entries are listed newest first and appended over time — never rewritten.
 This log publishes with the repository, so entries stay host-neutral.
 
+## 2026-10-15 — the archive doctrine: retired binaries are kept, not deleted
+
+- `releases/archive/` now exists as the local-only home for every superseded
+  staged set (owner direction: old executables are RESOURCES — always
+  archived, never just renamed or deleted; a new pass moves the previous
+  set mechanically via `release.sh`'s retirement step, and the folder stays
+  out of both remotes — gitignored for now).
+- The 0.1.0 set, retired at today's pass without an archive, was recovered
+  back into it: the exe (`8a11e703…`) and rpm (`47250697…`) byte-exact from
+  git history, the container archive re-saved from the surviving
+  `phoenix-tekton:0.1.0` image; the 0.1.0 AppImage could not be preserved
+  (deleted ahead of the policy; the per-pass build path overwrites its
+  ancestors) — the retrieval playbook and this gap carry an owner-visible
+  note in `releases/README.md`.
+
 ## 2026-10-15 — the v0.1.1 release pass (the packaged preview fix)
 
 - `scripts/release.sh 0.1.1` completed green end-to-end (exit 0): preflight
