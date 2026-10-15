@@ -540,7 +540,7 @@ export function App() {
         ledPulse: engineReady,
         value: engineReady ? 'WASM' : bp.renderError ? 'Error' : 'Loading',
         tooltip: [
-          'blueprint-core v0.1.0 · wasm32 · in-browser',
+          'blueprint-core v0.1.1 · wasm32 · in-browser',
           'render + lint + validate, single 4.4KB module',
           bp.renderError ? 'render gate blocked — see the canvas' : 'pipeline: serialize → render/lint/validate',
         ],
@@ -935,7 +935,7 @@ export function App() {
         {/* status footer — the PIN pattern, taller (44px): ALL status lights live
             here, including the engine connection light (moved out of the nav) */}
         <StatusFooter
-          brand="Phoenix Tekton · 2026 · Build 0.1.0"
+          brand="Phoenix Tekton · 2026 · Build 0.1.1"
           context={bp.doc?.meta.eyebrow ?? '—'}
           items={statusItems}
         />
