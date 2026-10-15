@@ -11,6 +11,20 @@ with its version and date. Docs/tests/tooling-only moves = patch; every
 user-visible arc = minor; breaking document/export contracts = minor-major
 until 1.0.0 (document-format + PIN-integration stability).
 
+### Fixed — desktop
+
+- The packaged preview is interactive again (exe · appimage · rpm): the
+  artifact's per-document interaction script was refused inside the preview
+  frame because an srcdoc iframe inherits the production CSP, whose fixed
+  hash list can never cover a per-document script — the exe shipped in
+  0.1.0 rendered a dead-static preview (the owner caught it on the Focus
+  layer dropdown). The preview now travels through a `blueprint-preview://`
+  custom-protocol route in the desktop shell (`set_preview_html` IPC, no
+  CSP on the response); the browser and web hosts keep the srcDoc path,
+  the app CSP stays strict, and the platform seam
+  (`src/platform/previewSource.ts`) keeps host knowledge in the platform
+  layer only.
+
 ## [0.1.0] — 2026-10-12
 
 First public release: the blueprint engine, the visual editor, the CLI, and

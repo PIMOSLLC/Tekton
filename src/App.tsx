@@ -29,6 +29,11 @@ import {
   browserFileStore,
   localStorageAutosave,
 } from './platform/persistence';
+import {
+  clearPreview,
+  exportsPreviewHtml,
+  pushPreview,
+} from './platform/previewSource';
 import { loadAppProfile, saveAppProfile, type AppProfile } from './platform/appProfile';
 import { BuildCanvas } from './BuildCanvas';
 import { SetupWizardModal } from './SetupWizardModal';
@@ -152,6 +157,27 @@ export function App() {
   const [inviteOpen, setInviteOpen] = useState(() => profile.showSetupOnStart);
   /** New-panel flow: template picker first, or the guided wizard. */
   const [wizardOpen, setWizardOpen] = useState(false);
+
+  /** Desktop preview route (blueprint-preview:// — a response the app CSP
+   * cannot reach): the artifact's per-document inline script is refused in an
+   * srcdoc frame there; the route keeps the interactions alive. Browser hosts
+   * return null from the seam and keep the srcDoc path untouched. */
+  const bridgeHost = exportsPreviewHtml();
+  const [previewSrc, setPreviewSrc] = useState<string | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    if (!bp.html) {
+      setPreviewSrc(null);
+      void clearPreview();
+      return undefined;
+    }
+    void pushPreview(bp.html).then((url) => {
+      if (!cancelled) setPreviewSrc(url);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [bp.html]);
 
   const resizePanel = useCallback((section: NonNullSection, width: number) => {
     // Store through the profile (single home for user prefs); clamp first.
@@ -853,12 +879,25 @@ export function App() {
                 </div>
               )
             ) : bp.html ? (
-              <iframe
-                title="Blueprint preview"
-                className="tk-preview"
-                sandbox="allow-scripts allow-modals"
-                srcDoc={bp.html}
-              />
+              bridgeHost ? (
+                previewSrc ? (
+                  <iframe
+                    title="Blueprint preview"
+                    className="tk-preview"
+                    sandbox="allow-scripts allow-modals"
+                    src={previewSrc}
+                  />
+                ) : (
+                  <p className="tk-loading">Rendering…</p>
+                )
+              ) : (
+                <iframe
+                  title="Blueprint preview"
+                  className="tk-preview"
+                  sandbox="allow-scripts allow-modals"
+                  srcDoc={bp.html}
+                />
+              )
             ) : (
               <p className="tk-loading">Rendering…</p>
             )}
