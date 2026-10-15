@@ -13,6 +13,37 @@ and this log tracks everything that moves to either remote. The split mirror:
 Entries are listed newest first and appended over time — never rewritten.
 This log publishes with the repository, so entries stay host-neutral.
 
+## 2026-10-15 — the v0.1.1 release pass (the packaged preview fix)
+
+- `scripts/release.sh 0.1.1` completed green end-to-end (exit 0): preflight
+  (the four surfaces — Cargo.toml, src-tauri/Cargo.toml, tauri.conf.json,
+  package.json — agree on 0.1.1) → the full QA battery (engine tests, editor
+  typecheck + 144 editor specs) → the Windows exe rebuilt from the current
+  tree, staged, and re-gated (`releases/phoenix-tekton_0.1.1_x64.exe`) →
+  the runtime container tagged `0.1.1` + `latest` with CLI and editor smokes
+  ok → the devtool door image rebuilt → the release-page container archive
+  (`phoenix-tekton_0.1.1_oci.tar`) saved → `SHA256SUMS` + `RELEASES.txt`
+  regenerated → the tag `v0.1.1` anchored on both remotes.
+- The fix the release carries (scope branch `fix/exe-preview-csp-protocol`,
+  merged to `public-ready`): the packaged preview is interactive again on
+  exe · appimage · rpm — an srcdoc iframe inherited the production CSP and
+  the artifact's per-document interaction script can never match a fixed
+  hash list, so v0.1.0's packaged preview rendered dead-static (the owner
+  caught it: the Focus layer dropdown did nothing; dev, being CSP-free,
+  always worked). The preview now travels through the shell's
+  `blueprint-preview://` custom-protocol route (`set_preview_html` IPC; no
+  CSP on the response); `frame-src` alone loosened; browser + web hosts
+  keep the srcDoc path; the platform seam (`src/platform/previewSource.ts`)
+  keeps host knowledge in the platform layer (full account:
+  CHANGELOG `0.1.1`).
+- The 0.1.1 native Linux bundles staged: the rpm
+  (`phoenix-tekton-0.1.1-1.x86_64.rpm`, ~2.4 MB) and the AppImage
+  (`phoenix-tekton_0.1.1_amd64.AppImage`, ~108 MB — rides the GitHub
+  Release page); the 0.1.0 staged set retired.
+- Owner steps outstanding (no `gh` on this host): draft the GitHub Release
+  for tag `v0.1.1` attaching the exe, AppImage, and OCI archive; the mirror
+  (`main`) syncs via `scripts/publish-public.sh` when the owner chooses.
+
 ## 2026-10-13 — the release folder ships in-repo
 
 - `releases/` now publishes its small set through the gate: the verify-gated
