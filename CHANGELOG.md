@@ -44,6 +44,11 @@ until 1.0.0 (document-format + PIN-integration stability).
   (shape stages → shape lanes → fill dashed slots → preview → export),
   the born-from-slots model, and the preview gate; linked from the README's
   docs table and the top of the user guide.
+- The Card Inspector is card-only: the lane-interpretation field that rode
+  in it was removed — a lane-level edit does not belong in a card-level
+  drawer (the owner's catch). The interpretation's single editable home is
+  the Architect panel's lane editor, where it already lived; the exported
+  artifact's reader drawer keeps showing the lane interpretation as before.
 
 ### Release discipline — tooling + docs
 

@@ -9,7 +9,6 @@ export interface CardInspectorProps {
   stageName: string;
   card: BlueprintCard | null;
   onCardChange(field: 'title' | 'blurb', value: string): void;
-  onInterpretationChange(value: string): void;
   onClose(): void;
 }
 
@@ -49,7 +48,7 @@ export function CardInspector(props: CardInspectorProps) {
       <div className="tk-inspector-head">
         <div className="flex-1 min-w-0">
           <h2 className="tk-inspector-heading">Card inspector</h2>
-          <p className="tk-inspector-blurb">Edit this card — content blurb + the lane's interpretation.</p>
+          <p className="tk-inspector-blurb">Edit this card — the title and its supporting line.</p>
         </div>
         <button
           type="button"
@@ -84,16 +83,6 @@ export function CardInspector(props: CardInspectorProps) {
               value={card.blurb}
               aria-label="Card blurb"
               onChange={(e) => props.onCardChange('blurb', e.target.value)}
-            />
-          </label>
-          <label className="tk-field">
-            <span>Lane interpretation</span>
-            <span className="tk-field-help">What a reader must understand about this lane (shows in the card drawer).</span>
-            <textarea
-              rows={5}
-              value={lane.interpretation ?? ''}
-              aria-label="Lane interpretation"
-              onChange={(e) => props.onInterpretationChange(e.target.value)}
             />
           </label>
         </div>

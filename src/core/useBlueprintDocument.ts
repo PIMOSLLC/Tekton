@@ -500,14 +500,6 @@ export function useBlueprintDocument(initialYaml: string, options?: UseBlueprint
     [updateDoc],
   );
 
-  const setInterpretation = useCallback(
-    (lane: number, value: string) =>
-      updateDoc((d) => {
-        d.lanes[lane].interpretation = value;
-      }),
-    [updateDoc],
-  );
-
   // ── YAML buffer controls (the headless format's editing surface) ───────
   const onYamlFocus = useCallback(() => {
     yamlFocused.current = true;
@@ -550,7 +542,6 @@ export function useBlueprintDocument(initialYaml: string, options?: UseBlueprint
     moveLane,
     moveStat,
     setCard,
-    setInterpretation,
     setTheme,
     // guarded preset transaction (stale lane tints re-base, announced)
     presetNotice,

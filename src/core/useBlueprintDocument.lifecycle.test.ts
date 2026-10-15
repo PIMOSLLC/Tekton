@@ -216,7 +216,7 @@ describe('useBlueprintDocument reorder invariants', () => {
       for (const lane of [0, 1, 2]) {
         result.current.setLane(lane, 'name', `Lane ${lane + 1}`);
         result.current.setLane(lane, 'tint', tints[lane]);
-        result.current.setInterpretation(lane, `reading ${lane + 1}`);
+        result.current.setLane(lane, 'interpretation', `reading ${lane + 1}`);
         for (const stage of [0, 1, 2]) {
           result.current.setCard(lane, stage, 'title', `S${stage}·L${lane}`);
         }

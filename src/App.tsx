@@ -914,9 +914,6 @@ export function App() {
           onCardChange={(field, value) => {
             if (selectedCard) bp.setCard(selectedCard.lane, selectedCard.stage, field, value);
           }}
-          onInterpretationChange={(value) => {
-            if (selectedCard) bp.setInterpretation(selectedCard.lane, value);
-          }}
           onClose={() => setSelectedCard(null)}
         />
         </div>
