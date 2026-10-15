@@ -13,6 +13,36 @@ and this log tracks everything that moves to either remote. The split mirror:
 Entries are listed newest first and appended over time — never rewritten.
 This log publishes with the repository, so entries stay host-neutral.
 
+## 2026-10-15 — the v0.2.0 release pass (deterministic zoom archived in, card inspector card-only)
+
+- `scripts/release.sh 0.2.0` completed green end-to-end (exit 0): preflight
+  (the four surfaces agree on 0.2.0) → the full QA battery (engine tests,
+  editor typecheck + 151 editor specs) → the Windows exe rebuilt from the
+  current tree, staged, and re-gated (`releases/phoenix-tekton_0.2.0_x64.exe`)
+  → the runtime container tagged `0.2.0` + `latest` with CLI and editor
+  smokes ok → the devtool door image rebuilt → the release-page container
+  archive (`phoenix-tekton_0.2.0_oci.tar`) saved → `SHA256SUMS` +
+  `RELEASES.txt` regenerated → the tag `v0.2.0` anchored on both remotes.
+- The release carries (scope: the owner tested the zoom live on dev before
+  the pass): the deterministic wheel zoom — one deliberate ×1.07 cursor-
+  anchored step per ~100px of accumulated scroll (the library's delta-
+  coupled wheel channel sent one flick to the zoom ceiling), the zoom
+  family aligned (buttons ±0.15 / double-click ±0.2), the live % readout
+  on per-frame callbacks; the Card Inspector made card-only (the lane
+  interpretation field left the drawer — its home is the Architect's lane
+  editor); the quick start guide (`docs/QUICK_START.md`); the
+  "Cards — born from slots" documentation set.
+- The archive doctrine's first live pass: the 0.1.1 staged set (exe,
+  AppImage, rpm, OCI archive) moved mechanically into `releases/archive/`
+  by `release.sh`'s retire step — and the 0.1.0 AppImage reconstruction
+  ("_0.1.0_rebuilt_") completed the archive (built from the tree of
+  `df8cbab` in a worktree, moved immediately; the earlier attempt's copy
+  died to the bundler's per-run dir wipe — noted as a build-host lesson).
+- Owner steps outstanding (no `gh` on this host): draft the GitHub Release
+  for tag `v0.1.1`/`v0.2.0` pages attaching the exe/AppImage/OCI artifacts;
+  the mirror (`main`) syncs via `scripts/publish-public.sh` when the owner
+  chooses.
+
 ## 2026-10-15 — the archive doctrine: retired binaries are kept, not deleted
 
 - `releases/archive/` now exists as the local-only home for every superseded

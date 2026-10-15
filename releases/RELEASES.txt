@@ -1,3 +1,10 @@
+Build of 2026-10-15 @ 246f945 (release 0.2.0) — scripts/release.sh pass: the verify-gated
+exe rebuilt from the CURRENT tree; the version-tagged runtime container (0.2.0)
++ latest, CLI/editor smokes ok; the release-page container archive
+(phoenix-tekton_0.2.0_oci.tar — the durable artifact: podman/docker load)
+re-generated; the devtool door image rebuilt. Tag v0.2.0 anchored on both
+remotes. Full publication history: docs/PUBLICATION_LOG.md.
+
 Build of 2026-10-15 @ 2c01fc2 (release 0.1.1) — scripts/release.sh pass: the verify-gated
 exe rebuilt from the CURRENT tree; the version-tagged runtime container (0.1.1)
 + latest, CLI/editor smokes ok; the release-page container archive

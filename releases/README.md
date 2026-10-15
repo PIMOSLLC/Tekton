@@ -42,7 +42,8 @@ podman run --rm -v ./out:/out -v .:/fixtures:Z phoenix-tekton:0.2.0 \
   | `phoenix-tekton_0.1.0_x64.exe` | recovered byte-exact from git history (`8a11e703…`, matches the shipped `SHA256SUMS`) |
   | `phoenix-tekton-0.1.0-1.x86_64.rpm` | recovered byte-exact from git history (`47250697…`, matches the shipped `SHA256SUMS`) |
   | `phoenix-tekton_0.1.0_oci.tar` | re-saved from the surviving `phoenix-tekton:0.1.0` image (same container; the tar bytes differ from the shipped archive) |
-  | `phoenix-tekton_0.1.0_amd64.AppImage` | **not preserved** — the copy was deleted before this policy existed (the build dir is overwritten per pass); rebuild from the tree of `df8cbab` if a copy is ever needed |
+  | `phoenix-tekton_0.1.0_rebuilt_amd64.AppImage` | reconstructed from the tree of `df8cbab` (the v0.1.0 tip) — the shipped copy was deleted before this policy existed; same code, not the same bytes |
+  | the 0.1.1 set (`_0.1.1_` files) | archived mechanically by the 0.2.0 pass — the doctrine's first live run (files verify against the 0.1.1 `SHA256SUMS` row) |
 
   Any archived exe re-verifies with the same gate:
   `npm run verify:win-exe releases/archive/phoenix-tekton_0.1.0_x64.exe`.
