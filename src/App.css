@@ -1358,10 +1358,16 @@ body.is-panel-resizing {
 
 .tk-status-footer {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  /* The wrap rhythm: same 44px identity on one row; when the width tightens
+     (long autosave stamp, five lights, a pushed panel), the indicators pill
+     STACKS as a whole row below the brand — it never squeezes the brand
+     into a jumbled mid-separator wrap. */
+  gap: 6px 16px;
   padding: 0.5rem 1rem;
+  min-height: 44px;
   background: var(--color-tekton-dark-bg-secondary);
   border-top: 1px solid var(--color-tekton-dark-border);
   flex: none;
@@ -1377,6 +1383,13 @@ body.is-panel-resizing {
   letter-spacing: 0.1em;
   color: var(--color-tekton-dark-text-muted);
   min-width: 0;
+  /* The brand reads one line or truncates — never wraps mid-separator. */
+  white-space: nowrap;
+}
+.tk-status-brand > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1 1 auto;
 }
 .tk-status-context {
   overflow: hidden;
@@ -1394,12 +1407,22 @@ body.is-panel-resizing {
 
 .tk-status-indicators {
   display: flex;
+  flex-wrap: wrap;
+  row-gap: 2px;
   align-items: center;
   background: var(--tk-status-neutral-bg);
   border-radius: 9999px;
   padding: 4px 12px;
   border: 1px solid var(--color-tekton-dark-border);
-  flex: none;
+  /* Content-hugging capsule (the PIN identity). It yields before the brand
+     line does: when the row is too narrow the capsule SHRINKS to its line
+     and its lights wrap into tidy internal rows (flex 1 → 0 makes a stuck
+     element — the 900px bleed past the viewport edge); wide viewports see
+     the exact one-row capsule as before. */
+  flex: 0 1 auto;
+  max-width: 100%;
+  margin-left: auto;
+  min-width: 0;
 }
 
 .tk-status-item {
@@ -1410,6 +1433,16 @@ body.is-panel-resizing {
   padding: 4px 8px;
   border-radius: 4px;
   cursor: help;
+}
+/* The inter-light divider lives on the OWNING item's leading edge — a wrap
+   never strands a hanging "|" at a row's end (the span version did); a
+   stacked row simply starts with its own first light's rail. */
+.tk-status-item:not(:first-child)::before {
+  content: '';
+  width: 1px;
+  height: 12px;
+  background: var(--color-tekton-dark-border);
+  flex: none;
 }
 .tk-status-item:hover { background: var(--tk-status-neutral-bg); }
 .tk-status-item:focus-visible {

@@ -33,7 +33,9 @@ export function StatusFooter({ items, brand, context }: StatusFooterProps) {
   return (
     <footer
       className="tk-status-footer"
-      style={{ height: 44 }}
+      /* min-height (CSS) not a hard height: a footer that must wrap stacks
+         into tidy rows — a fixed 44px would clip the second row and jumble
+         the brand. */
       aria-label="Studio status"
     >
       <div className="tk-status-brand">
@@ -43,19 +45,15 @@ export function StatusFooter({ items, brand, context }: StatusFooterProps) {
       </div>
 
       <div className="tk-status-indicators" role="list">
-        {items.map((item, i) => (
-          <StatusIndicator
-            key={item.id}
-            item={item}
-            last={i === items.length - 1}
-          />
+        {items.map((item) => (
+          <StatusIndicator key={item.id} item={item} />
         ))}
       </div>
     </footer>
   );
 }
 
-function StatusIndicator({ item: it, last }: { item: StatusItem; last: boolean }) {
+function StatusIndicator({ item: it }: { item: StatusItem }) {
   const Icon = it.icon;
   return (
     <div
@@ -69,7 +67,6 @@ function StatusIndicator({ item: it, last }: { item: StatusItem; last: boolean }
       <span className="tk-status-label">
         {it.label} · <strong>{it.value}</strong>
       </span>
-      {!last && <span className="tk-status-sep" />}
 
       <div className="tk-status-tooltip" role="tooltip">
         <div className="tk-status-tooltip-title">{it.label}: {it.value}</div>

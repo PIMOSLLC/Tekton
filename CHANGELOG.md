@@ -13,6 +13,19 @@ until 1.0.0 (document-format + PIN-integration stability).
 
 Nothing queued yet.
 
+### Editor — the status footer stacks, never jumbles
+
+- The footer's identity holds at width: the brand reads ONE line (nowrap +
+  ellipsis — it never wraps mid-separator into clipped stacked lines, the
+  jumble the owner caught in 0.2.0's narrow viewport); when the row is too
+  narrow for brand + all five lights (the autosave stamp is wide), the
+  footer stacks — the lights capsule moves wholesale onto a second,
+  right-anchored row and, when narrower, wraps its lights into tidy
+  internal rows (the capsule yields before the brand does). The
+  inter-light divider became each light's leading CSS rail: a stacked row
+  starts with its own rail and never strands a hanging "|" at a row's end
+  (the wrap-boundary blemish the screenshots exposed).
+
 ## [0.2.0] — 2026-10-15
 
 The canvas-feel and card-ownership pass: the wheel zoom becomes deliberate
