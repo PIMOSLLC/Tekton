@@ -166,7 +166,7 @@ npm run tauri dev
 
 # 5b. Windows exe (cross-compile, headless-safe) — MUST embed the frontend:
 npm run desktop:win                              # build + verify gate in one command (docs/DESKTOP_RELEASES.md)
-npm run verify:win-exe releases/phoenix-tekton_0.1.0_x64.exe   # re-gate any copy before/after staging
+npm run verify:win-exe releases/phoenix-tekton_0.1.1_x64.exe   # re-gate any copy before/after staging
 # Never ship an exe without the verify gate: without the custom-protocol feature
 # Tauri compiles a dev-mode shell that loads localhost:6041 → ERR_CONNECTION_REFUSED.
 
@@ -190,5 +190,5 @@ The `tekton` binary builds via `cargo run -p tekton-cli -- <args>` in the worksp
 
 ---
 
-**Last Updated:** 2026-10-12
-**Project:** Phoenix Tekton v0.1.0
+**Last Updated:** 2026-10-15
+**Project:** Phoenix Tekton v0.1.1
